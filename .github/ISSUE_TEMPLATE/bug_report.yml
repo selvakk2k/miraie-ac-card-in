@@ -6,6 +6,11 @@ body:
     attributes:
       value: |
         Please fill out this form to report bugs in the Lovelace card.
+
+        > [!IMPORTANT]
+        > If your issue is with the **Home Assistant integration** (e.g. config flows, entities, background service calls) or the **underlying Python library**, please report it in their respective repositories:
+        > - [Report Integration Issue](https://github.com/selvakk2k/ha-miraie-ac-in/issues)
+        > - [Report Python Library Issue](https://github.com/selvakk2k/miraie-ac-in/issues)
   - type: input
     id: card_version
     attributes:

@@ -2,6 +2,13 @@ name: Feature Request
 description: Suggest an enhancement for the Lovelace card
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > If your feature request is related to **Home Assistant integration features** or the **underlying Python library**, please submit it in their respective repositories:
+        > - [Integration Features](https://github.com/selvakk2k/ha-miraie-ac-in/issues)
+        > - [Python Library Features](https://github.com/selvakk2k/miraie-ac-in/issues)
   - type: textarea
     id: problem
     attributes:
