@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Integration Setup Issue
-    url: https://github.com/selvakk2k/ha-miraie-ac-in/issues/new/choose
-    about: If your issue is with the backend Home Assistant integration (sensors, config flows, etc.)
-  - name: Underlying Python Library Issue
-    url: https://github.com/selvakk2k/miraie-ac-in/issues/new/choose
-    about: If your issue is related to raw API calls or the python library wrapper.
