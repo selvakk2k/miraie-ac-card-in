@@ -5,7 +5,7 @@
 
 A custom Lovelace thermostat card for Panasonic Air Conditioners on the Indian market.
 
-While designed specifically to work with the [`ha-miraie-ac-in`](https://github.com/selvakk2k/ha-miraie-ac-in) custom integration, it remains backward-compatible with the upstream [`rkzofficial/ha-miraie-ac`](https://github.com/rkzofficial/ha-miraie-ac) integration. Note: under the upstream integration, capacity controls will be limited to Converti7 (Converti8 is not supported), and features like Coil Cleaning and Filter Clean alerts will not be available as they are not exposed by it.
+While designed specifically to work with the [`ha-miraie-ac-in`](https://github.com/selvakk2k/ha-miraie-ac-in) custom integration, it remains backward-compatible with the upstream [`rkzofficial/ha-miraie-ac`](https://github.com/rkzofficial/ha-miraie-ac) integration. Note: under the upstream integration, capacity controls will be limited to Converti7 (Converti8 is not supported), and features like Coil Cleaning and Filter Clean alerts will not be available as they are not exposed as entities by it.
 
 <p align="center">
   <img src="screenshot.png" alt="MirAIe AC Card" width="400" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
