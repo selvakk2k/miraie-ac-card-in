@@ -19,7 +19,7 @@ import { styles } from './styles';
 
 /** Parse "cv NNN" → number.  "cv 0" → 0.  Unknown → -1. */
 function parseCv(opt: string): number {
-  const m = /^cv\s+(\d+)$/.exec((opt ?? '').trim());
+  const m = /^cv[\s_]+(\d+)$/.exec((opt ?? '').trim());
   return m ? parseInt(m[1], 10) : -1;
 }
 
@@ -29,7 +29,7 @@ function parseCv(opt: string): number {
  */
 function convertiLabel(options: string[]): string {
   if (!options?.length) return 'Convertible';
-  return options.includes('cv 60') && options.includes('cv 50') ? 'Converti8' : 'Converti7';
+  return options.some(o => parseCv(o) === 60) && options.some(o => parseCv(o) === 50) ? 'Converti8' : 'Converti7';
 }
 
 /** Round to 2 dp, no trailing zeros. */
@@ -165,18 +165,19 @@ export class MirAIeACCard extends LitElement {
 
     /* Convertible step-slider data */
     let cvOptions: string[] = [];
-    let curCvOpt = 'cv 0';
+    let cvPrefix = 'cv_';
 
-    if (a.preset_modes && a.preset_modes.some((p: string) => p.startsWith('cv '))) {
-      cvOptions = a.preset_modes.filter((p: string) => p.startsWith('cv '));
-      if (!cvOptions.includes('cv 0')) cvOptions.push('cv 0');
-      curCvOpt = a.preset_mode?.startsWith('cv ') ? a.preset_mode : 'cv 0';
+    if (a.preset_modes && a.preset_modes.some((p: string) => /^cv[\s_]/.test(p))) {
+      cvOptions = a.preset_modes.filter((p: string) => /^cv[\s_]/.test(p));
+      cvPrefix = cvOptions[0].substring(0, 3);
+      if (!cvOptions.includes(`${cvPrefix}0`)) cvOptions.push(`${cvPrefix}0`);
     }
+    let curCvOpt = a.preset_mode && /^cv[\s_]/.test(a.preset_mode) ? a.preset_mode : `${cvPrefix}0`;
 
     // Sorted ascending: [40, 50, 60, ...] (without 0 = Normal)
     const cvNonZero  = cvOptions.filter(o => parseCv(o) > 0).sort((a, b) => parseCv(a) - parseCv(b));
     // All steps: Normal first, then ascending percentage steps
-    const allCvSteps = ['cv 0', ...cvNonZero];
+    const allCvSteps = [`${cvPrefix}0`, ...cvNonZero];
     const curCvIdx   = allCvSteps.indexOf(curCvOpt);   // 0 = Normal
     const cvGenLabel = convertiLabel(cvOptions);
     const fillPct    = cvNonZero.length > 0
