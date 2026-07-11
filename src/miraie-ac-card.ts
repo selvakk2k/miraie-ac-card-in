@@ -14,33 +14,25 @@ import { styles } from './styles';
 });
 
 /* ─────────────────────────────────────────────
-   Helpers
+   Pure helpers (no side effects)
    ───────────────────────────────────────────── */
 
-/**
- * Parse a "cv NNN" option string to its numeric value.
- * "cv 0" → 0, "cv 110" → 110.
- * Returns -1 for unrecognised strings.
- */
+/** Parse "cv NNN" → number.  "cv 0" → 0.  Unknown → -1. */
 function parseCv(opt: string): number {
-  const m = /^cv\s+(\d+)$/.exec(opt?.trim() ?? '');
+  const m = /^cv\s+(\d+)$/.exec((opt ?? '').trim());
   return m ? parseInt(m[1], 10) : -1;
 }
 
 /**
- * Detect whether the select entity is a Converti8 (8-in-1) or Converti7 (7-in-1)
- * by inspecting the options list exposed by the integration.
- *  • Converti8 has both "cv 60" and "cv 50" (and does NOT have "cv 55")
- *  • Converti7 has "cv 55"
+ * Detect Converti8 vs Converti7 by the presence of the 60 % and 50 % steps
+ * (8-in-1 replaces the single 55 % step with 60 % + 50 %).
  */
 function convertiLabel(options: string[]): string {
   if (!options?.length) return 'Convertible';
-  const has60 = options.includes('cv 60');
-  const has50 = options.includes('cv 50');
-  return has60 && has50 ? 'Converti8' : 'Converti7';
+  return options.includes('cv 60') && options.includes('cv 50') ? 'Converti8' : 'Converti7';
 }
 
-/** Format a number to 2 decimal places, stripping trailing zeros. */
+/** Round to 2 dp, no trailing zeros. */
 function fmt2(v: number | string): string {
   const n = Number(v);
   return isNaN(n) ? String(v) : n.toFixed(2);
@@ -51,40 +43,45 @@ export class MirAIeACCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config!: MirAIeCardConfig;
 
-  /** Which expandable panel is open: 'fan' | 'swing_v' | 'swing_h' | 'convertible' | null */
+  /** Which expandable picker is open: 'fan' | 'swing_v' | 'swing_h' | null */
   @state() private _openPanel: string | null = null;
 
   static get styles() { return styles; }
 
-  /* ── Visual Editor (getConfigForm — HA renders this natively) ── */
+  /* ── Native visual editor (HA renders this; no custom element needed) ── */
   static getConfigForm() {
     return {
       schema: [
-        { name: 'entity', required: true, selector: { entity: { domain: 'climate' } } },
-        { name: 'name', selector: { text: {} } },
+        { name: 'entity',  required: true, selector: { entity: { domain: 'climate' } } },
+        { name: 'name',    selector: { text: {} } },
+        { name: 'accent_color', selector: { color_rgb: {} } },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
             { name: 'room_temp_sensor', selector: { entity: { domain: 'sensor' } } },
-            { name: 'humidity_sensor', selector: { entity: { domain: 'sensor' } } },
+            { name: 'humidity_sensor',  selector: { entity: { domain: 'sensor' } } },
           ],
         },
         {
           name: '', type: 'expandable', title: 'Convertible & Controls', icon: 'mdi:toggle-switch-outline',
           schema: [
             { name: 'convertible_mode_entity', selector: { entity: { domain: 'select' } } },
-            { name: 'nanoe_switch', selector: { entity: { domain: 'switch' } } },
-            { name: 'display_switch', selector: { entity: { domain: 'switch' } } },
-            { name: 'coil_clean_button', selector: { entity: { domain: 'button' } } },
-            { name: 'coil_cleaning_sensor', selector: { entity: { domain: 'binary_sensor' } } },
-            { name: 'filter_alert_sensor', selector: { entity: { domain: 'binary_sensor' } } },
+            { name: 'nanoe_switch',            selector: { entity: { domain: 'switch' } } },
+            { name: 'display_switch',          selector: { entity: { domain: 'switch' } } },
+            { name: 'coil_clean_button',       selector: { entity: { domain: 'button' } } },
+            { name: 'coil_cleaning_sensor',    selector: { entity: { domain: 'binary_sensor' } } },
+            {
+              name: 'filter_alert_sensor',
+              selector: { entity: { domain: 'binary_sensor' } },
+              // helper text shown in editor
+            },
           ],
         },
         {
           name: '', type: 'expandable', title: 'Diagnostics & Energy', icon: 'mdi:chart-line',
           schema: [
-            { name: 'rssi_sensor', selector: { entity: { domain: 'sensor' } } },
-            { name: 'energy_today_sensor', selector: { entity: { domain: 'sensor' } } },
+            { name: 'rssi_sensor',             selector: { entity: { domain: 'sensor' } } },
+            { name: 'energy_today_sensor',     selector: { entity: { domain: 'sensor' } } },
             { name: 'energy_yesterday_sensor', selector: { entity: { domain: 'sensor' } } },
           ],
         },
@@ -108,20 +105,16 @@ export class MirAIeACCard extends LitElement {
   /* ── Selective re-render ── */
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('_config') || changedProps.has('_openPanel')) return true;
-
     if (changedProps.has('hass') && this._config) {
       const old = changedProps.get('hass') as HomeAssistant | undefined;
       if (!old) return true;
-
       const cfg = this._config;
-      const watched = [
+      return [
         cfg.entity, cfg.room_temp_sensor, cfg.humidity_sensor,
         cfg.convertible_mode_entity, cfg.nanoe_switch, cfg.display_switch,
         cfg.coil_clean_button, cfg.coil_cleaning_sensor, cfg.filter_alert_sensor,
         cfg.rssi_sensor, cfg.energy_today_sensor, cfg.energy_yesterday_sensor,
-      ].filter(Boolean) as string[];
-
-      return watched.some(id => old.states[id] !== this.hass.states[id]);
+      ].filter(Boolean).some((id) => old.states[id!] !== this.hass.states[id!]);
     }
     return false;
   }
@@ -132,57 +125,65 @@ export class MirAIeACCard extends LitElement {
   protected render(): TemplateResult | null {
     if (!this.hass || !this._config) return null;
 
-    const stateObj = this.hass.states[this._config.entity];
+    const cfg = this._config;
+    const stateObj = this.hass.states[cfg.entity];
     if (!stateObj) {
-      return html`<ha-card><div class="error">Entity not found: ${this._config.entity}</div></ha-card>`;
+      return html`<ha-card><div class="error">Entity not found: ${cfg.entity}</div></ha-card>`;
     }
 
-    const cfg = this._config;
     const a = stateObj.attributes;
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
-    const isOn = stateObj.state !== 'off' && isOnline;
+    const isOn     = stateObj.state !== 'off' && isOnline;
 
     const friendlyName = cfg.name || a.friendly_name || 'AC';
-    const targetTemp = a.temperature;
-    const minTemp = a.min_temp ?? 16;
-    const maxTemp = a.max_temp ?? 30;
-    const hvacMode = stateObj.state;
-    const fanMode = a.fan_mode;
-    const swingV = a.swing_mode;
-    const swingH = a.swing_horizontal_mode;
-    const presetMode = a.preset_mode;
+    const targetTemp   = a.temperature;
+    const minTemp      = a.min_temp ?? 16;
+    const maxTemp      = a.max_temp ?? 30;
+    const hvacMode     = stateObj.state;
+    const fanMode      = a.fan_mode;
+    const swingV       = a.swing_mode;
+    const swingH       = a.swing_horizontal_mode;
+    const presetMode   = a.preset_mode;
 
-    /* Room temperature — prefer external sensor if configured */
-    const roomSensorState = cfg.room_temp_sensor ? this.hass.states[cfg.room_temp_sensor] : undefined;
-    const currentTemp = roomSensorState ? roomSensorState.state : a.current_temperature;
+    /* Room temperature: external sensor overrides AC built-in */
+    const roomSensor   = cfg.room_temp_sensor ? this.hass.states[cfg.room_temp_sensor] : undefined;
+    const currentTemp  = roomSensor ? roomSensor.state : a.current_temperature;
 
     /* Humidity */
-    const humidityState = cfg.humidity_sensor ? this.hass.states[cfg.humidity_sensor] : undefined;
-    const humidity = humidityState?.state;
+    const humidState   = cfg.humidity_sensor ? this.hass.states[cfg.humidity_sensor] : undefined;
 
     /* Helper entities */
-    const convertible = cfg.convertible_mode_entity ? this.hass.states[cfg.convertible_mode_entity] : undefined;
-    const nanoe = cfg.nanoe_switch ? this.hass.states[cfg.nanoe_switch] : undefined;
-    const display = cfg.display_switch ? this.hass.states[cfg.display_switch] : undefined;
-    const coilBtn = cfg.coil_clean_button ? this.hass.states[cfg.coil_clean_button] : undefined;
-    const coilSensor = cfg.coil_cleaning_sensor ? this.hass.states[cfg.coil_cleaning_sensor] : undefined;
-    const filterAlert = cfg.filter_alert_sensor ? this.hass.states[cfg.filter_alert_sensor] : undefined;
-    const rssi = cfg.rssi_sensor ? this.hass.states[cfg.rssi_sensor] : undefined;
-    const energyToday = cfg.energy_today_sensor ? this.hass.states[cfg.energy_today_sensor] : undefined;
-    const energyYesterday = cfg.energy_yesterday_sensor ? this.hass.states[cfg.energy_yesterday_sensor] : undefined;
+    const convertible  = cfg.convertible_mode_entity  ? this.hass.states[cfg.convertible_mode_entity]  : undefined;
+    const nanoe        = cfg.nanoe_switch              ? this.hass.states[cfg.nanoe_switch]              : undefined;
+    const display      = cfg.display_switch            ? this.hass.states[cfg.display_switch]            : undefined;
+    const coilBtn      = cfg.coil_clean_button         ? this.hass.states[cfg.coil_clean_button]         : undefined;
+    const coilSensor   = cfg.coil_cleaning_sensor      ? this.hass.states[cfg.coil_cleaning_sensor]      : undefined;
+    const filterAlert  = cfg.filter_alert_sensor       ? this.hass.states[cfg.filter_alert_sensor]       : undefined;
+    const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
+    const energyToday  = cfg.energy_today_sensor       ? this.hass.states[cfg.energy_today_sensor]       : undefined;
+    const energyYest   = cfg.energy_yesterday_sensor   ? this.hass.states[cfg.energy_yesterday_sensor]   : undefined;
 
-    /* Convertible slider data */
-    const cvOptions: string[] = convertible?.attributes?.options ?? [];
-    const cvNonZero = cvOptions.filter(o => parseCv(o) > 0).sort((a, b) => parseCv(a) - parseCv(b));
-    const cvValues = cvNonZero.map(o => parseCv(o));        // sorted ascending e.g. [40,50,60,...]
-    const currentCvOpt = convertible?.state ?? 'cv 0';
-    const currentCvVal = parseCv(currentCvOpt);             // 0 means "Normal"
-    const sliderIndex = cvValues.indexOf(currentCvVal);     // -1 when "Normal" selected
-    const sliderVal = sliderIndex >= 0 ? sliderIndex : -1;
-    const cvLabel = convertiLabel(cvOptions);
+    /* Convertible step-slider data */
+    const cvOptions  = (convertible?.attributes?.options ?? []) as string[];
+    // Sorted ascending: [40, 50, 60, ...] (without 0 = Normal)
+    const cvNonZero  = cvOptions.filter(o => parseCv(o) > 0).sort((a, b) => parseCv(a) - parseCv(b));
+    // All steps: Normal first, then ascending percentage steps
+    const allCvSteps = ['cv 0', ...cvNonZero];
+    const curCvOpt   = convertible?.state ?? 'cv 0';
+    const curCvIdx   = allCvSteps.indexOf(curCvOpt);   // 0 = Normal
+    const cvGenLabel = convertiLabel(cvOptions);
+    const fillPct    = cvNonZero.length > 0
+      ? (curCvIdx / (allCvSteps.length - 1)) * 100
+      : 0;
+
+    /* Custom accent color applied as CSS var via inline style */
+    const cardStyle = cfg.accent_color
+      ? `--miraie-accent: ${cfg.accent_color};`
+      : '';
 
     return html`
-      <ha-card>
+      <ha-card style="${cardStyle}">
+
         <!-- ── Header ── -->
         <div class="header">
           <div class="header-left">
@@ -224,10 +225,10 @@ export class MirAIeACCard extends LitElement {
                 <ha-icon icon="mdi:thermometer"></ha-icon>
                 ${currentTemp != null ? `${currentTemp}°C` : '--'}
               </span>
-              ${humidity != null ? html`
+              ${humidState ? html`
                 <span class="temp-meta-item">
                   <ha-icon icon="mdi:water-percent"></ha-icon>
-                  ${humidity}%
+                  ${humidState.state}%
                 </span>
               ` : ''}
             </div>
@@ -242,22 +243,31 @@ export class MirAIeACCard extends LitElement {
           </button>
         </div>
 
+        <!-- ── Filter Alert (always visible if entity configured + active) ── -->
+        ${filterAlert?.state === 'on' ? html`
+          <div class="alert-banner">
+            <div class="alert-left">
+              <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
+              <span class="alert-text">Dirty Filter Alert!</span>
+            </div>
+            <span class="alert-hint">Clean your filter</span>
+          </div>
+        ` : ''}
+
         <!-- ── HVAC Modes ── -->
         <div class="section">
           <div class="section-title">Modes</div>
           <div class="pills">
-            ${(a.hvac_modes || [])
-              .filter((m: string) => m !== 'off')
-              .map((m: string) => html`
-                <button
-                  class="pill ${hvacMode === m && isOn ? 'active' : ''}"
-                  ?disabled=${!isOnline}
-                  @click=${() => this._setHvacMode(m)}
-                >
-                  <ha-icon icon="${this._modeIcon(m)}"></ha-icon>
-                  ${this._modeLabel(m)}
-                </button>
-              `)}
+            ${(a.hvac_modes || []).filter((m: string) => m !== 'off').map((m: string) => html`
+              <button
+                class="pill ${hvacMode === m && isOn ? 'active' : ''}"
+                ?disabled=${!isOnline}
+                @click=${() => this._setHvacMode(m)}
+              >
+                <ha-icon icon="${this._modeIcon(m)}"></ha-icon>
+                ${this._modeLabel(m)}
+              </button>
+            `)}
           </div>
         </div>
 
@@ -265,7 +275,6 @@ export class MirAIeACCard extends LitElement {
         <div class="section">
           <div class="section-title">Fan & Swing</div>
           <div class="pills">
-            <!-- Fan -->
             <button
               class="pill ${this._openPanel === 'fan' ? 'active' : ''}"
               ?disabled=${!isOn}
@@ -275,7 +284,6 @@ export class MirAIeACCard extends LitElement {
               Fan: ${fanMode ?? 'Auto'}
             </button>
 
-            <!-- Vertical Swing -->
             ${swingV != null ? html`
               <button
                 class="pill ${this._openPanel === 'swing_v' ? 'active' : ''}"
@@ -287,7 +295,6 @@ export class MirAIeACCard extends LitElement {
               </button>
             ` : ''}
 
-            <!-- Horizontal Swing -->
             ${swingH != null ? html`
               <button
                 class="pill ${this._openPanel === 'swing_h' ? 'active' : ''}"
@@ -300,42 +307,33 @@ export class MirAIeACCard extends LitElement {
             ` : ''}
           </div>
 
-          <!-- Fan picker -->
           ${this._openPanel === 'fan' ? html`
             <div class="picker-panel">
               ${(a.fan_modes || []).map((m: string) => html`
-                <button
-                  class="picker-option ${fanMode === m ? 'selected' : ''}"
-                  @click=${() => { this._setFanMode(stateObj, m); this._openPanel = null; }}
-                >
+                <button class="picker-opt ${fanMode === m ? 'sel' : ''}"
+                        @click=${() => { this._setFanMode(stateObj, m); this._openPanel = null; }}>
                   ${m.charAt(0).toUpperCase() + m.slice(1)}
                 </button>
               `)}
             </div>
           ` : ''}
 
-          <!-- Vertical swing picker -->
           ${this._openPanel === 'swing_v' ? html`
             <div class="picker-panel">
               ${(a.swing_modes || []).map((m: string) => html`
-                <button
-                  class="picker-option ${swingV === m ? 'selected' : ''}"
-                  @click=${() => { this._setSwing(stateObj, m); this._openPanel = null; }}
-                >
+                <button class="picker-opt ${swingV === m ? 'sel' : ''}"
+                        @click=${() => { this._setSwing(stateObj, m); this._openPanel = null; }}>
                   ${m}
                 </button>
               `)}
             </div>
           ` : ''}
 
-          <!-- Horizontal swing picker -->
           ${this._openPanel === 'swing_h' ? html`
             <div class="picker-panel">
               ${(a.swing_horizontal_modes || []).map((m: string) => html`
-                <button
-                  class="picker-option ${swingH === m ? 'selected' : ''}"
-                  @click=${() => { this._setHSwing(stateObj, m); this._openPanel = null; }}
-                >
+                <button class="picker-opt ${swingH === m ? 'sel' : ''}"
+                        @click=${() => { this._setHSwing(stateObj, m); this._openPanel = null; }}>
                   ${m}
                 </button>
               `)}
@@ -360,33 +358,41 @@ export class MirAIeACCard extends LitElement {
           </div>
         </div>
 
-        <!-- ── Convertible Mode (slider) ── -->
+        <!-- ── Convertible Mode — stepped notch slider ── -->
         ${convertible && cvNonZero.length > 0 ? html`
           <div class="section">
-            <div class="section-title">${cvLabel}</div>
-            <div class="slider-wrap">
-              <div class="slider-header">
-                <span class="slider-label">Capacity Limit</span>
-                <span class="slider-value">
-                  ${currentCvVal === 0 ? 'Normal' : `${currentCvVal}%`}
+            <div class="section-title">${cvGenLabel}</div>
+            <div class="step-slider-wrap">
+              <div class="step-slider-header">
+                <span class="step-slider-title">Capacity Limit</span>
+                <span class="step-slider-val">
+                  ${curCvIdx === 0 ? 'Normal' : `${parseCv(curCvOpt)}%`}
                 </span>
               </div>
-              <!-- Step 0 = Normal, steps 1..N = cvValues[0..N-1] -->
-              <input
-                type="range"
-                min="0"
-                max="${cvNonZero.length}"
-                step="1"
-                .value="${String(sliderVal + 1)}"
-                ?disabled=${!isOn}
-                @change=${(e: Event) => this._onCvSlider(e, cvNonZero)}
-              />
-              <div class="slider-ticks">
-                <span class="slider-tick">Normal</span>
-                ${cvNonZero.map((o, i) => i === cvNonZero.length - 1
-                  ? html`<span class="slider-tick">${parseCv(o)}%</span>`
-                  : ''
-                )}
+
+              <!-- Track + notch dots -->
+              <div class="step-track-outer">
+                <div class="step-track-bg">
+                  <div class="step-track-fill" style="width: ${fillPct}%"></div>
+                </div>
+                <div class="step-notches">
+                  ${allCvSteps.map((opt, i) => html`
+                    <button
+                      class="step-notch
+                        ${i < curCvIdx  ? 'filled'  : ''}
+                        ${i === curCvIdx ? 'current' : ''}"
+                      title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
+                      ?disabled=${!isOn}
+                      @click=${() => this._selectOption(cfg.convertible_mode_entity!, opt)}
+                    ></button>
+                  `)}
+                </div>
+              </div>
+
+              <!-- Edge labels -->
+              <div class="step-labels">
+                <span class="step-label">Normal</span>
+                <span class="step-label">${parseCv(cvNonZero[cvNonZero.length - 1])}%</span>
               </div>
             </div>
           </div>
@@ -398,18 +404,20 @@ export class MirAIeACCard extends LitElement {
             <div class="section-title">Controls</div>
             <div class="toggles">
               ${nanoe ? html`
-                <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}>
+                <div class="toggle-card"
+                     @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${nanoe.state === 'on' ? 'active' : ''}">
                       <ha-icon icon="mdi:air-purifier"></ha-icon>
                     </div>
-                    <span class="toggle-label">Nanoe-G</span>
+                    <span class="toggle-label">nanoe™</span>
                   </div>
                   <ha-switch .checked=${nanoe.state === 'on'} ?disabled=${!isOnline}></ha-switch>
                 </div>
               ` : ''}
               ${display ? html`
-                <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}>
+                <div class="toggle-card"
+                     @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${display.state === 'on' ? 'active' : ''}">
                       <ha-icon icon="mdi:eye"></ha-icon>
@@ -420,23 +428,17 @@ export class MirAIeACCard extends LitElement {
                 </div>
               ` : ''}
               ${coilBtn ? html`
-                <div class="toggle-card" @click=${() => this._pressButton(cfg.coil_clean_button!)}>
+                <div class="toggle-card"
+                     @click=${() => this._pressButton(cfg.coil_clean_button!)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${coilSensor?.state === 'on' ? 'active' : ''}">
                       <ha-icon icon="mdi:spray-bottle"></ha-icon>
                     </div>
-                    <span class="toggle-label">${coilSensor?.state === 'on' ? 'Cleaning…' : 'Coil Clean'}</span>
+                    <span class="toggle-label">
+                      ${coilSensor?.state === 'on' ? 'Cleaning…' : 'Coil Clean'}
+                    </span>
                   </div>
                   <ha-icon class="toggle-action" icon="mdi:play-circle-outline"></ha-icon>
-                </div>
-              ` : ''}
-              ${filterAlert?.state === 'on' ? html`
-                <div class="alert-banner">
-                  <div class="alert-left">
-                    <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
-                    <span class="alert-text">Dirty Filter Alert!</span>
-                  </div>
-                  <span class="alert-hint">Clean Filter</span>
                 </div>
               ` : ''}
             </div>
@@ -444,14 +446,14 @@ export class MirAIeACCard extends LitElement {
         ` : ''}
 
         <!-- ── Energy Cards ── -->
-        ${energyToday || energyYesterday ? html`
+        ${energyToday || energyYest ? html`
           <div class="section">
             <div class="section-title">Energy Consumption</div>
             <div class="energy-row">
               ${energyToday ? html`
                 <div class="energy-card">
                   <div class="energy-label">
-                    <ha-icon class="energy-icon" icon="mdi:flash"></ha-icon>
+                    <ha-icon icon="mdi:flash"></ha-icon>
                     ${energyToday.attributes.friendly_name ?? 'Today'}
                   </div>
                   <div class="energy-value-row">
@@ -460,15 +462,15 @@ export class MirAIeACCard extends LitElement {
                   </div>
                 </div>
               ` : ''}
-              ${energyYesterday ? html`
+              ${energyYest ? html`
                 <div class="energy-card">
                   <div class="energy-label">
-                    <ha-icon class="energy-icon" icon="mdi:flash-outline"></ha-icon>
-                    ${energyYesterday.attributes.friendly_name ?? 'Yesterday'}
+                    <ha-icon icon="mdi:flash-outline"></ha-icon>
+                    ${energyYest.attributes.friendly_name ?? 'Yesterday'}
                   </div>
                   <div class="energy-value-row">
-                    <span class="energy-value">${fmt2(energyYesterday.state)}</span>
-                    <span class="energy-unit">${energyYesterday.attributes.unit_of_measurement ?? 'kWh'}</span>
+                    <span class="energy-value">${fmt2(energyYest.state)}</span>
+                    <span class="energy-unit">${energyYest.attributes.unit_of_measurement ?? 'kWh'}</span>
                   </div>
                 </div>
               ` : ''}
@@ -495,17 +497,7 @@ export class MirAIeACCard extends LitElement {
   }
 
   /* ─────────────────────────────────────────────
-     Convertible slider
-     ───────────────────────────────────────────── */
-  private _onCvSlider(e: Event, cvNonZero: string[]): void {
-    const idx = parseInt((e.target as HTMLInputElement).value, 10);
-    // idx 0 → Normal (cv 0), idx N → cvNonZero[N-1]
-    const option = idx === 0 ? 'cv 0' : cvNonZero[idx - 1];
-    this._selectOption(this._config.convertible_mode_entity!, option);
-  }
-
-  /* ─────────────────────────────────────────────
-     Service Calls
+     Service calls
      ───────────────────────────────────────────── */
   private _togglePower(s: any): void {
     if (s.state !== 'off') {
@@ -555,10 +547,12 @@ export class MirAIeACCard extends LitElement {
   }
 
   /* ─────────────────────────────────────────────
-     Helpers
+     Label / Icon helpers
      ───────────────────────────────────────────── */
   private _modeLabel(m: string): string {
-    const map: Record<string, string> = { cool: 'Cool', dry: 'Dry', fan_only: 'Fan', auto: 'Auto', heat: 'Heat', off: 'Off' };
+    const map: Record<string, string> = {
+      cool: 'Cool', dry: 'Dry', fan_only: 'Fan', auto: 'Auto', heat: 'Heat', off: 'Off',
+    };
     return map[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
   }
 
@@ -571,7 +565,9 @@ export class MirAIeACCard extends LitElement {
   }
 
   private _presetIcon(p: string): string {
-    const map: Record<string, string> = { eco: 'mdi:leaf', boost: 'mdi:rocket', none: 'mdi:close-circle-outline' };
+    const map: Record<string, string> = {
+      eco: 'mdi:leaf', boost: 'mdi:rocket', none: 'mdi:close-circle-outline',
+    };
     return map[p] ?? 'mdi:play-circle-outline';
   }
 
