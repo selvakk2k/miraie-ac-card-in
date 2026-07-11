@@ -164,12 +164,24 @@ export class MirAIeACCard extends LitElement {
     const energyYest   = cfg.energy_yesterday_sensor   ? this.hass.states[cfg.energy_yesterday_sensor]   : undefined;
 
     /* Convertible step-slider data */
-    const cvOptions  = (convertible?.attributes?.options ?? []) as string[];
+    let cvOptions: string[] = [];
+    let curCvOpt = 'cv 0';
+    let isNativePresetCv = false;
+
+    if (convertible) {
+      cvOptions = (convertible.attributes?.options ?? []) as string[];
+      curCvOpt = convertible.state ?? 'cv 0';
+    } else if (a.preset_modes && a.preset_modes.some((p: string) => p.startsWith('cv '))) {
+      cvOptions = a.preset_modes.filter((p: string) => p.startsWith('cv '));
+      if (!cvOptions.includes('cv 0')) cvOptions.push('cv 0');
+      curCvOpt = a.preset_mode?.startsWith('cv ') ? a.preset_mode : 'cv 0';
+      isNativePresetCv = true;
+    }
+
     // Sorted ascending: [40, 50, 60, ...] (without 0 = Normal)
     const cvNonZero  = cvOptions.filter(o => parseCv(o) > 0).sort((a, b) => parseCv(a) - parseCv(b));
     // All steps: Normal first, then ascending percentage steps
     const allCvSteps = ['cv 0', ...cvNonZero];
-    const curCvOpt   = convertible?.state ?? 'cv 0';
     const curCvIdx   = allCvSteps.indexOf(curCvOpt);   // 0 = Normal
     const cvGenLabel = convertiLabel(cvOptions);
     const fillPct    = cvNonZero.length > 0
@@ -371,7 +383,7 @@ export class MirAIeACCard extends LitElement {
         </div>
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
-        ${convertible && cvNonZero.length > 0 ? html`
+        ${cvNonZero.length > 0 ? html`
           <div class="section" style="${['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <div class="section-title">${cvGenLabel}</div>
             <div class="step-slider-wrap">
@@ -395,7 +407,7 @@ export class MirAIeACCard extends LitElement {
                         ${i === curCvIdx ? 'current' : ''}"
                       title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
                       ?disabled=${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode)}
-                      @click=${() => this._selectOption(cfg.convertible_mode_entity!, opt)}
+                      @click=${() => isNativePresetCv ? this._setPreset(opt) : this._selectOption(cfg.convertible_mode_entity!, opt)}
                     ></button>
                   `)}
                 </div>
