@@ -65,7 +65,7 @@ export class MirAIeACCard extends LitElement {
         {
           name: '', type: 'expandable', title: 'Convertible & Controls', icon: 'mdi:toggle-switch-outline',
           schema: [
-            { name: 'convertible_mode_entity', selector: { entity: { domain: 'select' } } },
+
             { name: 'nanoe_switch',            selector: { entity: { domain: 'switch' } } },
             { name: 'display_switch',          selector: { entity: { domain: 'switch' } } },
             { name: 'coil_clean_button',       selector: { entity: { domain: 'button' } } },
@@ -111,7 +111,7 @@ export class MirAIeACCard extends LitElement {
       const cfg = this._config;
       return [
         cfg.entity, cfg.room_temp_sensor, cfg.humidity_sensor,
-        cfg.convertible_mode_entity, cfg.nanoe_switch, cfg.display_switch,
+        cfg.nanoe_switch, cfg.display_switch,
         cfg.coil_clean_button, cfg.coil_cleaning_sensor, cfg.filter_alert_sensor,
         cfg.rssi_sensor, cfg.energy_today_sensor, cfg.energy_yesterday_sensor,
       ].filter(Boolean).some((id) => old.states[id!] !== this.hass.states[id!]);
@@ -153,7 +153,7 @@ export class MirAIeACCard extends LitElement {
     const humidState   = cfg.humidity_sensor ? this.hass.states[cfg.humidity_sensor] : undefined;
 
     /* Helper entities */
-    const convertible  = cfg.convertible_mode_entity  ? this.hass.states[cfg.convertible_mode_entity]  : undefined;
+
     const nanoe        = cfg.nanoe_switch              ? this.hass.states[cfg.nanoe_switch]              : undefined;
     const display      = cfg.display_switch            ? this.hass.states[cfg.display_switch]            : undefined;
     const coilBtn      = cfg.coil_clean_button         ? this.hass.states[cfg.coil_clean_button]         : undefined;
@@ -166,16 +166,11 @@ export class MirAIeACCard extends LitElement {
     /* Convertible step-slider data */
     let cvOptions: string[] = [];
     let curCvOpt = 'cv 0';
-    let isNativePresetCv = false;
 
-    if (convertible) {
-      cvOptions = (convertible.attributes?.options ?? []) as string[];
-      curCvOpt = convertible.state ?? 'cv 0';
-    } else if (a.preset_modes && a.preset_modes.some((p: string) => p.startsWith('cv '))) {
+    if (a.preset_modes && a.preset_modes.some((p: string) => p.startsWith('cv '))) {
       cvOptions = a.preset_modes.filter((p: string) => p.startsWith('cv '));
       if (!cvOptions.includes('cv 0')) cvOptions.push('cv 0');
       curCvOpt = a.preset_mode?.startsWith('cv ') ? a.preset_mode : 'cv 0';
-      isNativePresetCv = true;
     }
 
     // Sorted ascending: [40, 50, 60, ...] (without 0 = Normal)
@@ -408,7 +403,7 @@ export class MirAIeACCard extends LitElement {
                           ${i === curCvIdx ? 'current' : ''}"
                         title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
                         ?disabled=${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode)}
-                        @click=${() => isNativePresetCv ? this._setPreset(opt) : this._selectOption(cfg.convertible_mode_entity!, opt)}
+                        @click=${() => this._setPreset(opt)}
                       ></button>
                       <span class="notch-label ${i === curCvIdx ? 'current' : ''}">${i === 0 ? 'N' : parseCv(opt)}</span>
                     </div>
@@ -578,10 +573,7 @@ export class MirAIeACCard extends LitElement {
     this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: preset });
   }
 
-  private _selectOption(entityId: string, option: string): void {
-    this._haptic('selection');
-    this.hass.callService('select', 'select_option', { entity_id: entityId, option });
-  }
+
 
   private _toggleSwitch(entityId: string, currentState: string): void {
     this._haptic('light');
