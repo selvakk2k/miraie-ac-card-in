@@ -401,22 +401,19 @@ export class MirAIeACCard extends LitElement {
                 </div>
                 <div class="step-notches">
                   ${allCvSteps.map((opt, i) => html`
-                    <button
-                      class="step-notch
-                        ${i < curCvIdx  ? 'filled'  : ''}
-                        ${i === curCvIdx ? 'current' : ''}"
-                      title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
-                      ?disabled=${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode)}
-                      @click=${() => isNativePresetCv ? this._setPreset(opt) : this._selectOption(cfg.convertible_mode_entity!, opt)}
-                    ></button>
+                    <div class="notch-wrapper">
+                      <button
+                        class="step-notch
+                          ${i < curCvIdx  ? 'filled'  : ''}
+                          ${i === curCvIdx ? 'current' : ''}"
+                        title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
+                        ?disabled=${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode)}
+                        @click=${() => isNativePresetCv ? this._setPreset(opt) : this._selectOption(cfg.convertible_mode_entity!, opt)}
+                      ></button>
+                      <span class="notch-label ${i === curCvIdx ? 'current' : ''}">${i === 0 ? 'N' : parseCv(opt)}</span>
+                    </div>
                   `)}
                 </div>
-              </div>
-
-              <!-- Edge labels -->
-              <div class="step-labels">
-                <span class="step-label">Normal</span>
-                <span class="step-label">${parseCv(cvNonZero[cvNonZero.length - 1])}%</span>
               </div>
             </div>
           </div>

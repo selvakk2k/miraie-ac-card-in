@@ -153,50 +153,42 @@ export const styles = css`
     margin-bottom: 18px;
   }
   .step-slider-title { font-size: 0.82rem; font-weight: 600; }
-  .step-slider-val   { font-size: 0.9rem; font-weight: 800; color: var(--miraie-accent); }
-
-  /* Track + notches */
+  .step-slider-val { font-size: 0.9rem; font-weight: 800; color: var(--miraie-accent); }
   .step-track-outer {
-    position: relative; height: 28px;
-    display: flex; align-items: center;
-    padding: 0 8px; /* half-notch inset so first/last dot don't clip */
+    position: relative; height: 4px; margin: 16px 6px 28px;
   }
   .step-track-bg {
-    position: absolute; left: 8px; right: 8px;
-    height: 4px; border-radius: 2px; background: var(--m-border);
-    overflow: visible;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--m-border); border-radius: 2px;
   }
   .step-track-fill {
-    position: absolute; top: 0; left: 0;
-    height: 100%; border-radius: 2px;
-    background: var(--miraie-accent);
-    transition: width 0.2s ease;
+    height: 100%; background: var(--miraie-accent); border-radius: 2px;
+    transition: width 0.3s ease;
   }
   .step-notches {
-    position: absolute; left: 8px; right: 8px;
-    top: 50%; transform: translateY(-50%);
+    position: absolute; top: -4px; left: 0; width: 100%; height: 12px;
     display: flex; justify-content: space-between; align-items: center;
   }
+  .notch-wrapper {
+    position: relative; display: flex; justify-content: center; width: 12px; height: 12px;
+  }
   .step-notch {
-    width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid var(--m-border);
-    background: var(--m-bg);
-    cursor: pointer; transition: all 0.15s; z-index: 1;
+    width: 12px; height: 12px; border-radius: 50%; padding: 0;
+    background: var(--m-surface-hover); border: 2px solid var(--m-border);
+    cursor: pointer; transition: all 0.2s;
   }
-  .step-notch.filled {
-    background: var(--miraie-accent); border-color: var(--miraie-accent);
-  }
+  .step-notch:hover:not(:disabled) { transform: scale(1.3); }
+  .step-notch.filled { background: var(--miraie-accent); border-color: var(--miraie-accent); }
   .step-notch.current {
-    width: 19px; height: 19px;
-    background: var(--miraie-accent); border-color: var(--miraie-accent);
-    box-shadow: 0 0 0 4px var(--m-active-bg);
+    transform: scale(1.4); background: var(--miraie-accent);
+    border-color: var(--m-surface); box-shadow: 0 0 0 1px var(--miraie-accent);
   }
   .step-notch:disabled { cursor: not-allowed; opacity: 0.4; }
-
-  .step-labels {
-    display: flex; justify-content: space-between;
-    margin-top: 6px; padding: 0 2px;
+  
+  .notch-label {
+    position: absolute; top: 16px; font-size: 0.65rem; color: var(--m-text-2); font-weight: 600;
   }
+  .notch-label.current { color: var(--miraie-accent); font-weight: 700; }
   .step-label { font-size: 0.65rem; color: var(--m-text-2); }
 
   /* ── Toggle Cards (controls) ── */
