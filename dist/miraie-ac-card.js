@@ -531,7 +531,6 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
               `:""}
               ${y?B`
                 <div class="toggle-card ${r?"disabled":""}"
-                     title=${r?"AC must be off to clean coil":""}
                      @click=${()=>this._pressButton(t.coil_clean_button)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${"on"===b?.state?"active":""}">
