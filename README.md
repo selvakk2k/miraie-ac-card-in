@@ -20,7 +20,7 @@ While designed specifically to work with the [`ha-miraie-ac-in`](https://github.
 
 * **Target & Ambient Readings**: Target temperature controls showing current ambient room temperature and humidity prominent below.
 * **Stepped Capacity Slider**: A notched slider for convertible capacity limits (Normal down to 40% / up to 110%) with values displayed directly underneath. Dynamically scales between **Converti7** and **Converti8** models.
-* **HVAC Mode Selection**: Selector pills for Auto, Cool, Dry, and Fan Only modes (graying out/disabling unavailable options in Dry or Fan modes).
+* **HVAC Mode Selection**: Selector pills for Auto, Cool, Dry, and Fan Only modes (graying out/disabling unavailable options).
 * **Comfort Presets**: Toggle between **None**, **Eco**, and **Boost**.
 * **Device Control Deck**: Toggles for the physical AC Display LED panel, Nanoe™ Air Purifier, and Coil Cleaning.
 * **Energy Consumption Analytics**: Displays today's and yesterday's energy statistics. Clicking the cards launches the native Home Assistant history dialog.
