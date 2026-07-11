@@ -177,8 +177,16 @@ export class MirAIeACCard extends LitElement {
       : 0;
 
     /* Custom accent color applied as CSS var via inline style */
-    const cardStyle = cfg.accent_color
-      ? `--miraie-accent: ${cfg.accent_color};`
+    let accentStyle = '';
+    if (cfg.accent_color) {
+      if (Array.isArray(cfg.accent_color)) {
+        accentStyle = `rgb(${cfg.accent_color.join(',')})`;
+      } else {
+        accentStyle = cfg.accent_color;
+      }
+    }
+    const cardStyle = accentStyle
+      ? `--miraie-accent: ${accentStyle};`
       : '';
 
     return html`
