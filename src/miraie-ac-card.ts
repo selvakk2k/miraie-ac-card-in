@@ -54,7 +54,7 @@ export class MirAIeACCard extends LitElement {
       schema: [
         { name: 'entity',  required: true, selector: { entity: { domain: 'climate' } } },
         { name: 'name',    selector: { text: {} } },
-        { name: 'accent_color', selector: { color_rgb: {} } },
+        { name: 'accent_color', selector: { ui_color: {} } },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
@@ -181,8 +181,12 @@ export class MirAIeACCard extends LitElement {
     if (cfg.accent_color) {
       if (Array.isArray(cfg.accent_color)) {
         accentStyle = `rgb(${cfg.accent_color.join(',')})`;
-      } else {
-        accentStyle = cfg.accent_color;
+      } else if (typeof cfg.accent_color === 'string') {
+        const c = cfg.accent_color.toLowerCase();
+        if (c === 'primary') accentStyle = 'var(--primary-color)';
+        else if (c === 'accent') accentStyle = 'var(--accent-color)';
+        else if (/^[a-z]+$/.test(c)) accentStyle = `var(--${c}-color, ${c})`;
+        else accentStyle = c;
       }
     }
     const cardStyle = accentStyle
