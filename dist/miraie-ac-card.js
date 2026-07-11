@@ -147,6 +147,12 @@ const lt={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},ct=(t=lt
   }
   .pill:disabled { opacity: 0.28; cursor: not-allowed; }
 
+  @media (max-width: 450px) {
+    .pills { gap: 6px; }
+    .pill { padding: 7px 11px; font-size: 0.78rem; gap: 4px; }
+    .pill ha-icon { --mdc-icon-size: 14px; }
+  }
+
   /* ── Picker panel (fan / swing) ── */
   .picker-panel {
     margin-top: 8px; border-radius: 14px;
