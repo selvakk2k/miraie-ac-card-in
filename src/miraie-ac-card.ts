@@ -505,13 +505,19 @@ export class MirAIeACCard extends LitElement {
      Panel toggle
      ───────────────────────────────────────────── */
   private _togglePanel(name: string): void {
+    this._haptic('selection');
     this._openPanel = this._openPanel === name ? null : name;
   }
 
   /* ─────────────────────────────────────────────
      Service calls & Actions
      ───────────────────────────────────────────── */
+  private _haptic(type: 'success' | 'warning' | 'failure' | 'info' | 'selection' | 'light' | 'medium' | 'heavy' = 'light'): void {
+    this.dispatchEvent(new CustomEvent('haptic', { detail: type, bubbles: true, composed: true }));
+  }
+
   private _showMoreInfo(entityId: string): void {
+    this._haptic('selection');
     this.dispatchEvent(
       new CustomEvent('hass-more-info', {
         bubbles: true,
@@ -522,6 +528,7 @@ export class MirAIeACCard extends LitElement {
   }
 
   private _togglePower(s: any): void {
+    this._haptic('medium');
     if (s.state !== 'off') {
       this.hass.callService('climate', 'set_hvac_mode', { entity_id: s.entity_id, hvac_mode: 'off' });
     } else {
@@ -530,6 +537,7 @@ export class MirAIeACCard extends LitElement {
   }
 
   private _adjustTemp(delta: number, current?: number, limit?: number): void {
+    this._haptic('light');
     if (current == null) return;
     const next = Number(current) + delta;
     if (limit != null && ((delta < 0 && next < Number(limit)) || (delta > 0 && next > Number(limit)))) return;
@@ -537,34 +545,42 @@ export class MirAIeACCard extends LitElement {
   }
 
   private _setHvacMode(mode: string): void {
+    this._haptic('light');
     this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode });
   }
 
   private _setFanMode(s: any, mode: string): void {
+    this._haptic('selection');
     this.hass.callService('climate', 'set_fan_mode', { entity_id: s.entity_id, fan_mode: mode });
   }
 
   private _setSwing(s: any, mode: string): void {
+    this._haptic('selection');
     this.hass.callService('climate', 'set_swing_mode', { entity_id: s.entity_id, swing_mode: mode });
   }
 
   private _setHSwing(s: any, mode: string): void {
+    this._haptic('selection');
     this.hass.callService('climate', 'set_swing_horizontal_mode', { entity_id: s.entity_id, swing_horizontal_mode: mode });
   }
 
   private _setPreset(preset: string): void {
+    this._haptic('light');
     this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: preset });
   }
 
   private _selectOption(entityId: string, option: string): void {
+    this._haptic('selection');
     this.hass.callService('select', 'select_option', { entity_id: entityId, option });
   }
 
   private _toggleSwitch(entityId: string, currentState: string): void {
+    this._haptic('light');
     this.hass.callService('switch', currentState === 'on' ? 'turn_off' : 'turn_on', { entity_id: entityId });
   }
 
   private _pressButton(entityId: string): void {
+    this._haptic('medium');
     this.hass.callService('button', 'press', { entity_id: entityId });
   }
 
