@@ -289,7 +289,7 @@ export class MirAIeACCard extends LitElement {
           <div class="pills">
             <button
               class="pill ${this._openPanel === 'fan' ? 'active' : ''}"
-              ?disabled=${!isOn}
+              ?disabled=${!isOn || hvacMode === 'dry'}
               @click=${() => this._togglePanel('fan')}
             >
               <ha-icon icon="mdi:fan"></ha-icon>
@@ -360,7 +360,7 @@ export class MirAIeACCard extends LitElement {
             ${['none', 'eco', 'boost'].map(p => html`
               <button
                 class="pill ${presetMode === p ? 'active' : ''}"
-                ?disabled=${!isOn}
+                ?disabled=${!isOn || (hvacMode === 'dry' && p !== 'none')}
                 @click=${() => this._setPreset(p)}
               >
                 <ha-icon icon="${this._presetIcon(p)}"></ha-icon>
@@ -372,7 +372,7 @@ export class MirAIeACCard extends LitElement {
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
         ${convertible && cvNonZero.length > 0 ? html`
-          <div class="section">
+          <div class="section" style="${hvacMode === 'dry' ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <div class="section-title">${cvGenLabel}</div>
             <div class="step-slider-wrap">
               <div class="step-slider-header">
@@ -394,7 +394,7 @@ export class MirAIeACCard extends LitElement {
                         ${i < curCvIdx  ? 'filled'  : ''}
                         ${i === curCvIdx ? 'current' : ''}"
                       title="${i === 0 ? 'Normal' : `${parseCv(opt)}%`}"
-                      ?disabled=${!isOn}
+                      ?disabled=${!isOn || hvacMode === 'dry'}
                       @click=${() => this._selectOption(cfg.convertible_mode_entity!, opt)}
                     ></button>
                   `)}

@@ -78,29 +78,29 @@ export const styles = css`
   .temp-value  { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
   .temp-meta {
     display: flex; align-items: center; justify-content: center;
-    gap: 12px; margin-top: 4px;
+    gap: 16px; margin-top: 8px;
   }
   .temp-meta-item {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 0.75rem; color: var(--m-text-2);
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.95rem; font-weight: 500; color: var(--m-text);
   }
-  .temp-meta-item ha-icon { --mdc-icon-size: 13px; }
+  .temp-meta-item ha-icon { --mdc-icon-size: 16px; color: var(--m-text-2); }
 
   /* ── Generic section ── */
-  .section { margin-bottom: 16px; }
+  .section { margin-bottom: 22px; }
   .section-title {
     font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.08em; color: var(--m-text-2); margin-bottom: 8px;
   }
 
   /* ── Pills ── */
-  .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; }
   .pill {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 7px 14px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 24px;
     border: 1px solid var(--m-border);
     background: var(--m-surface); color: var(--m-text-2);
-    font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+    font-size: 0.85rem; cursor: pointer; white-space: nowrap;
     transition: all 0.18s; --mdc-icon-size: 15px;
   }
   .pill:hover:not(:disabled) { background: var(--m-surface-hover); }
@@ -115,7 +115,7 @@ export const styles = css`
   .picker-panel {
     margin-top: 8px; border-radius: 14px;
     background: var(--m-surface); border: 1px solid var(--m-border);
-    padding: 12px; display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 14px; display: flex; flex-wrap: wrap; gap: 8px;
     animation: slideDown 0.15s ease;
   }
   @keyframes slideDown {
@@ -123,10 +123,10 @@ export const styles = css`
     to   { opacity: 1; transform: translateY(0); }
   }
   .picker-opt {
-    padding: 6px 14px; border-radius: 16px;
+    padding: 8px 16px; border-radius: 16px;
     border: 1px solid var(--m-border);
     background: transparent; color: var(--m-text-2);
-    font-size: 0.8rem; cursor: pointer; transition: all 0.15s;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.15s;
   }
   .picker-opt:hover { background: var(--m-surface-hover); }
   .picker-opt.sel {
