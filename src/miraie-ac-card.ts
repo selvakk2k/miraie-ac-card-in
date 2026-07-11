@@ -463,7 +463,7 @@ export class MirAIeACCard extends LitElement {
             <div class="section-title">Energy Consumption</div>
             <div class="energy-row">
               ${energyToday ? html`
-                <div class="energy-card">
+                <div class="energy-card" @click=${() => this._showMoreInfo(cfg.energy_today_sensor!)}>
                   <div class="energy-label">
                     <ha-icon icon="mdi:flash"></ha-icon>
                     ${energyToday.attributes.friendly_name ?? 'Today'}
@@ -475,7 +475,7 @@ export class MirAIeACCard extends LitElement {
                 </div>
               ` : ''}
               ${energyYest ? html`
-                <div class="energy-card">
+                <div class="energy-card" @click=${() => this._showMoreInfo(cfg.energy_yesterday_sensor!)}>
                   <div class="energy-label">
                     <ha-icon icon="mdi:flash-outline"></ha-icon>
                     ${energyYest.attributes.friendly_name ?? 'Yesterday'}
@@ -509,8 +509,18 @@ export class MirAIeACCard extends LitElement {
   }
 
   /* ─────────────────────────────────────────────
-     Service calls
+     Service calls & Actions
      ───────────────────────────────────────────── */
+  private _showMoreInfo(entityId: string): void {
+    this.dispatchEvent(
+      new CustomEvent('hass-more-info', {
+        bubbles: true,
+        composed: true,
+        detail: { entityId },
+      })
+    );
+  }
+
   private _togglePower(s: any): void {
     if (s.state !== 'off') {
       this.hass.callService('climate', 'set_hvac_mode', { entity_id: s.entity_id, hvac_mode: 'off' });

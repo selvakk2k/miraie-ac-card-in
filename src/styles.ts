@@ -232,12 +232,13 @@ export const styles = css`
   .alert-hint { font-size: 0.72rem; color: var(--error-color, #f44336); }
 
   /* ── Energy Cards ── */
-  .energy-row { display: flex; gap: 10px; }
+  .energy-row { display: flex; gap: 10px; flex-wrap: wrap; }
   .energy-card {
     flex: 1; border-radius: 14px;
     background: var(--m-surface); border: 1px solid var(--m-border);
-    padding: 12px 14px;
+    padding: 12px 14px; cursor: pointer; transition: background 0.15s;
   }
+  .energy-card:hover { background: var(--m-surface-hover); }
   .energy-label {
     display: flex; align-items: center; gap: 5px;
     font-size: 0.7rem; font-weight: 600; color: var(--m-text-2);
