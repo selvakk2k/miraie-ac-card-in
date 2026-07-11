@@ -1,6 +1,6 @@
 {
   "name": "miraie-ac-card-in",
-  "version": "1.0.1",
+  "version": "1.3.0",
   "description": "A premium Lovelace thermostat card for Panasonic MirAIe AC units (Indian market)",
   "type": "module",
   "main": "dist/miraie-ac-card.js",
