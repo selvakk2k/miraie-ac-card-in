@@ -287,8 +287,8 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
 
   /* ── Error ── */
   .error { padding: 20px; color: var(--error-color, #f44336); text-align: center; font-size: 0.85rem; }
-`;function mt(t){const e=/^cv\s+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends ot{constructor(){super(...arguments),this._openPanel=null}static get styles(){return pt}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"accent_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return B`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,r="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",o=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,h=i.swing_mode,p=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0,g=u?u.state:i.current_temperature,_=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0,v=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,f=t.display_switch?this.hass.states[t.display_switch]:void 0,y=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,b=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,$=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,x=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,w=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,A=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0;let S=[],k="cv 0";i.preset_modes&&i.preset_modes.some(t=>t.startsWith("cv "))&&(S=i.preset_modes.filter(t=>t.startsWith("cv ")),S.includes("cv 0")||S.push("cv 0"),k=i.preset_mode?.startsWith("cv ")?i.preset_mode:"cv 0");const E=S.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),C=["cv 0",...E],P=C.indexOf(k),z=(U=S,U?.length?U.includes("cv 60")&&U.includes("cv 50")?"Converti8":"Converti7":"Convertible");var U;const M=E.length>0?P/(C.length-1)*100:0;let O="";if(t.accent_color)if(Array.isArray(t.accent_color))O=`rgb(${t.accent_color.join(",")})`;else if("string"==typeof t.accent_color){const e=t.accent_color.toLowerCase();O="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z]+$/.test(e)?`var(--${e}-color, ${e})`:e}return B`
-      <ha-card style="${O?`--miraie-accent: ${O};`:""}">
+`;function mt(t){const e=/^cv[\s_]+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends ot{constructor(){super(...arguments),this._openPanel=null}static get styles(){return pt}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"accent_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return B`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,r="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",o=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,h=i.swing_mode,p=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0,g=u?u.state:i.current_temperature,_=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0,v=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,f=t.display_switch?this.hass.states[t.display_switch]:void 0,y=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,b=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,$=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,x=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,w=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,A=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0;let S=[],k="cv_";i.preset_modes&&i.preset_modes.some(t=>/^cv[\s_]/.test(t))&&(S=i.preset_modes.filter(t=>/^cv[\s_]/.test(t)),k=S[0].substring(0,3),S.includes(`${k}0`)||S.push(`${k}0`));let E=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${k}0`;const C=S.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),P=[`${k}0`,...C],z=P.indexOf(E),U=(M=S,M?.length?M.some(t=>60===mt(t))&&M.some(t=>50===mt(t))?"Converti8":"Converti7":"Convertible");var M;const O=C.length>0?z/(P.length-1)*100:0;let H="";if(t.accent_color)if(Array.isArray(t.accent_color))H=`rgb(${t.accent_color.join(",")})`;else if("string"==typeof t.accent_color){const e=t.accent_color.toLowerCase();H="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z]+$/.test(e)?`var(--${e}-color, ${e})`:e}return B`
+      <ha-card style="${H?`--miraie-accent: ${H};`:""}">
 
         <!-- ── Header ── -->
         <div class="header">
@@ -463,34 +463,34 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         </div>
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
-        ${E.length>0?B`
+        ${C.length>0?B`
           <div class="section" style="${["dry","auto","fan_only"].includes(l)?"opacity: 0.5; pointer-events: none;":""}">
-            <div class="section-title">${z}</div>
+            <div class="section-title">${U}</div>
             <div class="step-slider-wrap">
               <div class="step-slider-header">
                 <span class="step-slider-title">Capacity Limit</span>
                 <span class="step-slider-val">
-                  ${0===P?"Normal":`${mt(k)}%`}
+                  ${0===z?"Normal":`${mt(E)}%`}
                 </span>
               </div>
 
               <!-- Track + notch dots -->
               <div class="step-track-outer">
                 <div class="step-track-bg">
-                  <div class="step-track-fill" style="width: ${M}%"></div>
+                  <div class="step-track-fill" style="width: ${O}%"></div>
                 </div>
                 <div class="step-notches">
-                  ${C.map((t,e)=>B`
+                  ${P.map((t,e)=>B`
                     <div class="notch-wrapper">
                       <button
                         class="step-notch
-                          ${e<P?"filled":""}
-                          ${e===P?"current":""}"
+                          ${e<z?"filled":""}
+                          ${e===z?"current":""}"
                         title="${0===e?"Normal":`${mt(t)}%`}"
                         ?disabled=${!r||["dry","auto","fan_only"].includes(l)}
                         @click=${()=>this._setPreset(t)}
                       ></button>
-                      <span class="notch-label ${e===P?"current":""}">${0===e?"N":mt(t)}</span>
+                      <span class="notch-label ${e===z?"current":""}">${0===e?"N":mt(t)}</span>
                     </div>
                   `)}
                 </div>
