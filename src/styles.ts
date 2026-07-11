@@ -199,7 +199,8 @@ export const styles = css`
     border: 1px solid var(--m-border); background: var(--m-surface);
     cursor: pointer; transition: background 0.15s;
   }
-  .toggle-card:hover { background: var(--m-surface-hover); }
+  .toggle-card:hover:not(.disabled) { background: var(--m-surface-hover); }
+  .toggle-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
   .toggle-left { display: flex; align-items: center; gap: 9px; }
   .toggle-icon {
     width: 32px; height: 32px; border-radius: 9px;

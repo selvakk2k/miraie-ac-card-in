@@ -445,7 +445,8 @@ export class MirAIeACCard extends LitElement {
                 </div>
               ` : ''}
               ${coilBtn ? html`
-                <div class="toggle-card"
+                <div class="toggle-card ${isOn ? 'disabled' : ''}"
+                     title=${isOn ? 'AC must be off to clean coil' : ''}
                      @click=${() => this._pressButton(cfg.coil_clean_button!)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${coilSensor?.state === 'on' ? 'active' : ''}">
