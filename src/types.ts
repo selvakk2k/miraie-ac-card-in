@@ -8,7 +8,6 @@ export interface MirAIeCardConfig {
   room_temp_sensor?: string;
   humidity_sensor?: string;
   // Controls
-  convertible_mode_entity?: string;
   nanoe_switch?: string;
   display_switch?: string;
   coil_clean_button?: string;
