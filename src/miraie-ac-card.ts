@@ -4,7 +4,7 @@ import { HomeAssistant } from 'custom-card-helpers';
 import { MirAIeCardConfig } from './types';
 import { styles } from './styles';
 
-/* ── Register in card picker ── */
+/* ── Card picker registration ── */
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
   type: 'miraie-ac-card-in',
@@ -13,78 +13,79 @@ import { styles } from './styles';
   preview: true,
 });
 
+/* ─────────────────────────────────────────────
+   Helpers
+   ───────────────────────────────────────────── */
+
+/**
+ * Parse a "cv NNN" option string to its numeric value.
+ * "cv 0" → 0, "cv 110" → 110.
+ * Returns -1 for unrecognised strings.
+ */
+function parseCv(opt: string): number {
+  const m = /^cv\s+(\d+)$/.exec(opt?.trim() ?? '');
+  return m ? parseInt(m[1], 10) : -1;
+}
+
+/**
+ * Detect whether the select entity is a Converti8 (8-in-1) or Converti7 (7-in-1)
+ * by inspecting the options list exposed by the integration.
+ *  • Converti8 has both "cv 60" and "cv 50" (and does NOT have "cv 55")
+ *  • Converti7 has "cv 55"
+ */
+function convertiLabel(options: string[]): string {
+  if (!options?.length) return 'Convertible';
+  const has60 = options.includes('cv 60');
+  const has50 = options.includes('cv 50');
+  return has60 && has50 ? 'Converti8' : 'Converti7';
+}
+
+/** Format a number to 2 decimal places, stripping trailing zeros. */
+function fmt2(v: number | string): string {
+  const n = Number(v);
+  return isNaN(n) ? String(v) : n.toFixed(2);
+}
+
 @customElement('miraie-ac-card-in')
 export class MirAIeACCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config!: MirAIeCardConfig;
 
-  static get styles() {
-    return styles;
-  }
+  /** Which expandable panel is open: 'fan' | 'swing_v' | 'swing_h' | 'convertible' | null */
+  @state() private _openPanel: string | null = null;
 
-  /* ── Visual Editor via getConfigForm ── */
+  static get styles() { return styles; }
+
+  /* ── Visual Editor (getConfigForm — HA renders this natively) ── */
   static getConfigForm() {
     return {
       schema: [
+        { name: 'entity', required: true, selector: { entity: { domain: 'climate' } } },
+        { name: 'name', selector: { text: {} } },
         {
-          name: 'entity',
-          required: true,
-          selector: { entity: { domain: 'climate' } },
-        },
-        {
-          name: 'name',
-          selector: { text: {} },
-        },
-        {
-          name: '',
-          type: 'expandable',
-          title: 'Convertible & Controls',
-          icon: 'mdi:toggle-switch-outline',
+          name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
-            {
-              name: 'convertible_mode_entity',
-              selector: { entity: { domain: 'select' } },
-            },
-            {
-              name: 'nanoe_switch',
-              selector: { entity: { domain: 'switch' } },
-            },
-            {
-              name: 'display_switch',
-              selector: { entity: { domain: 'switch' } },
-            },
-            {
-              name: 'coil_clean_button',
-              selector: { entity: { domain: 'button' } },
-            },
-            {
-              name: 'coil_cleaning_sensor',
-              selector: { entity: { domain: 'binary_sensor' } },
-            },
-            {
-              name: 'filter_alert_sensor',
-              selector: { entity: { domain: 'binary_sensor' } },
-            },
+            { name: 'room_temp_sensor', selector: { entity: { domain: 'sensor' } } },
+            { name: 'humidity_sensor', selector: { entity: { domain: 'sensor' } } },
           ],
         },
         {
-          name: '',
-          type: 'expandable',
-          title: 'Diagnostics & Energy',
-          icon: 'mdi:chart-line',
+          name: '', type: 'expandable', title: 'Convertible & Controls', icon: 'mdi:toggle-switch-outline',
           schema: [
-            {
-              name: 'rssi_sensor',
-              selector: { entity: { domain: 'sensor' } },
-            },
-            {
-              name: 'energy_today_sensor',
-              selector: { entity: { domain: 'sensor' } },
-            },
-            {
-              name: 'energy_yesterday_sensor',
-              selector: { entity: { domain: 'sensor' } },
-            },
+            { name: 'convertible_mode_entity', selector: { entity: { domain: 'select' } } },
+            { name: 'nanoe_switch', selector: { entity: { domain: 'switch' } } },
+            { name: 'display_switch', selector: { entity: { domain: 'switch' } } },
+            { name: 'coil_clean_button', selector: { entity: { domain: 'button' } } },
+            { name: 'coil_cleaning_sensor', selector: { entity: { domain: 'binary_sensor' } } },
+            { name: 'filter_alert_sensor', selector: { entity: { domain: 'binary_sensor' } } },
+          ],
+        },
+        {
+          name: '', type: 'expandable', title: 'Diagnostics & Energy', icon: 'mdi:chart-line',
+          schema: [
+            { name: 'rssi_sensor', selector: { entity: { domain: 'sensor' } } },
+            { name: 'energy_today_sensor', selector: { entity: { domain: 'sensor' } } },
+            { name: 'energy_yesterday_sensor', selector: { entity: { domain: 'sensor' } } },
           ],
         },
       ],
@@ -101,35 +102,33 @@ export class MirAIeACCard extends LitElement {
       throw new Error('Please define a valid climate entity.');
     }
     this._config = { ...config };
+    this._openPanel = null;
   }
 
   /* ── Selective re-render ── */
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('_config') || changedProps.has('_openPanel')) return true;
 
     if (changedProps.has('hass') && this._config) {
-      const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
-      if (!oldHass) return true;
+      const old = changedProps.get('hass') as HomeAssistant | undefined;
+      if (!old) return true;
 
+      const cfg = this._config;
       const watched = [
-        this._config.entity,
-        this._config.convertible_mode_entity,
-        this._config.nanoe_switch,
-        this._config.display_switch,
-        this._config.coil_clean_button,
-        this._config.coil_cleaning_sensor,
-        this._config.filter_alert_sensor,
-        this._config.rssi_sensor,
-        this._config.energy_today_sensor,
-        this._config.energy_yesterday_sensor,
+        cfg.entity, cfg.room_temp_sensor, cfg.humidity_sensor,
+        cfg.convertible_mode_entity, cfg.nanoe_switch, cfg.display_switch,
+        cfg.coil_clean_button, cfg.coil_cleaning_sensor, cfg.filter_alert_sensor,
+        cfg.rssi_sensor, cfg.energy_today_sensor, cfg.energy_yesterday_sensor,
       ].filter(Boolean) as string[];
 
-      return watched.some(id => oldHass.states[id] !== this.hass.states[id]);
+      return watched.some(id => old.states[id] !== this.hass.states[id]);
     }
     return false;
   }
 
-  /* ── Render ── */
+  /* ─────────────────────────────────────────────
+     Render
+     ───────────────────────────────────────────── */
   protected render(): TemplateResult | null {
     if (!this.hass || !this._config) return null;
 
@@ -138,13 +137,13 @@ export class MirAIeACCard extends LitElement {
       return html`<ha-card><div class="error">Entity not found: ${this._config.entity}</div></ha-card>`;
     }
 
+    const cfg = this._config;
+    const a = stateObj.attributes;
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
     const isOn = stateObj.state !== 'off' && isOnline;
-    const a = stateObj.attributes;
 
-    const friendlyName = this._config.name || a.friendly_name || 'AC';
+    const friendlyName = cfg.name || a.friendly_name || 'AC';
     const targetTemp = a.temperature;
-    const currentTemp = a.current_temperature;
     const minTemp = a.min_temp ?? 16;
     const maxTemp = a.max_temp ?? 30;
     const hvacMode = stateObj.state;
@@ -153,8 +152,15 @@ export class MirAIeACCard extends LitElement {
     const swingH = a.swing_horizontal_mode;
     const presetMode = a.preset_mode;
 
-    // Helper entity states — only looked up if configured
-    const cfg = this._config;
+    /* Room temperature — prefer external sensor if configured */
+    const roomSensorState = cfg.room_temp_sensor ? this.hass.states[cfg.room_temp_sensor] : undefined;
+    const currentTemp = roomSensorState ? roomSensorState.state : a.current_temperature;
+
+    /* Humidity */
+    const humidityState = cfg.humidity_sensor ? this.hass.states[cfg.humidity_sensor] : undefined;
+    const humidity = humidityState?.state;
+
+    /* Helper entities */
     const convertible = cfg.convertible_mode_entity ? this.hass.states[cfg.convertible_mode_entity] : undefined;
     const nanoe = cfg.nanoe_switch ? this.hass.states[cfg.nanoe_switch] : undefined;
     const display = cfg.display_switch ? this.hass.states[cfg.display_switch] : undefined;
@@ -164,6 +170,16 @@ export class MirAIeACCard extends LitElement {
     const rssi = cfg.rssi_sensor ? this.hass.states[cfg.rssi_sensor] : undefined;
     const energyToday = cfg.energy_today_sensor ? this.hass.states[cfg.energy_today_sensor] : undefined;
     const energyYesterday = cfg.energy_yesterday_sensor ? this.hass.states[cfg.energy_yesterday_sensor] : undefined;
+
+    /* Convertible slider data */
+    const cvOptions: string[] = convertible?.attributes?.options ?? [];
+    const cvNonZero = cvOptions.filter(o => parseCv(o) > 0).sort((a, b) => parseCv(a) - parseCv(b));
+    const cvValues = cvNonZero.map(o => parseCv(o));        // sorted ascending e.g. [40,50,60,...]
+    const currentCvOpt = convertible?.state ?? 'cv 0';
+    const currentCvVal = parseCv(currentCvOpt);             // 0 means "Normal"
+    const sliderIndex = cvValues.indexOf(currentCvVal);     // -1 when "Normal" selected
+    const sliderVal = sliderIndex >= 0 ? sliderIndex : -1;
+    const cvLabel = convertiLabel(cvOptions);
 
     return html`
       <ha-card>
@@ -181,7 +197,7 @@ export class MirAIeACCard extends LitElement {
             </div>
           </div>
           <button
-            class="power-btn ${isOn ? 'active' : ''}"
+            class="power-btn ${isOn ? 'on' : ''}"
             ?disabled=${!isOnline}
             @click=${() => this._togglePower(stateObj)}
           >
@@ -190,7 +206,7 @@ export class MirAIeACCard extends LitElement {
         </div>
 
         <!-- ── Temperature ── -->
-        <div class="temp-bar">
+        <div class="temp-block">
           <button
             class="temp-btn"
             ?disabled=${!isOn || (targetTemp != null && Number(targetTemp) <= Number(minTemp))}
@@ -198,10 +214,25 @@ export class MirAIeACCard extends LitElement {
           >
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
-          <div class="temp-info">
-            <span class="temp-value">${isOn && targetTemp != null ? `${targetTemp}°C` : '--'}</span>
-            <span class="temp-room">${currentTemp != null ? `Room: ${currentTemp}°C` : 'Room: --'}</span>
+
+          <div class="temp-center">
+            <div class="temp-value">
+              ${isOn && targetTemp != null ? `${targetTemp}°C` : '--'}
+            </div>
+            <div class="temp-meta">
+              <span class="temp-meta-item">
+                <ha-icon icon="mdi:thermometer"></ha-icon>
+                ${currentTemp != null ? `${currentTemp}°C` : '--'}
+              </span>
+              ${humidity != null ? html`
+                <span class="temp-meta-item">
+                  <ha-icon icon="mdi:water-percent"></ha-icon>
+                  ${humidity}%
+                </span>
+              ` : ''}
+            </div>
           </div>
+
           <button
             class="temp-btn"
             ?disabled=${!isOn || (targetTemp != null && Number(targetTemp) >= Number(maxTemp))}
@@ -217,18 +248,16 @@ export class MirAIeACCard extends LitElement {
           <div class="pills">
             ${(a.hvac_modes || [])
               .filter((m: string) => m !== 'off')
-              .map(
-                (m: string) => html`
-                  <button
-                    class="pill ${hvacMode === m && isOn ? 'active' : ''}"
-                    ?disabled=${!isOnline}
-                    @click=${() => this._setHvacMode(m)}
-                  >
-                    <ha-icon icon="${this._modeIcon(m)}"></ha-icon>
-                    ${this._modeLabel(m)}
-                  </button>
-                `,
-              )}
+              .map((m: string) => html`
+                <button
+                  class="pill ${hvacMode === m && isOn ? 'active' : ''}"
+                  ?disabled=${!isOnline}
+                  @click=${() => this._setHvacMode(m)}
+                >
+                  <ha-icon icon="${this._modeIcon(m)}"></ha-icon>
+                  ${this._modeLabel(m)}
+                </button>
+              `)}
           </div>
         </div>
 
@@ -236,171 +265,248 @@ export class MirAIeACCard extends LitElement {
         <div class="section">
           <div class="section-title">Fan & Swing</div>
           <div class="pills">
-            <button class="pill" ?disabled=${!isOn} @click=${() => this._cycleFan(stateObj)}>
+            <!-- Fan -->
+            <button
+              class="pill ${this._openPanel === 'fan' ? 'active' : ''}"
+              ?disabled=${!isOn}
+              @click=${() => this._togglePanel('fan')}
+            >
               <ha-icon icon="mdi:fan"></ha-icon>
               Fan: ${fanMode ?? 'Auto'}
             </button>
-            ${swingV != null
-              ? html`
-                  <button class="pill" ?disabled=${!isOn} @click=${() => this._cycleSwing(stateObj)}>
-                    <ha-icon icon="mdi:arrow-up-down"></ha-icon>
-                    Swing V: ${swingV}
-                  </button>
-                `
-              : ''}
-            ${swingH != null
-              ? html`
-                  <button class="pill" ?disabled=${!isOn} @click=${() => this._cycleHSwing(stateObj)}>
-                    <ha-icon icon="mdi:arrow-left-right"></ha-icon>
-                    Swing H: ${swingH}
-                  </button>
-                `
-              : ''}
+
+            <!-- Vertical Swing -->
+            ${swingV != null ? html`
+              <button
+                class="pill ${this._openPanel === 'swing_v' ? 'active' : ''}"
+                ?disabled=${!isOn}
+                @click=${() => this._togglePanel('swing_v')}
+              >
+                <ha-icon icon="mdi:arrow-up-down"></ha-icon>
+                Swing V: ${swingV}
+              </button>
+            ` : ''}
+
+            <!-- Horizontal Swing -->
+            ${swingH != null ? html`
+              <button
+                class="pill ${this._openPanel === 'swing_h' ? 'active' : ''}"
+                ?disabled=${!isOn}
+                @click=${() => this._togglePanel('swing_h')}
+              >
+                <ha-icon icon="mdi:arrow-left-right"></ha-icon>
+                Swing H: ${swingH}
+              </button>
+            ` : ''}
           </div>
+
+          <!-- Fan picker -->
+          ${this._openPanel === 'fan' ? html`
+            <div class="picker-panel">
+              ${(a.fan_modes || []).map((m: string) => html`
+                <button
+                  class="picker-option ${fanMode === m ? 'selected' : ''}"
+                  @click=${() => { this._setFanMode(stateObj, m); this._openPanel = null; }}
+                >
+                  ${m.charAt(0).toUpperCase() + m.slice(1)}
+                </button>
+              `)}
+            </div>
+          ` : ''}
+
+          <!-- Vertical swing picker -->
+          ${this._openPanel === 'swing_v' ? html`
+            <div class="picker-panel">
+              ${(a.swing_modes || []).map((m: string) => html`
+                <button
+                  class="picker-option ${swingV === m ? 'selected' : ''}"
+                  @click=${() => { this._setSwing(stateObj, m); this._openPanel = null; }}
+                >
+                  ${m}
+                </button>
+              `)}
+            </div>
+          ` : ''}
+
+          <!-- Horizontal swing picker -->
+          ${this._openPanel === 'swing_h' ? html`
+            <div class="picker-panel">
+              ${(a.swing_horizontal_modes || []).map((m: string) => html`
+                <button
+                  class="picker-option ${swingH === m ? 'selected' : ''}"
+                  @click=${() => { this._setHSwing(stateObj, m); this._openPanel = null; }}
+                >
+                  ${m}
+                </button>
+              `)}
+            </div>
+          ` : ''}
         </div>
 
         <!-- ── Comfort Presets ── -->
         <div class="section">
           <div class="section-title">Comfort Presets</div>
           <div class="pills">
-            ${['none', 'eco', 'boost'].map(
-              (p) => html`
-                <button
-                  class="pill ${presetMode === p ? 'active' : ''}"
-                  ?disabled=${!isOn}
-                  @click=${() => this._setPreset(p)}
-                >
-                  <ha-icon icon="${this._presetIcon(p)}"></ha-icon>
-                  ${p.charAt(0).toUpperCase() + p.slice(1)}
-                </button>
-              `,
-            )}
+            ${['none', 'eco', 'boost'].map(p => html`
+              <button
+                class="pill ${presetMode === p ? 'active' : ''}"
+                ?disabled=${!isOn}
+                @click=${() => this._setPreset(p)}
+              >
+                <ha-icon icon="${this._presetIcon(p)}"></ha-icon>
+                ${p.charAt(0).toUpperCase() + p.slice(1)}
+              </button>
+            `)}
           </div>
         </div>
 
-        <!-- ── Convertible Mode ── -->
-        ${convertible
-          ? html`
-              <div class="section">
-                <div class="section-title">Capacity Limit (Convertible)</div>
-                <div class="pills">
-                  ${(convertible.attributes.options || []).map(
-                    (opt: string) => html`
-                      <button
-                        class="pill ${convertible.state === opt ? 'active' : ''}"
-                        ?disabled=${!isOn}
-                        @click=${() => this._selectOption(cfg.convertible_mode_entity!, opt)}
-                      >
-                        ${opt === 'cv 0' ? 'Normal' : opt.replace('cv ', '') + '%'}
-                      </button>
-                    `,
-                  )}
-                </div>
+        <!-- ── Convertible Mode (slider) ── -->
+        ${convertible && cvNonZero.length > 0 ? html`
+          <div class="section">
+            <div class="section-title">${cvLabel}</div>
+            <div class="slider-wrap">
+              <div class="slider-header">
+                <span class="slider-label">Capacity Limit</span>
+                <span class="slider-value">
+                  ${currentCvVal === 0 ? 'Normal' : `${currentCvVal}%`}
+                </span>
               </div>
-            `
-          : ''}
+              <!-- Step 0 = Normal, steps 1..N = cvValues[0..N-1] -->
+              <input
+                type="range"
+                min="0"
+                max="${cvNonZero.length}"
+                step="1"
+                .value="${String(sliderVal + 1)}"
+                ?disabled=${!isOn}
+                @change=${(e: Event) => this._onCvSlider(e, cvNonZero)}
+              />
+              <div class="slider-ticks">
+                <span class="slider-tick">Normal</span>
+                ${cvNonZero.map((o, i) => i === cvNonZero.length - 1
+                  ? html`<span class="slider-tick">${parseCv(o)}%</span>`
+                  : ''
+                )}
+              </div>
+            </div>
+          </div>
+        ` : ''}
 
-        <!-- ── Controls ── -->
-        ${nanoe || display || coilBtn
-          ? html`
-              <div class="section">
-                <div class="section-title">Controls</div>
-                <div class="toggles">
-                  ${nanoe
-                    ? html`
-                        <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}>
-                          <div class="toggle-left">
-                            <div class="toggle-icon ${nanoe.state === 'on' ? 'active' : ''}">
-                              <ha-icon icon="mdi:air-purifier"></ha-icon>
-                            </div>
-                            <span class="toggle-label">Nanoe-G</span>
-                          </div>
-                          <ha-switch .checked=${nanoe.state === 'on'} ?disabled=${!isOnline}></ha-switch>
-                        </div>
-                      `
-                    : ''}
-                  ${display
-                    ? html`
-                        <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}>
-                          <div class="toggle-left">
-                            <div class="toggle-icon ${display.state === 'on' ? 'active' : ''}">
-                              <ha-icon icon="mdi:eye"></ha-icon>
-                            </div>
-                            <span class="toggle-label">AC LED</span>
-                          </div>
-                          <ha-switch .checked=${display.state === 'on'} ?disabled=${!isOnline}></ha-switch>
-                        </div>
-                      `
-                    : ''}
-                  ${coilBtn
-                    ? html`
-                        <div class="toggle-card" @click=${() => this._pressButton(cfg.coil_clean_button!)}>
-                          <div class="toggle-left">
-                            <div class="toggle-icon ${coilSensor?.state === 'on' ? 'active' : ''}">
-                              <ha-icon icon="mdi:spray-bottle"></ha-icon>
-                            </div>
-                            <span class="toggle-label">
-                              ${coilSensor?.state === 'on' ? 'Cleaning…' : 'Coil Clean'}
-                            </span>
-                          </div>
-                          <ha-icon icon="mdi:play-circle-outline" style="color:var(--text-secondary);margin-right:4px"></ha-icon>
-                        </div>
-                      `
-                    : ''}
-                  ${filterAlert?.state === 'on'
-                    ? html`
-                        <div class="alert-banner">
-                          <div class="alert-left">
-                            <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
-                            <span class="alert-text">Dirty Filter Alert!</span>
-                          </div>
-                          <span class="alert-hint">Clean Filter</span>
-                        </div>
-                      `
-                    : ''}
+        <!-- ── Controls (Nanoe, Display, Coil Clean) ── -->
+        ${nanoe || display || coilBtn ? html`
+          <div class="section">
+            <div class="section-title">Controls</div>
+            <div class="toggles">
+              ${nanoe ? html`
+                <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}>
+                  <div class="toggle-left">
+                    <div class="toggle-icon ${nanoe.state === 'on' ? 'active' : ''}">
+                      <ha-icon icon="mdi:air-purifier"></ha-icon>
+                    </div>
+                    <span class="toggle-label">Nanoe-G</span>
+                  </div>
+                  <ha-switch .checked=${nanoe.state === 'on'} ?disabled=${!isOnline}></ha-switch>
                 </div>
-              </div>
-            `
-          : ''}
+              ` : ''}
+              ${display ? html`
+                <div class="toggle-card" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}>
+                  <div class="toggle-left">
+                    <div class="toggle-icon ${display.state === 'on' ? 'active' : ''}">
+                      <ha-icon icon="mdi:eye"></ha-icon>
+                    </div>
+                    <span class="toggle-label">AC LED</span>
+                  </div>
+                  <ha-switch .checked=${display.state === 'on'} ?disabled=${!isOnline}></ha-switch>
+                </div>
+              ` : ''}
+              ${coilBtn ? html`
+                <div class="toggle-card" @click=${() => this._pressButton(cfg.coil_clean_button!)}>
+                  <div class="toggle-left">
+                    <div class="toggle-icon ${coilSensor?.state === 'on' ? 'active' : ''}">
+                      <ha-icon icon="mdi:spray-bottle"></ha-icon>
+                    </div>
+                    <span class="toggle-label">${coilSensor?.state === 'on' ? 'Cleaning…' : 'Coil Clean'}</span>
+                  </div>
+                  <ha-icon class="toggle-action" icon="mdi:play-circle-outline"></ha-icon>
+                </div>
+              ` : ''}
+              ${filterAlert?.state === 'on' ? html`
+                <div class="alert-banner">
+                  <div class="alert-left">
+                    <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
+                    <span class="alert-text">Dirty Filter Alert!</span>
+                  </div>
+                  <span class="alert-hint">Clean Filter</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
 
-        <!-- ── Footer Diagnostics ── -->
-        ${rssi || energyToday || energyYesterday
-          ? html`
-              <div class="footer">
-                <div class="footer-item">
-                  ${rssi
-                    ? html`<ha-icon icon="mdi:wifi"></ha-icon><span>RSSI: ${rssi.state} ${rssi.attributes.unit_of_measurement ?? 'dBm'}</span>`
-                    : ''}
+        <!-- ── Energy Cards ── -->
+        ${energyToday || energyYesterday ? html`
+          <div class="section">
+            <div class="section-title">Energy Consumption</div>
+            <div class="energy-row">
+              ${energyToday ? html`
+                <div class="energy-card">
+                  <div class="energy-label">
+                    <ha-icon class="energy-icon" icon="mdi:flash"></ha-icon>
+                    ${energyToday.attributes.friendly_name ?? 'Today'}
+                  </div>
+                  <div class="energy-value-row">
+                    <span class="energy-value">${fmt2(energyToday.state)}</span>
+                    <span class="energy-unit">${energyToday.attributes.unit_of_measurement ?? 'kWh'}</span>
+                  </div>
                 </div>
-                <div class="footer-group">
-                  ${energyToday
-                    ? html`
-                        <div class="footer-item">
-                          <ha-icon icon="mdi:flash"></ha-icon>
-                          <span>Today: ${energyToday.state} ${energyToday.attributes.unit_of_measurement ?? 'kWh'}</span>
-                        </div>
-                      `
-                    : ''}
-                  ${energyYesterday
-                    ? html`
-                        <div class="footer-item">
-                          <ha-icon icon="mdi:flash-outline"></ha-icon>
-                          <span>Yesterday: ${energyYesterday.state} ${energyYesterday.attributes.unit_of_measurement ?? 'kWh'}</span>
-                        </div>
-                      `
-                    : ''}
+              ` : ''}
+              ${energyYesterday ? html`
+                <div class="energy-card">
+                  <div class="energy-label">
+                    <ha-icon class="energy-icon" icon="mdi:flash-outline"></ha-icon>
+                    ${energyYesterday.attributes.friendly_name ?? 'Yesterday'}
+                  </div>
+                  <div class="energy-value-row">
+                    <span class="energy-value">${fmt2(energyYesterday.state)}</span>
+                    <span class="energy-unit">${energyYesterday.attributes.unit_of_measurement ?? 'kWh'}</span>
+                  </div>
                 </div>
-              </div>
-            `
-          : ''}
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- ── Wi-Fi Footer ── -->
+        ${rssi ? html`
+          <div class="footer">
+            <ha-icon icon="mdi:wifi"></ha-icon>
+            <span>RSSI: ${rssi.state} ${rssi.attributes.unit_of_measurement ?? 'dBm'}</span>
+          </div>
+        ` : ''}
       </ha-card>
     `;
   }
 
-  /* ═══════════════════════════════════════════════
-     Service Calls
-     ═══════════════════════════════════════════════ */
+  /* ─────────────────────────────────────────────
+     Panel toggle
+     ───────────────────────────────────────────── */
+  private _togglePanel(name: string): void {
+    this._openPanel = this._openPanel === name ? null : name;
+  }
 
+  /* ─────────────────────────────────────────────
+     Convertible slider
+     ───────────────────────────────────────────── */
+  private _onCvSlider(e: Event, cvNonZero: string[]): void {
+    const idx = parseInt((e.target as HTMLInputElement).value, 10);
+    // idx 0 → Normal (cv 0), idx N → cvNonZero[N-1]
+    const option = idx === 0 ? 'cv 0' : cvNonZero[idx - 1];
+    this._selectOption(this._config.convertible_mode_entity!, option);
+  }
+
+  /* ─────────────────────────────────────────────
+     Service Calls
+     ───────────────────────────────────────────── */
   private _togglePower(s: any): void {
     if (s.state !== 'off') {
       this.hass.callService('climate', 'set_hvac_mode', { entity_id: s.entity_id, hvac_mode: 'off' });
@@ -420,25 +526,16 @@ export class MirAIeACCard extends LitElement {
     this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode });
   }
 
-  private _cycleFan(s: any): void {
-    const modes = s.attributes.fan_modes || [];
-    if (!modes.length) return;
-    const i = (modes.indexOf(s.attributes.fan_mode) + 1) % modes.length;
-    this.hass.callService('climate', 'set_fan_mode', { entity_id: s.entity_id, fan_mode: modes[i] });
+  private _setFanMode(s: any, mode: string): void {
+    this.hass.callService('climate', 'set_fan_mode', { entity_id: s.entity_id, fan_mode: mode });
   }
 
-  private _cycleSwing(s: any): void {
-    const modes = s.attributes.swing_modes || [];
-    if (!modes.length) return;
-    const i = (modes.indexOf(s.attributes.swing_mode) + 1) % modes.length;
-    this.hass.callService('climate', 'set_swing_mode', { entity_id: s.entity_id, swing_mode: modes[i] });
+  private _setSwing(s: any, mode: string): void {
+    this.hass.callService('climate', 'set_swing_mode', { entity_id: s.entity_id, swing_mode: mode });
   }
 
-  private _cycleHSwing(s: any): void {
-    const modes = s.attributes.swing_horizontal_modes || [];
-    if (!modes.length) return;
-    const i = (modes.indexOf(s.attributes.swing_horizontal_mode) + 1) % modes.length;
-    this.hass.callService('climate', 'set_swing_horizontal_mode', { entity_id: s.entity_id, swing_horizontal_mode: modes[i] });
+  private _setHSwing(s: any, mode: string): void {
+    this.hass.callService('climate', 'set_swing_horizontal_mode', { entity_id: s.entity_id, swing_horizontal_mode: mode });
   }
 
   private _setPreset(preset: string): void {
@@ -457,10 +554,9 @@ export class MirAIeACCard extends LitElement {
     this.hass.callService('button', 'press', { entity_id: entityId });
   }
 
-  /* ═══════════════════════════════════════════════
-     Label / Icon helpers
-     ═══════════════════════════════════════════════ */
-
+  /* ─────────────────────────────────────────────
+     Helpers
+     ───────────────────────────────────────────── */
   private _modeLabel(m: string): string {
     const map: Record<string, string> = { cool: 'Cool', dry: 'Dry', fan_only: 'Fan', auto: 'Auto', heat: 'Heat', off: 'Off' };
     return map[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
@@ -468,8 +564,8 @@ export class MirAIeACCard extends LitElement {
 
   private _modeIcon(m: string): string {
     const map: Record<string, string> = {
-      cool: 'mdi:snowflake', dry: 'mdi:water-percent', fan_only: 'mdi:fan',
-      auto: 'mdi:cached', heat: 'mdi:fire',
+      cool: 'mdi:snowflake', dry: 'mdi:water-percent',
+      fan_only: 'mdi:fan', auto: 'mdi:cached', heat: 'mdi:fire',
     };
     return map[m] ?? 'mdi:air-conditioner';
   }
@@ -479,7 +575,5 @@ export class MirAIeACCard extends LitElement {
     return map[p] ?? 'mdi:play-circle-outline';
   }
 
-  public getCardSize(): number {
-    return 4;
-  }
+  public getCardSize(): number { return 5; }
 }
