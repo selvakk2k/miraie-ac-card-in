@@ -193,7 +193,7 @@ export class MirAIeACCard extends LitElement {
         const c = cfg.accent_color.toLowerCase();
         if (c === 'primary') accentStyle = 'var(--primary-color)';
         else if (c === 'accent') accentStyle = 'var(--accent-color)';
-        else if (/^[a-z]+$/.test(c)) accentStyle = `var(--${c}-color, ${c})`;
+        else if (/^[a-z-]+$/.test(c)) accentStyle = `var(--${c}-color, ${c})`;
         else accentStyle = c;
       }
     }
