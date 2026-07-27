@@ -15,12 +15,12 @@ const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const x=globalThis,w=t=>t,A=x.trustedTypes,S=A?A.createPolicy("lit-html",{createHTML:t=>t}):void 0,k="$lit$",E=`lit$${Math.random().toFixed(9).slice(2)}$`,C="?"+E,P=`<${C}>`,z=document,U=()=>z.createComment(""),M=t=>null===t||"object"!=typeof t&&"function"!=typeof t,O=Array.isArray,H="[ \t\n\f\r]",N=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,T=/-->/g,j=/>/g,R=RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,I=/"/g,L=/^(?:script|style|textarea|title)$/i,B=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),F=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),q=new WeakMap,V=z.createTreeWalker(z,129);function Y(t,e){if(!O(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==S?S.createHTML(e):e}const J=(t,e)=>{const i=t.length-1,s=[];let r,n=2===e?"<svg>":3===e?"<math>":"",o=N;for(let e=0;e<i;e++){const i=t[e];let a,c,l=-1,d=0;for(;d<i.length&&(o.lastIndex=d,c=o.exec(i),null!==c);)d=o.lastIndex,o===N?"!--"===c[1]?o=T:void 0!==c[1]?o=j:void 0!==c[2]?(L.test(c[2])&&(r=RegExp("</"+c[2],"g")),o=R):void 0!==c[3]&&(o=R):o===R?">"===c[0]?(o=r??N,l=-1):void 0===c[1]?l=-2:(l=o.lastIndex-c[2].length,a=c[1],o=void 0===c[3]?R:'"'===c[3]?I:D):o===I||o===D?o=R:o===T||o===j?o=N:(o=R,r=void 0);const h=o===R&&t[e+1].startsWith("/>")?" ":"";n+=o===N?i+P:l>=0?(s.push(a),i.slice(0,l)+k+i.slice(l)+E+h):i+E+(-2===l?e:h)}return[Y(t,n+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class K{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let r=0,n=0;const o=t.length-1,a=this.parts,[c,l]=J(t,e);if(this.el=K.createElement(c,i),V.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=V.nextNode())&&a.length<o;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(k)){const e=l[n++],i=s.getAttribute(t).split(E),o=/([.?@])?(.*)/.exec(e);a.push({type:1,index:r,name:o[2],strings:i,ctor:"."===o[1]?tt:"?"===o[1]?et:"@"===o[1]?it:X}),s.removeAttribute(t)}else t.startsWith(E)&&(a.push({type:6,index:r}),s.removeAttribute(t));if(L.test(s.tagName)){const t=s.textContent.split(E),e=t.length-1;if(e>0){s.textContent=A?A.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],U()),V.nextNode(),a.push({type:2,index:++r});s.append(t[e],U())}}}else if(8===s.nodeType)if(s.data===C)a.push({type:2,index:r});else{let t=-1;for(;-1!==(t=s.data.indexOf(E,t+1));)a.push({type:7,index:r}),t+=E.length-1}r++}}static createElement(t,e){const i=z.createElement("template");return i.innerHTML=t,i}}function Z(t,e,i=t,s){if(e===F)return e;let r=void 0!==s?i._$Co?.[s]:i._$Cl;const n=M(e)?void 0:e._$litDirective$;return r?.constructor!==n&&(r?._$AO?.(!1),void 0===n?r=void 0:(r=new n(t),r._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=r:i._$Cl=r),void 0!==r&&(e=Z(t,r._$AS(t,e.values),r,s)),e}class G{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??z).importNode(e,!0);V.currentNode=s;let r=V.nextNode(),n=0,o=0,a=i[0];for(;void 0!==a;){if(n===a.index){let e;2===a.type?e=new Q(r,r.nextSibling,this,t):1===a.type?e=new a.ctor(r,a.name,a.strings,this,t):6===a.type&&(e=new st(r,this,t)),this._$AV.push(e),a=i[++o]}n!==a?.index&&(r=V.nextNode(),n++)}return V.currentNode=z,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class Q{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Z(this,t,e),M(t)?t===W||null==t||""===t?(this._$AH!==W&&this._$AR(),this._$AH=W):t!==this._$AH&&t!==F&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>O(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==W&&M(this._$AH)?this._$AA.nextSibling.data=t:this.T(z.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=K.createElement(Y(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new G(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=q.get(t.strings);return void 0===e&&q.set(t.strings,e=new K(t)),e}k(t){O(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const r of t)s===e.length?e.push(i=new Q(this.O(U()),this.O(U()),this,this.options)):i=e[s],i._$AI(r),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=w(t).nextSibling;w(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class X{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,r){this.type=1,this._$AH=W,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=r,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(t,e=this,i,s){const r=this.strings;let n=!1;if(void 0===r)t=Z(this,t,e,0),n=!M(t)||t!==this._$AH&&t!==F,n&&(this._$AH=t);else{const s=t;let o,a;for(t=r[0],o=0;o<r.length-1;o++)a=Z(this,s[i+o],e,o),a===F&&(a=this._$AH[o]),n||=!M(a)||a!==this._$AH[o],a===W?t=W:t!==W&&(t+=(a??"")+r[o+1]),this._$AH[o]=a}n&&!s&&this.j(t)}j(t){t===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class tt extends X{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===W?void 0:t}}class et extends X{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==W)}}class it extends X{constructor(t,e,i,s,r){super(t,e,i,s,r),this.type=5}_$AI(t,e=this){if((t=Z(this,t,e,0)??W)===F)return;const i=this._$AH,s=t===W&&i!==W||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,r=t!==W&&(i===W||s);s&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class st{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Z(this,t)}}const rt=x.litHtmlPolyfillSupport;rt?.(K,Q),(x.litHtmlVersions??=[]).push("3.3.3");const nt=globalThis;
+const x=globalThis,w=t=>t,A=x.trustedTypes,S=A?A.createPolicy("lit-html",{createHTML:t=>t}):void 0,k="$lit$",E=`lit$${Math.random().toFixed(9).slice(2)}$`,C="?"+E,P=`<${C}>`,N=document,z=()=>N.createComment(""),U=t=>null===t||"object"!=typeof t&&"function"!=typeof t,M=Array.isArray,O="[ \t\n\f\r]",H=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,T=/-->/g,j=/>/g,R=RegExp(`>|${O}(?:([^\\s"'>=/]+)(${O}*=${O}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,I=/"/g,L=/^(?:script|style|textarea|title)$/i,F=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),B=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),q=new WeakMap,V=N.createTreeWalker(N,129);function Y(t,e){if(!M(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==S?S.createHTML(e):e}const J=(t,e)=>{const i=t.length-1,s=[];let r,n=2===e?"<svg>":3===e?"<math>":"",o=H;for(let e=0;e<i;e++){const i=t[e];let a,c,l=-1,d=0;for(;d<i.length&&(o.lastIndex=d,c=o.exec(i),null!==c);)d=o.lastIndex,o===H?"!--"===c[1]?o=T:void 0!==c[1]?o=j:void 0!==c[2]?(L.test(c[2])&&(r=RegExp("</"+c[2],"g")),o=R):void 0!==c[3]&&(o=R):o===R?">"===c[0]?(o=r??H,l=-1):void 0===c[1]?l=-2:(l=o.lastIndex-c[2].length,a=c[1],o=void 0===c[3]?R:'"'===c[3]?I:D):o===I||o===D?o=R:o===T||o===j?o=H:(o=R,r=void 0);const h=o===R&&t[e+1].startsWith("/>")?" ":"";n+=o===H?i+P:l>=0?(s.push(a),i.slice(0,l)+k+i.slice(l)+E+h):i+E+(-2===l?e:h)}return[Y(t,n+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class K{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let r=0,n=0;const o=t.length-1,a=this.parts,[c,l]=J(t,e);if(this.el=K.createElement(c,i),V.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=V.nextNode())&&a.length<o;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(k)){const e=l[n++],i=s.getAttribute(t).split(E),o=/([.?@])?(.*)/.exec(e);a.push({type:1,index:r,name:o[2],strings:i,ctor:"."===o[1]?tt:"?"===o[1]?et:"@"===o[1]?it:X}),s.removeAttribute(t)}else t.startsWith(E)&&(a.push({type:6,index:r}),s.removeAttribute(t));if(L.test(s.tagName)){const t=s.textContent.split(E),e=t.length-1;if(e>0){s.textContent=A?A.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],z()),V.nextNode(),a.push({type:2,index:++r});s.append(t[e],z())}}}else if(8===s.nodeType)if(s.data===C)a.push({type:2,index:r});else{let t=-1;for(;-1!==(t=s.data.indexOf(E,t+1));)a.push({type:7,index:r}),t+=E.length-1}r++}}static createElement(t,e){const i=N.createElement("template");return i.innerHTML=t,i}}function Z(t,e,i=t,s){if(e===B)return e;let r=void 0!==s?i._$Co?.[s]:i._$Cl;const n=U(e)?void 0:e._$litDirective$;return r?.constructor!==n&&(r?._$AO?.(!1),void 0===n?r=void 0:(r=new n(t),r._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=r:i._$Cl=r),void 0!==r&&(e=Z(t,r._$AS(t,e.values),r,s)),e}class G{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??N).importNode(e,!0);V.currentNode=s;let r=V.nextNode(),n=0,o=0,a=i[0];for(;void 0!==a;){if(n===a.index){let e;2===a.type?e=new Q(r,r.nextSibling,this,t):1===a.type?e=new a.ctor(r,a.name,a.strings,this,t):6===a.type&&(e=new st(r,this,t)),this._$AV.push(e),a=i[++o]}n!==a?.index&&(r=V.nextNode(),n++)}return V.currentNode=N,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class Q{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Z(this,t,e),U(t)?t===W||null==t||""===t?(this._$AH!==W&&this._$AR(),this._$AH=W):t!==this._$AH&&t!==B&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>M(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==W&&U(this._$AH)?this._$AA.nextSibling.data=t:this.T(N.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=K.createElement(Y(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new G(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=q.get(t.strings);return void 0===e&&q.set(t.strings,e=new K(t)),e}k(t){M(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const r of t)s===e.length?e.push(i=new Q(this.O(z()),this.O(z()),this,this.options)):i=e[s],i._$AI(r),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=w(t).nextSibling;w(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class X{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,r){this.type=1,this._$AH=W,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=r,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(t,e=this,i,s){const r=this.strings;let n=!1;if(void 0===r)t=Z(this,t,e,0),n=!U(t)||t!==this._$AH&&t!==B,n&&(this._$AH=t);else{const s=t;let o,a;for(t=r[0],o=0;o<r.length-1;o++)a=Z(this,s[i+o],e,o),a===B&&(a=this._$AH[o]),n||=!U(a)||a!==this._$AH[o],a===W?t=W:t!==W&&(t+=(a??"")+r[o+1]),this._$AH[o]=a}n&&!s&&this.j(t)}j(t){t===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class tt extends X{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===W?void 0:t}}class et extends X{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==W)}}class it extends X{constructor(t,e,i,s,r){super(t,e,i,s,r),this.type=5}_$AI(t,e=this){if((t=Z(this,t,e,0)??W)===B)return;const i=this._$AH,s=t===W&&i!==W||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,r=t!==W&&(i===W||s);s&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class st{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Z(this,t)}}const rt=x.litHtmlPolyfillSupport;rt?.(K,Q),(x.litHtmlVersions??=[]).push("3.3.3");const nt=globalThis;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */class ot extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let r=s._$litPart$;if(void 0===r){const t=i?.renderBefore??null;s._$litPart$=r=new Q(e.insertBefore(U(),t),t,void 0,i??{})}return r._$AI(t),r})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return F}}ot._$litElement$=!0,ot.finalized=!0,nt.litElementHydrateSupport?.({LitElement:ot});const at=nt.litElementPolyfillSupport;at?.({LitElement:ot}),(nt.litElementVersions??=[]).push("4.2.2");
+ */class ot extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let r=s._$litPart$;if(void 0===r){const t=i?.renderBefore??null;s._$litPart$=r=new Q(e.insertBefore(z(),t),t,void 0,i??{})}return r._$AI(t),r})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return B}}ot._$litElement$=!0,ot.finalized=!0,nt.litElementHydrateSupport?.({LitElement:ot});const at=nt.litElementPolyfillSupport;at?.({LitElement:ot}),(nt.litElementVersions??=[]).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -288,7 +288,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
 
   /* ── Error ── */
   .error { padding: 20px; color: var(--error-color, #f44336); text-align: center; font-size: 0.85rem; }
-`;function mt(t){const e=/^cv[\s_]+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends ot{constructor(){super(...arguments),this._openPanel=null}static get styles(){return pt}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"accent_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return B`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,r="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",o=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,h=i.swing_mode,p=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0,g=u?u.state:i.current_temperature,_=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0,v=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,f=t.display_switch?this.hass.states[t.display_switch]:void 0,y=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,b=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,$=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,x=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,w=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,A=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0;let S=[],k="cv_";i.preset_modes&&i.preset_modes.some(t=>/^cv[\s_]/.test(t))&&(S=i.preset_modes.filter(t=>/^cv[\s_]/.test(t)),k=S[0].substring(0,3),S.includes(`${k}0`)||S.push(`${k}0`));let E=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${k}0`;const C=S.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),P=[`${k}0`,...C],z=P.indexOf(E),U=(M=S,M?.length?M.some(t=>60===mt(t))&&M.some(t=>50===mt(t))?"Converti8":"Converti7":"Convertible");var M;const O=C.length>0?z/(P.length-1)*100:0;let H="";if(t.accent_color)if(Array.isArray(t.accent_color))H=`rgb(${t.accent_color.join(",")})`;else if("string"==typeof t.accent_color){const e=t.accent_color.toLowerCase();H="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}return B`
+`;function mt(t){const e=/^cv[\s_]+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends ot{constructor(){super(...arguments),this._openPanel=null}static get styles(){return pt}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"accent_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return F`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,r="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",o=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,h=i.swing_mode,p=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0;let g=u?u.state:i.current_temperature;null==g||isNaN(Number(g))||(g=Number(g).toFixed(1));const _=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0;let v=_?_.state:void 0;null==v||isNaN(Number(v))||(v=Number(v).toFixed(1));const f=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,y=t.display_switch?this.hass.states[t.display_switch]:void 0,b=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,$=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,x=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,w=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,A=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,S=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0;let k=[],E="cv_";i.preset_modes&&i.preset_modes.some(t=>/^cv[\s_]/.test(t))&&(k=i.preset_modes.filter(t=>/^cv[\s_]/.test(t)),E=k[0].substring(0,3),k.includes(`${E}0`)||k.push(`${E}0`));let C=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${E}0`;const P=k.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),N=[`${E}0`,...P],z=N.indexOf(C),U=(M=k,M?.length?M.some(t=>60===mt(t))&&M.some(t=>50===mt(t))?"Converti8":"Converti7":"Convertible");var M;const O=P.length>0?z/(N.length-1)*100:0;let H="";if(t.accent_color)if(Array.isArray(t.accent_color))H=`rgb(${t.accent_color.join(",")})`;else if("string"==typeof t.accent_color){const e=t.accent_color.toLowerCase();H="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}return F`
       <ha-card style="${H?`--miraie-accent: ${H};`:""}">
 
         <!-- ── Header ── -->
@@ -330,10 +330,10 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
                 <ha-icon icon="mdi:thermometer"></ha-icon>
                 ${null!=g?`${g}°C`:"--"}
               </span>
-              ${_?B`
+              ${_?F`
                 <span class="temp-meta-item">
                   <ha-icon icon="mdi:water-percent"></ha-icon>
-                  ${_.state}%
+                  ${v}%
                 </span>
               `:""}
             </div>
@@ -349,7 +349,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         </div>
 
         <!-- ── Filter Alert (always visible if entity configured + active) ── -->
-        ${"on"===$?.state?B`
+        ${"on"===x?.state?F`
           <div class="alert-banner">
             <div class="alert-left">
               <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
@@ -363,7 +363,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         <div class="section">
           <div class="section-title">Modes</div>
           <div class="pills">
-            ${(i.hvac_modes||[]).filter(t=>"off"!==t).map(t=>B`
+            ${(i.hvac_modes||[]).filter(t=>"off"!==t).map(t=>F`
               <button
                 class="pill ${l===t&&r?"active":""}"
                 ?disabled=${!s}
@@ -389,7 +389,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
               Fan: ${d??"Auto"}
             </button>
 
-            ${null!=h?B`
+            ${null!=h?F`
               <button
                 class="pill ${"swing_v"===this._openPanel?"active":""}"
                 ?disabled=${!r}
@@ -400,7 +400,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
               </button>
             `:""}
 
-            ${null!=p?B`
+            ${null!=p?F`
               <button
                 class="pill ${"swing_h"===this._openPanel?"active":""}"
                 ?disabled=${!r}
@@ -412,9 +412,9 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
             `:""}
           </div>
 
-          ${"fan"===this._openPanel?B`
+          ${"fan"===this._openPanel?F`
             <div class="picker-panel">
-              ${(i.fan_modes||[]).map(t=>B`
+              ${(i.fan_modes||[]).map(t=>F`
                 <button class="picker-opt ${d===t?"sel":""}"
                         @click=${()=>{this._setFanMode(e,t),this._openPanel=null}}>
                   ${t.charAt(0).toUpperCase()+t.slice(1)}
@@ -423,9 +423,9 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
             </div>
           `:""}
 
-          ${"swing_v"===this._openPanel?B`
+          ${"swing_v"===this._openPanel?F`
             <div class="picker-panel">
-              ${(i.swing_modes||[]).map(t=>B`
+              ${(i.swing_modes||[]).map(t=>F`
                 <button class="picker-opt ${h===t?"sel":""}"
                         @click=${()=>{this._setSwing(e,t),this._openPanel=null}}>
                   ${t}
@@ -434,9 +434,9 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
             </div>
           `:""}
 
-          ${"swing_h"===this._openPanel?B`
+          ${"swing_h"===this._openPanel?F`
             <div class="picker-panel">
-              ${(i.swing_horizontal_modes||[]).map(t=>B`
+              ${(i.swing_horizontal_modes||[]).map(t=>F`
                 <button class="picker-opt ${p===t?"sel":""}"
                         @click=${()=>{this._setHSwing(e,t),this._openPanel=null}}>
                   ${t}
@@ -450,7 +450,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         <div class="section">
           <div class="section-title">Comfort Presets</div>
           <div class="pills">
-            ${["none","eco","boost"].map(t=>B`
+            ${["none","eco","boost"].map(t=>F`
               <button
                 class="pill ${m===t?"active":""}"
                 ?disabled=${!r||["dry","auto","fan_only"].includes(l)&&"none"!==t}
@@ -464,14 +464,14 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         </div>
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
-        ${C.length>0?B`
+        ${P.length>0?F`
           <div class="section" style="${["dry","auto","fan_only"].includes(l)?"opacity: 0.5; pointer-events: none;":""}">
             <div class="section-title">${U}</div>
             <div class="step-slider-wrap">
               <div class="step-slider-header">
                 <span class="step-slider-title">Capacity Limit</span>
                 <span class="step-slider-val">
-                  ${0===z?"Normal":`${mt(E)}%`}
+                  ${0===z?"Normal":`${mt(C)}%`}
                 </span>
               </div>
 
@@ -481,7 +481,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
                   <div class="step-track-fill" style="width: ${O}%"></div>
                 </div>
                 <div class="step-notches">
-                  ${P.map((t,e)=>B`
+                  ${N.map((t,e)=>F`
                     <div class="notch-wrapper">
                       <button
                         class="step-notch
@@ -501,43 +501,43 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         `:""}
 
         <!-- ── Controls (Nanoe, Display, Coil Clean) ── -->
-        ${v||f||y?B`
+        ${f||y||b?F`
           <div class="section">
             <div class="section-title">Controls</div>
             <div class="toggles">
-              ${v?B`
+              ${f?F`
                 <div class="toggle-card"
-                     @click=${()=>this._toggleSwitch(t.nanoe_switch,v.state)}>
+                     @click=${()=>this._toggleSwitch(t.nanoe_switch,f.state)}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===v.state?"active":""}">
+                    <div class="toggle-icon ${"on"===f.state?"active":""}">
                       <ha-icon icon="mdi:air-purifier"></ha-icon>
                     </div>
                     <span class="toggle-label">nanoe™</span>
                   </div>
-                  <ha-switch .checked=${"on"===v.state} ?disabled=${!s}></ha-switch>
+                  <ha-switch .checked=${"on"===f.state} ?disabled=${!s}></ha-switch>
                 </div>
               `:""}
-              ${f?B`
+              ${y?F`
                 <div class="toggle-card"
-                     @click=${()=>this._toggleSwitch(t.display_switch,f.state)}>
+                     @click=${()=>this._toggleSwitch(t.display_switch,y.state)}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===f.state?"active":""}">
+                    <div class="toggle-icon ${"on"===y.state?"active":""}">
                       <ha-icon icon="mdi:eye"></ha-icon>
                     </div>
                     <span class="toggle-label">AC LED</span>
                   </div>
-                  <ha-switch .checked=${"on"===f.state} ?disabled=${!s}></ha-switch>
+                  <ha-switch .checked=${"on"===y.state} ?disabled=${!s}></ha-switch>
                 </div>
               `:""}
-              ${y?B`
+              ${b?F`
                 <div class="toggle-card ${r?"disabled":""}"
                      @click=${()=>this._pressButton(t.coil_clean_button)}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===b?.state?"active":""}">
+                    <div class="toggle-icon ${"on"===$?.state?"active":""}">
                       <ha-icon icon="mdi:spray-bottle"></ha-icon>
                     </div>
                     <span class="toggle-label">
-                      ${"on"===b?.state?"Cleaning…":"Coil Clean"}
+                      ${"on"===$?.state?"Cleaning…":"Coil Clean"}
                     </span>
                   </div>
                   <ha-icon class="toggle-action" icon="mdi:play-circle-outline"></ha-icon>
@@ -548,31 +548,31 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         `:""}
 
         <!-- ── Energy Cards ── -->
-        ${w||A?B`
+        ${A||S?F`
           <div class="section">
             <div class="section-title">Energy Consumption</div>
             <div class="energy-row">
-              ${w?B`
+              ${A?F`
                 <div class="energy-card" @click=${()=>this._showMoreInfo(t.energy_today_sensor)}>
                   <div class="energy-label">
                     <ha-icon icon="mdi:flash"></ha-icon>
-                    ${w.attributes.friendly_name??"Today"}
-                  </div>
-                  <div class="energy-value-row">
-                    <span class="energy-value">${ut(w.state)}</span>
-                    <span class="energy-unit">${w.attributes.unit_of_measurement??"kWh"}</span>
-                  </div>
-                </div>
-              `:""}
-              ${A?B`
-                <div class="energy-card" @click=${()=>this._showMoreInfo(t.energy_yesterday_sensor)}>
-                  <div class="energy-label">
-                    <ha-icon icon="mdi:flash-outline"></ha-icon>
-                    ${A.attributes.friendly_name??"Yesterday"}
+                    ${A.attributes.friendly_name??"Today"}
                   </div>
                   <div class="energy-value-row">
                     <span class="energy-value">${ut(A.state)}</span>
                     <span class="energy-unit">${A.attributes.unit_of_measurement??"kWh"}</span>
+                  </div>
+                </div>
+              `:""}
+              ${S?F`
+                <div class="energy-card" @click=${()=>this._showMoreInfo(t.energy_yesterday_sensor)}>
+                  <div class="energy-label">
+                    <ha-icon icon="mdi:flash-outline"></ha-icon>
+                    ${S.attributes.friendly_name??"Yesterday"}
+                  </div>
+                  <div class="energy-value-row">
+                    <span class="energy-value">${ut(S.state)}</span>
+                    <span class="energy-unit">${S.attributes.unit_of_measurement??"kWh"}</span>
                   </div>
                 </div>
               `:""}
@@ -581,10 +581,10 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},lt=(t=ct
         `:""}
 
         <!-- ── Wi-Fi Footer ── -->
-        ${x?B`
+        ${w?F`
           <div class="footer">
             <ha-icon icon="mdi:wifi"></ha-icon>
-            <span>RSSI: ${x.state} ${x.attributes.unit_of_measurement??"dBm"}</span>
+            <span>RSSI: ${w.state} ${w.attributes.unit_of_measurement??"dBm"}</span>
           </div>
         `:""}
       </ha-card>
