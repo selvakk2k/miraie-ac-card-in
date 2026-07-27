@@ -147,10 +147,17 @@ export class MirAIeACCard extends LitElement {
 
     /* Room temperature: external sensor overrides AC built-in */
     const roomSensor   = cfg.room_temp_sensor ? this.hass.states[cfg.room_temp_sensor] : undefined;
-    const currentTemp  = roomSensor ? roomSensor.state : a.current_temperature;
+    let currentTemp: any = roomSensor ? roomSensor.state : a.current_temperature;
+    if (currentTemp != null && !isNaN(Number(currentTemp))) {
+      currentTemp = Number(currentTemp).toFixed(1);
+    }
 
     /* Humidity */
     const humidState   = cfg.humidity_sensor ? this.hass.states[cfg.humidity_sensor] : undefined;
+    let humidVal: any = humidState ? humidState.state : undefined;
+    if (humidVal != null && !isNaN(Number(humidVal))) {
+      humidVal = Number(humidVal).toFixed(1);
+    }
 
     /* Helper entities */
 
@@ -248,7 +255,7 @@ export class MirAIeACCard extends LitElement {
               ${humidState ? html`
                 <span class="temp-meta-item">
                   <ha-icon icon="mdi:water-percent"></ha-icon>
-                  ${humidState.state}%
+                  ${humidVal}%
                 </span>
               ` : ''}
             </div>
