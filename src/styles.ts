@@ -371,4 +371,129 @@ export const styles = css`
     font-size: 0.9rem;
     font-weight: 500;
   }
+
+  /* ──────────────────────────────────────────────────────────
+     Google Home Full View
+     ────────────────────────────────────────────────────────── */
+  .gh-full-card {
+    background: var(--m-bg);
+    border-radius: 28px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  .gh-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 24px;
+  }
+  .gh-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gh-icon {
+    color: var(--m-text-2);
+    --mdc-icon-size: 20px;
+  }
+  .gh-title {
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--m-text);
+  }
+  .gh-power-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--m-text-2);
+    cursor: pointer;
+    transition: 0.2s;
+    outline: none;
+  }
+  .gh-power-btn:hover {
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .gh-power-btn.on {
+    background: var(--m-active-bg);
+    color: var(--miraie-accent);
+  }
+  .gh-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0 16px 0;
+  }
+  .gh-value-large {
+    font-size: 5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--m-text);
+  }
+  .gh-subtitle-large {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--m-text-2);
+    margin-top: 8px;
+  }
+  .gh-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
+  }
+  .gh-circular-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--m-surface-hover);
+    border: none;
+    color: var(--m-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    --mdc-icon-size: 32px;
+  }
+  .gh-circular-btn:hover {
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .gh-circular-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .gh-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gh-pill {
+    flex: 1 1 calc(50% - 8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: 20px;
+    background: var(--m-surface-hover);
+    border: none;
+    color: var(--m-text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .gh-pill:hover {
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .gh-pill.active {
+    background: var(--m-active-bg);
+    color: var(--miraie-accent);
+  }
 `;

@@ -57,6 +57,7 @@ export class MirAIeACCard extends LitElement {
         { name: 'name',    selector: { text: {} } },
         { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
         { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
+        { name: 'full_layout', selector: { select: { options: [{ label: 'Classic', value: 'default' }, { label: 'Google Home', value: 'google_home' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
         { name: 'main_color', selector: { ui_color: {} } },
         {
@@ -237,6 +238,10 @@ export class MirAIeACCard extends LitElement {
 
     if (cfg.layout === 'compact' && !this._expanded) {
       return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
+    }
+
+    if (cfg.full_layout === 'google_home') {
+      return this._renderGoogleHomeFull(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
     }
 
     return html`
@@ -654,6 +659,62 @@ export class MirAIeACCard extends LitElement {
       eco: 'mdi:leaf', boost: 'mdi:rocket', none: 'mdi:close-circle-outline',
     };
     return map[p] ?? 'mdi:play-circle-outline';
+  }
+
+  private _renderGoogleHomeFull(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
+    const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
+    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    const subValue = currentTemp != null ? `Indoor ${currentTemp}°` : '';
+
+    const modes = stateObj.attributes.hvac_modes || [];
+    
+    // We get fan modes for presets basically
+    const fanModes = stateObj.attributes.fan_modes || [];
+
+    return html`
+      <ha-card style="${cardStyle}" class="gh-full-card">
+        <div class="gh-header">
+          <div class="gh-header-left">
+            <ha-icon class="gh-icon" icon="mdi:air-conditioner"></ha-icon>
+            <div class="gh-title">${name}</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            ${this._config.layout === 'compact' ? html`
+              <button class="gh-power-btn" style="background: transparent; color: var(--m-text-2);" @click=${() => this._expanded = false}>
+                <ha-icon icon="mdi:chevron-up"></ha-icon>
+              </button>
+            ` : ''}
+            <button class="gh-power-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => this._togglePower(stateObj)}>
+              <ha-icon icon="mdi:power"></ha-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="gh-center">
+          <div class="gh-value-large">${displayValue}</div>
+          <div class="gh-subtitle-large">${subValue}</div>
+        </div>
+
+        <div class="gh-action-row">
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-0.5, targetTemp, minTemp); }}>
+            <ha-icon icon="mdi:minus"></ha-icon>
+          </button>
+          <div style="width: 48px;"></div>
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(0.5, targetTemp, maxTemp); }}>
+            <ha-icon icon="mdi:plus"></ha-icon>
+          </button>
+        </div>
+
+        <div class="gh-pill-grid">
+          ${modes.map((mode: string) => html`
+            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode })}>
+              <ha-icon icon="${this._modeIcon(mode)}"></ha-icon>
+              <span>${mode === 'cool' ? 'Cool' : mode === 'dry' ? 'Dry' : mode === 'fan_only' ? 'Fan' : mode === 'auto' ? 'Auto' : mode}</span>
+            </button>
+          `)}
+        </div>
+      </ha-card>
+    `;
   }
 
   private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
