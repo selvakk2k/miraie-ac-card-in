@@ -54,6 +54,7 @@ export class MirAIeACCard extends LitElement {
       schema: [
         { name: 'entity',  required: true, selector: { entity: { domain: 'climate' } } },
         { name: 'name',    selector: { text: {} } },
+        { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
@@ -100,6 +101,17 @@ export class MirAIeACCard extends LitElement {
     }
     this._config = { ...config };
     this._openPanel = null;
+  }
+
+  /* ── Lifecycle ── */
+  protected updated(changedProps: PropertyValues): void {
+    super.updated(changedProps);
+    if (changedProps.has('_config')) {
+      const theme = this._config?.theme || 'default';
+      if (this.getAttribute('theme') !== theme) {
+        this.setAttribute('theme', theme);
+      }
+    }
   }
 
   /* ── Selective re-render ── */

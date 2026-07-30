@@ -2,14 +2,12 @@ import { css } from 'lit';
 
 export const styles = css`
   /* ──────────────────────────────────────────────────────────
-     Token layer — everything resolves from HA theme variables.
-     --miraie-accent is overridden via inline style when
-     the user sets accent_color in the card config.
+     Default Token Layer (Standard Home Assistant)
      ────────────────────────────────────────────────────────── */
   :host {
     --miraie-accent:        var(--primary-color, #f39c12);
 
-    /* Surfaces — HA supplies these; they flip between light/dark */
+    /* Surfaces */
     --m-bg:                 var(--ha-card-background, var(--card-background-color, var(--lovelace-background)));
     --m-surface:            var(--secondary-background-color, rgba(128,128,128,0.08));
     --m-surface-hover:      rgba(128,128,128,0.15);
@@ -18,10 +16,33 @@ export const styles = css`
     /* Text */
     --m-text:               var(--primary-text-color);
     --m-text-2:             var(--secondary-text-color);
+    --m-on-accent:          var(--text-primary-color, var(--m-bg));
 
-    /* Active state derived from accent */
+    /* Active state */
     --m-active-bg:          color-mix(in srgb, var(--miraie-accent) 15%, transparent);
     --m-active-border:      color-mix(in srgb, var(--miraie-accent) 50%, transparent);
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Material You Token Layer (Activated via Config)
+     ────────────────────────────────────────────────────────── */
+  :host([theme="material_you"]) {
+    --miraie-accent:        var(--md-sys-color-primary, var(--primary-color, #f39c12));
+
+    /* Surfaces */
+    --m-bg:                 var(--md-sys-color-surface, var(--ha-card-background, var(--card-background-color, var(--lovelace-background))));
+    --m-surface:            var(--md-sys-color-surface-variant, var(--secondary-background-color, rgba(128,128,128,0.08)));
+    --m-surface-hover:      var(--md-sys-color-surface-variant-hover, var(--hover-color, rgba(128,128,128,0.15)));
+    --m-border:             var(--md-sys-color-outline, var(--divider-color, rgba(128,128,128,0.14)));
+
+    /* Text */
+    --m-text:               var(--md-sys-color-on-surface, var(--primary-text-color));
+    --m-text-2:             var(--md-sys-color-on-surface-variant, var(--secondary-text-color));
+    --m-on-accent:          var(--md-sys-color-on-primary, var(--text-primary-color, var(--m-bg)));
+
+    /* Active state */
+    --m-active-bg:          var(--md-sys-color-secondary-container, color-mix(in srgb, var(--miraie-accent) 15%, transparent));
+    --m-active-border:      var(--md-sys-color-secondary, color-mix(in srgb, var(--miraie-accent) 50%, transparent));
   }
 
   ha-card {
@@ -56,7 +77,7 @@ export const styles = css`
     background: var(--m-surface); color: var(--m-text-2);
     transition: all 0.2s; --mdc-icon-size: 22px;
   }
-  .power-btn.on { background: var(--miraie-accent); color: var(--m-bg); }
+  .power-btn.on { background: var(--miraie-accent); color: var(--m-on-accent); }
   .power-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   /* ── Temperature block ── */
