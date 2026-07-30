@@ -479,6 +479,7 @@ export const styles = css`
     position: relative;
     background: rgba(128, 128, 128, 0.15);
     border-radius: 20px;
+    border: none;
     height: 48px;
     display: flex;
     align-items: center;
@@ -487,8 +488,10 @@ export const styles = css`
     color: var(--m-text);
     font-size: 0.95rem;
     font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   .gh-custom-select ha-icon {
     color: var(--m-text-2);
@@ -509,10 +512,17 @@ export const styles = css`
     flex-direction: column;
   }
   .gh-dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    font-family: inherit;
     padding: 12px 16px;
     font-size: 0.95rem;
     color: var(--m-text);
     transition: 0.2s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   .gh-dropdown-item:hover {
     background: rgba(128, 128, 128, 0.1);
@@ -524,8 +534,21 @@ export const styles = css`
   .gh-extra-chips {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
     padding-top: 16px;
+  }
+  .gh-footer-text {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--m-text-2);
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    opacity: 0.6;
+    --mdc-icon-size: 14px;
   }
   .gh-chip {
     display: flex;

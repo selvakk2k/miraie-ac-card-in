@@ -717,64 +717,69 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-select-container">
           <!-- Mode Dropdown -->
-          <div class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
+          <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
             <span>${this._modeLabel(hvacMode)}</span>
             <ha-icon icon="mdi:chevron-down"></ha-icon>
             ${this._ghDropdown === 'mode' ? html`
               <div class="gh-dropdown-menu">
                 ${modes.map((mode: string) => html`
-                  <div class="gh-dropdown-item ${hvacMode === mode ? 'active' : ''}" 
+                  <button class="gh-dropdown-item ${hvacMode === mode ? 'active' : ''}" 
                        @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode }); }}>
                     ${this._modeLabel(mode)}
-                  </div>
+                  </button>
                 `)}
               </div>
             ` : ''}
-          </div>
+          </button>
 
           <!-- Preset Dropdown -->
-          <div class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
+          <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
             <span>${stateObj.attributes.preset_mode === 'none' ? 'Normal' : (stateObj.attributes.preset_mode || 'Normal').charAt(0).toUpperCase() + (stateObj.attributes.preset_mode || 'Normal').slice(1)}</span>
             <ha-icon icon="mdi:chevron-down"></ha-icon>
             ${this._ghDropdown === 'preset' ? html`
               <div class="gh-dropdown-menu">
                 ${['none', 'eco', 'boost'].map((p: string) => html`
-                  <div class="gh-dropdown-item ${stateObj.attributes.preset_mode === p ? 'active' : ''}" 
+                  <button class="gh-dropdown-item ${stateObj.attributes.preset_mode === p ? 'active' : ''}" 
                        @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: p }); }}>
                     ${p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)}
-                  </div>
+                  </button>
                 `)}
               </div>
             ` : ''}
-          </div>
+          </button>
 
           <!-- Convertible Dropdown -->
           ${fanModes.includes('100%') ? html`
-            <div class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
+            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
               <span>${stateObj.attributes.fan_mode || '100%'} Cap</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
               ${this._ghDropdown === 'cv' ? html`
                 <div class="gh-dropdown-menu">
                   ${['100%', '80%', '60%', '40%'].map((cv: string) => html`
-                    <div class="gh-dropdown-item ${stateObj.attributes.fan_mode === cv ? 'active' : ''}" 
+                    <button class="gh-dropdown-item ${stateObj.attributes.fan_mode === cv ? 'active' : ''}" 
                          @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_fan_mode', { entity_id: this._config.entity, fan_mode: cv }); }}>
                       ${cv} Cap
-                    </div>
+                    </button>
                   `)}
                 </div>
               ` : ''}
-            </div>
+            </button>
           ` : ''}
         </div>
 
-        ${nanoe || display || coilBtn || energyToday || rssi ? html`
+        ${nanoe || display || coilBtn || energyToday || energyYest ? html`
           <div class="gh-extra-chips">
             ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
             ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
             ${coilBtn || coilSensor ? html`<div class="gh-chip ${coilSensor?.state === 'on' ? 'active' : ''}" @click=${() => coilBtn ? this._pressButton(cfg.coil_clean_button!) : null}><ha-icon icon="mdi:spray"></ha-icon>${coilSensor?.state === 'on' ? 'Cleaning...' : 'Clean Coil'}</div>` : ''}
             ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${fmt2(energyToday.state)} kWh</div>` : ''}
             ${energyYest ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yest: ${fmt2(energyYest.state)} kWh</div>` : ''}
-            ${rssi ? html`<div class="gh-chip-text"><ha-icon icon="mdi:wifi"></ha-icon>${rssi.state} dBm</div>` : ''}
+          </div>
+        ` : ''}
+        
+        ${rssi ? html`
+          <div class="gh-footer-text">
+            <ha-icon icon="mdi:wifi"></ha-icon> ${rssi.state} dBm
           </div>
         ` : ''}
       </ha-card>
