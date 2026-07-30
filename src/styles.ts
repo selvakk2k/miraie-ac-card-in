@@ -451,7 +451,7 @@ export const styles = css`
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: var(--m-surface-hover);
+    background: rgba(128, 128, 128, 0.15);
     border: none;
     color: var(--m-text);
     display: flex;
@@ -462,7 +462,7 @@ export const styles = css`
     --mdc-icon-size: 32px;
   }
   .gh-circular-btn:hover {
-    background: rgba(128, 128, 128, 0.15);
+    background: rgba(128, 128, 128, 0.25);
   }
   .gh-circular-btn:disabled {
     opacity: 0.3;
@@ -481,7 +481,7 @@ export const styles = css`
     gap: 8px;
     padding: 14px 16px;
     border-radius: 20px;
-    background: var(--m-surface-hover);
+    background: rgba(128, 128, 128, 0.15);
     border: none;
     color: var(--m-text);
     font-size: 0.9rem;
@@ -490,10 +490,42 @@ export const styles = css`
     transition: 0.2s;
   }
   .gh-pill:hover {
-    background: rgba(128, 128, 128, 0.15);
+    background: rgba(128, 128, 128, 0.25);
   }
   .gh-pill.active {
     background: var(--m-active-bg);
     color: var(--miraie-accent);
+  }
+  .gh-extra-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 16px;
+  }
+  .gh-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    cursor: pointer;
+    --mdc-icon-size: 16px;
+  }
+  .gh-chip.active {
+    color: var(--miraie-accent);
+  }
+  .gh-chip-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    --mdc-icon-size: 16px;
   }
 `;

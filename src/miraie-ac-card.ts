@@ -666,10 +666,17 @@ export class MirAIeACCard extends LitElement {
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
     const subValue = currentTemp != null ? `Indoor ${currentTemp}°` : '';
 
-    const modes = stateObj.attributes.hvac_modes || [];
+    const modes = (stateObj.attributes.hvac_modes || []).filter((m: string) => m !== 'off');
     
     // We get fan modes for presets basically
     const fanModes = stateObj.attributes.fan_modes || [];
+
+    const cfg = this._config;
+    const nanoe        = cfg.nanoe_switch              ? this.hass.states[cfg.nanoe_switch]              : undefined;
+    const display      = cfg.display_switch            ? this.hass.states[cfg.display_switch]            : undefined;
+    const coilBtn      = cfg.coil_clean_button         ? this.hass.states[cfg.coil_clean_button]         : undefined;
+    const energyToday  = cfg.energy_today_sensor       ? this.hass.states[cfg.energy_today_sensor]       : undefined;
+    const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
 
     return html`
       <ha-card style="${cardStyle}" class="gh-full-card">
@@ -707,12 +714,22 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-pill-grid">
           ${modes.map((mode: string) => html`
-            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode })}>
+            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this._setMode(mode, stateObj)}>
               <ha-icon icon="${this._modeIcon(mode)}"></ha-icon>
               <span>${mode === 'cool' ? 'Cool' : mode === 'dry' ? 'Dry' : mode === 'fan_only' ? 'Fan' : mode === 'auto' ? 'Auto' : mode}</span>
             </button>
           `)}
         </div>
+
+        ${nanoe || display || coilBtn || energyToday || rssi ? html`
+          <div class="gh-extra-chips">
+            ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
+            ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
+            ${coilBtn ? html`<div class="gh-chip" @click=${() => this.hass.callService('button', 'press', { entity_id: cfg.coil_clean_button! })}><ha-icon icon="mdi:spray"></ha-icon>Clean Coil</div>` : ''}
+            ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${energyToday.state} kWh</div>` : ''}
+            ${rssi ? html`<div class="gh-chip-text"><ha-icon icon="mdi:wifi"></ha-icon>${rssi.state} dBm</div>` : ''}
+          </div>
+        ` : ''}
       </ha-card>
     `;
   }
