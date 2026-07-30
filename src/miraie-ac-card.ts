@@ -46,8 +46,25 @@ export class MirAIeACCard extends LitElement {
   /** Which expandable picker is open: 'fan' | 'swing_v' | 'swing_h' | null */
   @state() private _openPanel: string | null = null;
   @state() private _expanded: boolean = false;
+  @state() private _ghDropdown: string | null = null;
 
   static get styles() { return styles; }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('click', this._handleWindowClick);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('click', this._handleWindowClick);
+    super.disconnectedCallback();
+  }
+
+  private _handleWindowClick = () => {
+    if (this._ghDropdown) {
+      this._ghDropdown = null;
+    }
+  };
 
   /* ── Native visual editor (HA renders this; no custom element needed) ── */
   static getConfigForm() {
@@ -57,6 +74,7 @@ export class MirAIeACCard extends LitElement {
         { name: 'name',    selector: { text: {} } },
         { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
         { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
+        { name: 'full_layout', selector: { select: { options: [{ label: 'Classic', value: 'default' }, { label: 'Google Home', value: 'google_home' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
         { name: 'main_color', selector: { ui_color: {} } },
         {
@@ -119,7 +137,7 @@ export class MirAIeACCard extends LitElement {
 
   /* ── Selective re-render ── */
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config') || changedProps.has('_openPanel') || changedProps.has('_expanded')) return true;
+    if (changedProps.has('_config') || changedProps.has('_openPanel') || changedProps.has('_expanded') || changedProps.has('_ghDropdown')) return true;
     if (changedProps.has('hass') && this._config) {
       const old = changedProps.get('hass') as HomeAssistant | undefined;
       if (!old) return true;
@@ -237,6 +255,10 @@ export class MirAIeACCard extends LitElement {
 
     if (cfg.layout === 'compact' && !this._expanded) {
       return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
+    }
+
+    if (cfg.full_layout === 'google_home') {
+      return this._renderGoogleHomeFull(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
     }
 
     return html`
@@ -654,6 +676,159 @@ export class MirAIeACCard extends LitElement {
       eco: 'mdi:leaf', boost: 'mdi:rocket', none: 'mdi:close-circle-outline',
     };
     return map[p] ?? 'mdi:play-circle-outline';
+  }
+
+  private _renderGoogleHomeFull(
+    stateObj: any, name: string, isOn: boolean,
+    targetTemp: number, currentTemp: number,
+    hvacMode: string, minTemp: number, maxTemp: number,
+    cardStyle: string
+  ) {
+    const cfg = this._config;
+    const a = stateObj.attributes;
+    const modes = a.hvac_modes || [];
+    
+    const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
+    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    const subValue = currentTemp != null ? `Indoor ${currentTemp}°` : '';
+
+    // Split presets into standard presets and convertible options
+    let stdPresets: string[] = ['none'];
+    let cvOptions: string[] = [];
+    if (a.preset_modes) {
+      stdPresets = ['none', ...a.preset_modes.filter((p: string) => !/^cv[\s_]/.test(p))];
+      cvOptions = a.preset_modes.filter((p: string) => /^cv[\s_]/.test(p));
+      if (cvOptions.length > 0) {
+        const cvPrefix = cvOptions[0].substring(0, 3);
+        if (!cvOptions.includes(`${cvPrefix}0`)) cvOptions.push(`${cvPrefix}0`);
+      }
+    }
+    const cvSorted = cvOptions.sort((x, y) => parseCv(y) - parseCv(x));
+
+    const nanoe        = cfg.nanoe_switch              ? this.hass.states[cfg.nanoe_switch]              : undefined;
+    const display      = cfg.display_switch            ? this.hass.states[cfg.display_switch]            : undefined;
+    const coilBtn      = cfg.coil_clean_button         ? this.hass.states[cfg.coil_clean_button]         : undefined;
+    const coilSensor   = cfg.coil_cleaning_sensor      ? this.hass.states[cfg.coil_cleaning_sensor]      : undefined;
+    const energyToday  = cfg.energy_today_sensor       ? this.hass.states[cfg.energy_today_sensor]       : undefined;
+    const energyYest   = cfg.energy_yesterday_sensor   ? this.hass.states[cfg.energy_yesterday_sensor]   : undefined;
+    const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
+
+    return html`
+      <ha-card style="${cardStyle}" class="gh-full-card">
+        <div class="gh-header">
+          <div class="gh-header-left">
+            <ha-icon class="gh-icon" icon="mdi:air-conditioner"></ha-icon>
+            <div class="gh-title">${name}</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            ${this._config.layout === 'compact' ? html`
+              <button class="gh-power-btn" style="background: transparent; color: var(--m-text-2);" @click=${() => this._expanded = false}>
+                <ha-icon icon="mdi:chevron-up"></ha-icon>
+              </button>
+            ` : ''}
+            <button class="gh-power-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => this._togglePower(stateObj)}>
+              <ha-icon icon="mdi:power"></ha-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="gh-center">
+          <div class="gh-value-large">${displayValue}</div>
+          <div class="gh-subtitle-large">${subValue}</div>
+        </div>
+
+        <div class="gh-action-row">
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-0.5, targetTemp, minTemp); }}>
+            <ha-icon icon="mdi:minus"></ha-icon>
+          </button>
+          <div style="width: 48px;"></div>
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(0.5, targetTemp, maxTemp); }}>
+            <ha-icon icon="mdi:plus"></ha-icon>
+          </button>
+        </div>
+
+        <div class="gh-select-container">
+          <!-- Mode Dropdown -->
+          <div class="gh-select-wrapper">
+            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
+              <span>${this._modeLabel(hvacMode)}</span>
+              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            </button>
+            ${this._ghDropdown === 'mode' ? html`
+              <div class="gh-dropdown-menu">
+                ${modes.map((mode: string) => html`
+                  <button class="gh-dropdown-item ${hvacMode === mode ? 'active' : ''}" 
+                       @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode }); }}>
+                    ${this._modeLabel(mode)}
+                  </button>
+                `)}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Preset Dropdown -->
+          <div class="gh-select-wrapper" style="${!isOn || hvacMode === 'fan_only' ? 'opacity: 0.5; pointer-events: none;' : ''}">
+            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
+              <span>${stateObj.attributes.preset_mode === 'none' || !stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? 'Normal' : stateObj.attributes.preset_mode.charAt(0).toUpperCase() + stateObj.attributes.preset_mode.slice(1)}</span>
+              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            </button>
+            ${this._ghDropdown === 'preset' ? html`
+              <div class="gh-dropdown-menu">
+                ${stdPresets.map((p: string) => {
+                  const isActive = stateObj.attributes.preset_mode === p || (p === 'none' && (!stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode)));
+                  return html`
+                    <button class="gh-dropdown-item ${isActive ? 'active' : ''}" 
+                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: p }); }}>
+                      ${p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)}
+                    </button>
+                  `;
+                })}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Convertible Dropdown -->
+          ${cvSorted.length > 0 ? html`
+            <div class="gh-select-wrapper" style="${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
+              <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
+                <span>${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? (parseCv(stateObj.attributes.preset_mode) === 0 ? 'Normal' : parseCv(stateObj.attributes.preset_mode) + '%') : 'Normal'}</span>
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
+              </button>
+              ${this._ghDropdown === 'cv' ? html`
+                <div class="gh-dropdown-menu">
+                  ${cvSorted.map((cv: string) => {
+                    const pct = parseCv(cv);
+                    const isActive = stateObj.attributes.preset_mode === cv || (pct === 0 && (!stateObj.attributes.preset_mode || !/^cv[\s_]/.test(stateObj.attributes.preset_mode)));
+                    return html`
+                      <button class="gh-dropdown-item ${isActive ? 'active' : ''}" 
+                           @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: cv }); }}>
+                        ${pct === 0 ? 'Normal' : pct + '%'}
+                      </button>
+                    `;
+                  })}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        </div>
+
+        ${nanoe || display || coilBtn || energyToday || energyYest ? html`
+          <div class="gh-extra-chips">
+            ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
+            ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
+            ${coilBtn || coilSensor ? html`<div class="gh-chip ${coilSensor?.state === 'on' ? 'active' : ''}" @click=${() => coilBtn ? this._pressButton(cfg.coil_clean_button!) : null}><ha-icon icon="mdi:spray"></ha-icon>${coilSensor?.state === 'on' ? 'Cleaning...' : 'Clean Coil'}</div>` : ''}
+            ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${fmt2(energyToday.state)} kWh</div>` : ''}
+            ${energyYest ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yesterday: ${fmt2(energyYest.state)} kWh</div>` : ''}
+          </div>
+        ` : ''}
+        
+        ${rssi ? html`
+          <div class="gh-footer-text">
+            <ha-icon icon="mdi:wifi"></ha-icon> ${rssi.state} dBm
+          </div>
+        ` : ''}
+      </ha-card>
+    `;
   }
 
   private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
