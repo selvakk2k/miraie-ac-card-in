@@ -202,6 +202,7 @@ export class MirAIeACCard extends LitElement {
     const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
     const energyToday  = cfg.energy_today_sensor       ? this.hass.states[cfg.energy_today_sensor]       : undefined;
     const energyYest   = cfg.energy_yesterday_sensor   ? this.hass.states[cfg.energy_yesterday_sensor]   : undefined;
+    const isCleaning   = coilSensor?.state === 'on';
 
     /* Convertible step-slider data */
     let cvOptions: string[] = [];
@@ -297,7 +298,7 @@ export class MirAIeACCard extends LitElement {
         <div class="temp-block">
           <button
             class="temp-btn"
-            ?disabled=${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(minTemp))}
+            ?disabled=${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(minTemp)) || isCleaning}
             @click=${() => this._adjustTemp(-1, targetTemp, minTemp)}
           >
             <ha-icon icon="mdi:minus"></ha-icon>
@@ -323,7 +324,7 @@ export class MirAIeACCard extends LitElement {
 
           <button
             class="temp-btn"
-            ?disabled=${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(maxTemp))}
+            ?disabled=${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(maxTemp)) || isCleaning}
             @click=${() => this._adjustTemp(1, targetTemp, maxTemp)}
           >
             <ha-icon icon="mdi:plus"></ha-icon>
@@ -344,7 +345,7 @@ export class MirAIeACCard extends LitElement {
         <!-- ── HVAC Modes ── -->
         <div class="section">
           <div class="section-title">Modes</div>
-          <div class="pills">
+          <div class="pills" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
             ${(a.hvac_modes || []).filter((m: string) => m !== 'off').map((m: string) => html`
               <button
                 class="pill ${hvacMode === m && isOn ? 'active' : ''}"
@@ -361,7 +362,7 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Fan & Swing ── -->
         <div class="section">
           <div class="section-title">Fan & Swing</div>
-          <div class="pills">
+          <div class="pills" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <button
               class="pill ${this._openPanel === 'fan' ? 'active' : ''}"
               ?disabled=${!isOn || hvacMode === 'dry'}
@@ -431,7 +432,7 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Comfort Presets ── -->
         <div class="section">
           <div class="section-title">Comfort Presets</div>
-          <div class="pills">
+          <div class="pills" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
             ${['none', 'eco', 'boost'].map(p => html`
               <button
                 class="pill ${presetMode === p ? 'active' : ''}"
@@ -447,7 +448,7 @@ export class MirAIeACCard extends LitElement {
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
         ${cvNonZero.length > 0 ? html`
-          <div class="section" style="${['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
+          <div class="section" style="${['dry', 'auto', 'fan_only'].includes(hvacMode) || isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <div class="section-title">${cvGenLabel}</div>
             <div class="step-slider-wrap">
               <div class="step-slider-header">
@@ -488,7 +489,7 @@ export class MirAIeACCard extends LitElement {
             <div class="section-title">Controls</div>
             <div class="toggles">
               ${nanoe ? html`
-                <div class="toggle-card"
+                <div class="toggle-card" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}"
                      @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${nanoe.state === 'on' ? 'active' : ''}">
@@ -500,7 +501,7 @@ export class MirAIeACCard extends LitElement {
                 </div>
               ` : ''}
               ${display ? html`
-                <div class="toggle-card"
+                <div class="toggle-card" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}"
                      @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}>
                   <div class="toggle-left">
                     <div class="toggle-icon ${display.state === 'on' ? 'active' : ''}">
@@ -712,6 +713,7 @@ export class MirAIeACCard extends LitElement {
     const energyToday  = cfg.energy_today_sensor       ? this.hass.states[cfg.energy_today_sensor]       : undefined;
     const energyYest   = cfg.energy_yesterday_sensor   ? this.hass.states[cfg.energy_yesterday_sensor]   : undefined;
     const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
+    const isCleaning   = coilSensor?.state === 'on';
 
     return html`
       <ha-card style="${cardStyle}" class="gh-full-card">
@@ -726,7 +728,7 @@ export class MirAIeACCard extends LitElement {
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
             ` : ''}
-            <button class="gh-power-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => this._togglePower(stateObj)}>
+            <button class="gh-power-btn ${isOn ? 'on' : ''}" ?disabled=${isCleaning} style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}" @click=${(e: Event) => this._togglePower(stateObj)}>
               <ha-icon icon="mdi:power"></ha-icon>
             </button>
           </div>
@@ -737,7 +739,7 @@ export class MirAIeACCard extends LitElement {
           <div class="gh-subtitle-large">${subValue}</div>
         </div>
 
-        <div class="gh-action-row">
+        <div class="gh-action-row" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
           <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-0.5, targetTemp, minTemp); }}>
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
@@ -747,11 +749,11 @@ export class MirAIeACCard extends LitElement {
           </button>
         </div>
 
-        <div class="gh-select-container">
+        <div class="gh-select-container" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
           <!-- Mode Dropdown -->
           <div class="gh-select-wrapper">
             <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
-              <span>${this._modeLabel(hvacMode)}</span>
+              <span>Mode: ${this._modeLabel(hvacMode)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
             </button>
             ${this._ghDropdown === 'mode' ? html`
@@ -769,7 +771,7 @@ export class MirAIeACCard extends LitElement {
           <!-- Preset Dropdown -->
           <div class="gh-select-wrapper" style="${!isOn || hvacMode === 'fan_only' ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
-              <span>${stateObj.attributes.preset_mode === 'none' || !stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? 'Normal' : stateObj.attributes.preset_mode.charAt(0).toUpperCase() + stateObj.attributes.preset_mode.slice(1)}</span>
+              <span>Preset: ${stateObj.attributes.preset_mode === 'none' || !stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? 'Normal' : stateObj.attributes.preset_mode.charAt(0).toUpperCase() + stateObj.attributes.preset_mode.slice(1)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
             </button>
             ${this._ghDropdown === 'preset' ? html`
@@ -791,7 +793,7 @@ export class MirAIeACCard extends LitElement {
           ${cvSorted.length > 0 ? html`
             <div class="gh-select-wrapper" style="${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
-                <span>${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? (parseCv(stateObj.attributes.preset_mode) === 0 ? 'Normal' : parseCv(stateObj.attributes.preset_mode) + '%') : 'Normal'}</span>
+                <span>Limit: ${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? (parseCv(stateObj.attributes.preset_mode) === 0 ? 'Normal' : parseCv(stateObj.attributes.preset_mode) + '%') : 'Normal'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${this._ghDropdown === 'cv' ? html`
@@ -814,8 +816,8 @@ export class MirAIeACCard extends LitElement {
 
         ${nanoe || display || coilBtn || energyToday || energyYest ? html`
           <div class="gh-extra-chips">
-            ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
-            ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
+            ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
+            ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
             ${coilBtn || coilSensor ? html`<div class="gh-chip ${coilSensor?.state === 'on' ? 'active' : ''}" @click=${() => coilBtn ? this._pressButton(cfg.coil_clean_button!) : null}><ha-icon icon="mdi:spray"></ha-icon>${coilSensor?.state === 'on' ? 'Cleaning...' : 'Clean Coil'}</div>` : ''}
             ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${fmt2(energyToday.state)} kWh</div>` : ''}
             ${energyYest ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yesterday: ${fmt2(energyYest.state)} kWh</div>` : ''}
@@ -834,10 +836,11 @@ export class MirAIeACCard extends LitElement {
   private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    const isCleaning = this.hass.states[this._config.coil_cleaning_sensor!]?.state === 'on';
     return html`
       <ha-card style="${cardStyle}" class="compact-card" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
         <div class="compact-header">
-          <button class="compact-icon-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => { e.stopPropagation(); this._togglePower(stateObj); }}>
+          <button class="compact-icon-btn ${isOn ? 'on' : ''}" ?disabled=${isCleaning} @click=${(e: Event) => { e.stopPropagation(); this._togglePower(stateObj); }}>
             <ha-icon icon="mdi:power"></ha-icon>
           </button>
           <div class="compact-title">${name}</div>
