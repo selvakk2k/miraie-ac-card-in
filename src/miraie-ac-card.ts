@@ -58,6 +58,7 @@ export class MirAIeACCard extends LitElement {
         { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
         { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
+        { name: 'main_color', selector: { ui_color: {} } },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
@@ -205,22 +206,34 @@ export class MirAIeACCard extends LitElement {
       ? (curCvIdx / (allCvSteps.length - 1)) * 100
       : 0;
 
-    /* Custom accent color applied as CSS var via inline style */
+    /* Custom accent and main colors applied as CSS vars via inline style */
     let accentStyle = '';
-    if (cfg.accent_color) {
-      if (Array.isArray(cfg.accent_color)) {
-        accentStyle = `rgb(${cfg.accent_color.join(',')})`;
-      } else if (typeof cfg.accent_color === 'string') {
-        const c = cfg.accent_color.toLowerCase();
+    if (this._config.accent_color) {
+      if (Array.isArray(this._config.accent_color)) {
+        accentStyle = `rgb(${this._config.accent_color.join(',')})`;
+      } else if (typeof this._config.accent_color === 'string') {
+        const c = this._config.accent_color.toLowerCase();
         if (c === 'primary') accentStyle = 'var(--primary-color)';
         else if (c === 'accent') accentStyle = 'var(--accent-color)';
         else if (/^[a-z-]+$/.test(c)) accentStyle = `var(--${c}-color, ${c})`;
         else accentStyle = c;
       }
     }
-    const cardStyle = accentStyle
-      ? `--miraie-accent: ${accentStyle};`
-      : '';
+
+    let mainStyle = '';
+    if (this._config.main_color) {
+      if (Array.isArray(this._config.main_color)) {
+        mainStyle = `rgb(${this._config.main_color.join(',')})`;
+      } else if (typeof this._config.main_color === 'string') {
+        const c = this._config.main_color.toLowerCase();
+        if (c === 'primary') mainStyle = 'var(--primary-color)';
+        else if (c === 'accent') mainStyle = 'var(--accent-color)';
+        else if (/^[a-z-]+$/.test(c)) mainStyle = `var(--${c}-color, ${c})`;
+        else mainStyle = c;
+      }
+    }
+    
+    const cardStyle = `${accentStyle ? `--miraie-accent: ${accentStyle}; ` : ''}${mainStyle ? `--m-bg: ${mainStyle}; ` : ''}`;
 
     if (cfg.layout === 'compact' && !this._expanded) {
       return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
