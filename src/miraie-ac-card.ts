@@ -714,7 +714,7 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-pill-grid">
           ${modes.map((mode: string) => html`
-            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this._setMode(mode, stateObj)}>
+            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode })}>
               <ha-icon icon="${this._modeIcon(mode)}"></ha-icon>
               <span>${mode === 'cool' ? 'Cool' : mode === 'dry' ? 'Dry' : mode === 'fan_only' ? 'Fan' : mode === 'auto' ? 'Auto' : mode}</span>
             </button>

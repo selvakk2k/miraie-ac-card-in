@@ -906,10 +906,10 @@ const ct={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:b},lt=(t=ct
         </div>
 
         <div class="gh-pill-grid">
-          ${h.map(e=>L`
-            <button class="gh-pill ${r===e?"active":""}" @click=${()=>this._setMode(e,t)}>
-              <ha-icon icon="${this._modeIcon(e)}"></ha-icon>
-              <span>${"cool"===e?"Cool":"dry"===e?"Dry":"fan_only"===e?"Fan":"auto"===e?"Auto":e}</span>
+          ${h.map(t=>L`
+            <button class="gh-pill ${r===t?"active":""}" @click=${()=>this.hass.callService("climate","set_hvac_mode",{entity_id:this._config.entity,hvac_mode:t})}>
+              <ha-icon icon="${this._modeIcon(t)}"></ha-icon>
+              <span>${"cool"===t?"Cool":"dry"===t?"Dry":"fan_only"===t?"Fan":"auto"===t?"Auto":t}</span>
             </button>
           `)}
         </div>
