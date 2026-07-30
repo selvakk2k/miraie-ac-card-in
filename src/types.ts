@@ -4,6 +4,7 @@ export interface MirAIeCardConfig {
   name?: string;
   // Theming
   theme?: string;
+  layout?: string;
   accent_color?: string;
   // Optional sensor overrides
   room_temp_sensor?: string;
