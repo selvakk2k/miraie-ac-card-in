@@ -474,7 +474,7 @@ export const styles = css`
     gap: 8px;
     padding-bottom: 8px;
   }
-  .gh-select-wrapper {
+  .gh-custom-select {
     flex: 1 1 calc(33.33% - 8px);
     position: relative;
     background: rgba(128, 128, 128, 0.15);
@@ -482,31 +482,44 @@ export const styles = css`
     height: 48px;
     display: flex;
     align-items: center;
-  }
-  .gh-select {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
     color: var(--m-text);
     font-size: 0.95rem;
     font-weight: 500;
-    padding: 0 36px 0 16px;
-    outline: none;
     cursor: pointer;
+    user-select: none;
   }
-  .gh-select-wrapper ha-icon {
-    position: absolute;
-    right: 12px;
-    pointer-events: none;
+  .gh-custom-select ha-icon {
     color: var(--m-text-2);
     --mdc-icon-size: 20px;
   }
-  .gh-select option {
-    background: var(--m-bg);
+  .gh-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: var(--m-surface, var(--card-background-color));
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .gh-dropdown-item {
+    padding: 12px 16px;
+    font-size: 0.95rem;
     color: var(--m-text);
+    transition: 0.2s;
+  }
+  .gh-dropdown-item:hover {
+    background: rgba(128, 128, 128, 0.1);
+  }
+  .gh-dropdown-item.active {
+    color: var(--miraie-accent);
+    background: rgba(128, 128, 128, 0.05);
   }
   .gh-extra-chips {
     display: flex;
