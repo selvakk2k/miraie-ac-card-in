@@ -712,13 +712,35 @@ export class MirAIeACCard extends LitElement {
           </button>
         </div>
 
-        <div class="gh-pill-grid">
-          ${modes.map((mode: string) => html`
-            <button class="gh-pill ${hvacMode === mode ? 'active' : ''}" @click=${() => this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode })}>
-              <ha-icon icon="${this._modeIcon(mode)}"></ha-icon>
-              <span>${mode === 'cool' ? 'Cool' : mode === 'dry' ? 'Dry' : mode === 'fan_only' ? 'Fan' : mode === 'auto' ? 'Auto' : mode}</span>
-            </button>
-          `)}
+        <div class="gh-select-container">
+          <div class="gh-select-wrapper">
+            <select class="gh-select" @change=${(e: any) => this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: e.target.value })}>
+              ${modes.map((mode: string) => html`
+                <option value="${mode}" ?selected=${hvacMode === mode}>${this._modeLabel(mode)}</option>
+              `)}
+            </select>
+            <ha-icon icon="mdi:chevron-down"></ha-icon>
+          </div>
+
+          <div class="gh-select-wrapper">
+            <select class="gh-select" @change=${(e: any) => this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: e.target.value })}>
+              ${['none', 'eco', 'boost'].map((p: string) => html`
+                <option value="${p}" ?selected=${stateObj.attributes.preset_mode === p}>${p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)}</option>
+              `)}
+            </select>
+            <ha-icon icon="mdi:chevron-down"></ha-icon>
+          </div>
+
+          ${fanModes.includes('100%') ? html`
+            <div class="gh-select-wrapper">
+              <select class="gh-select" @change=${(e: any) => this.hass.callService('climate', 'set_fan_mode', { entity_id: this._config.entity, fan_mode: e.target.value })}>
+                ${['100%', '80%', '60%', '40%'].map((cv: string) => html`
+                  <option value="${cv}" ?selected=${stateObj.attributes.fan_mode === cv}>${cv} Cap</option>
+                `)}
+              </select>
+              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            </div>
+          ` : ''}
         </div>
 
         ${nanoe || display || coilBtn || energyToday || rssi ? html`

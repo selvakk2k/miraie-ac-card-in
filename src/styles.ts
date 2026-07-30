@@ -468,33 +468,45 @@ export const styles = css`
     opacity: 0.3;
     cursor: not-allowed;
   }
-  .gh-pill-grid {
+  .gh-select-container {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    padding-bottom: 8px;
   }
-  .gh-pill {
-    flex: 1 1 calc(50% - 8px);
+  .gh-select-wrapper {
+    flex: 1 1 calc(33.33% - 8px);
+    position: relative;
+    background: rgba(128, 128, 128, 0.15);
+    border-radius: 20px;
+    height: 48px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 14px 16px;
-    border-radius: 20px;
-    background: rgba(128, 128, 128, 0.15);
+  }
+  .gh-select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 100%;
+    background: transparent;
     border: none;
     color: var(--m-text);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
+    padding: 0 36px 0 16px;
+    outline: none;
     cursor: pointer;
-    transition: 0.2s;
   }
-  .gh-pill:hover {
-    background: rgba(128, 128, 128, 0.25);
+  .gh-select-wrapper ha-icon {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    color: var(--m-text-2);
+    --mdc-icon-size: 20px;
   }
-  .gh-pill.active {
-    background: var(--m-active-bg);
-    color: var(--miraie-accent);
+  .gh-select option {
+    background: var(--m-bg);
+    color: var(--m-text);
   }
   .gh-extra-chips {
     display: flex;
