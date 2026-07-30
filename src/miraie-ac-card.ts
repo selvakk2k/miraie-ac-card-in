@@ -45,6 +45,7 @@ export class MirAIeACCard extends LitElement {
 
   /** Which expandable picker is open: 'fan' | 'swing_v' | 'swing_h' | null */
   @state() private _openPanel: string | null = null;
+  @state() private _expanded: boolean = false;
 
   static get styles() { return styles; }
 
@@ -55,6 +56,7 @@ export class MirAIeACCard extends LitElement {
         { name: 'entity',  required: true, selector: { entity: { domain: 'climate' } } },
         { name: 'name',    selector: { text: {} } },
         { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
+        { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
@@ -116,7 +118,7 @@ export class MirAIeACCard extends LitElement {
 
   /* ── Selective re-render ── */
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config') || changedProps.has('_openPanel')) return true;
+    if (changedProps.has('_config') || changedProps.has('_openPanel') || changedProps.has('_expanded')) return true;
     if (changedProps.has('hass') && this._config) {
       const old = changedProps.get('hass') as HomeAssistant | undefined;
       if (!old) return true;
@@ -220,6 +222,10 @@ export class MirAIeACCard extends LitElement {
       ? `--miraie-accent: ${accentStyle};`
       : '';
 
+    if (cfg.layout === 'compact' && !this._expanded) {
+      return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
+    }
+
     return html`
       <ha-card style="${cardStyle}">
 
@@ -236,13 +242,20 @@ export class MirAIeACCard extends LitElement {
                 : 'Offline'}
             </div>
           </div>
-          <button
-            class="power-btn ${isOn ? 'on' : ''}"
-            ?disabled=${!isOnline}
-            @click=${() => this._togglePower(stateObj)}
-          >
-            <ha-icon icon="mdi:power"></ha-icon>
-          </button>
+          <div style="display: flex; gap: 8px;">
+            ${cfg.layout === 'compact' ? html`
+              <button class="power-btn" style="background: transparent;" @click=${() => { this._haptic('light'); this._expanded = false; }}>
+                <ha-icon icon="mdi:chevron-up"></ha-icon>
+              </button>
+            ` : ''}
+            <button
+              class="power-btn ${isOn ? 'on' : ''}"
+              ?disabled=${!isOnline}
+              @click=${() => this._togglePower(stateObj)}
+            >
+              <ha-icon icon="mdi:power"></ha-icon>
+            </button>
+          </div>
         </div>
 
         <!-- ── Temperature ── -->
@@ -630,5 +643,35 @@ export class MirAIeACCard extends LitElement {
     return map[p] ?? 'mdi:play-circle-outline';
   }
 
-  public getCardSize(): number { return 5; }
+  private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
+    const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
+    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    return html`
+      <ha-card style="${cardStyle}" class="compact-card" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
+        <div class="compact-header">
+          <button class="compact-icon-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => { e.stopPropagation(); this._togglePower(stateObj); }}>
+            <ha-icon icon="${isOn ? this._modeIcon(hvacMode) : 'mdi:power'}"></ha-icon>
+          </button>
+          <div class="compact-title">${name}</div>
+          <ha-icon class="compact-chevron" icon="mdi:chevron-right"></ha-icon>
+        </div>
+        
+        <div class="compact-center">
+          <div class="compact-value">${displayValue}</div>
+        </div>
+
+        <div class="compact-footer">
+          <button class="compact-action-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-1, targetTemp, minTemp); }}>
+            <ha-icon icon="mdi:minus"></ha-icon>
+          </button>
+          <div class="compact-subtitle">Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</div>
+          <button class="compact-action-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(1, targetTemp, maxTemp); }}>
+            <ha-icon icon="mdi:plus"></ha-icon>
+          </button>
+        </div>
+      </ha-card>
+    `;
+  }
+
+  public getCardSize(): number { return this._config?.layout === 'compact' && !this._expanded ? 2 : 5; }
 }
