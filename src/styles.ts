@@ -451,7 +451,7 @@ export const styles = css`
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: var(--m-surface-hover);
+    background: rgba(128, 128, 128, 0.15);
     border: none;
     color: var(--m-text);
     display: flex;
@@ -462,38 +462,125 @@ export const styles = css`
     --mdc-icon-size: 32px;
   }
   .gh-circular-btn:hover {
-    background: rgba(128, 128, 128, 0.15);
+    background: rgba(128, 128, 128, 0.25);
   }
   .gh-circular-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  .gh-pill-grid {
+  .gh-select-container {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    padding-bottom: 8px;
   }
-  .gh-pill {
-    flex: 1 1 calc(50% - 8px);
+  .gh-select-wrapper {
+    flex: 1 1 calc(33.33% - 8px);
+    position: relative;
+  }
+  .gh-custom-select {
+    width: 100%;
+    background: rgba(128, 128, 128, 0.15);
+    border-radius: 20px;
+    border: none;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
+    color: var(--m-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gh-custom-select span,
+  .gh-custom-select ha-icon {
+    pointer-events: none;
+  }
+  .gh-custom-select ha-icon {
+    color: var(--m-text-2);
+    --mdc-icon-size: 20px;
+  }
+  .gh-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: var(--m-surface, var(--card-background-color));
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .gh-dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--m-text);
+    transition: 0.2s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gh-dropdown-item:hover {
+    background: rgba(128, 128, 128, 0.1);
+  }
+  .gh-dropdown-item.active {
+    color: var(--miraie-accent);
+    background: rgba(128, 128, 128, 0.05);
+  }
+  .gh-extra-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 16px;
+  }
+  .gh-footer-text {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--m-text-2);
+    margin-top: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 14px 16px;
-    border-radius: 20px;
-    background: var(--m-surface-hover);
-    border: none;
-    color: var(--m-text);
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: 0.2s;
+    gap: 4px;
+    opacity: 0.6;
+    --mdc-icon-size: 14px;
   }
-  .gh-pill:hover {
+  .gh-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
     background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    cursor: pointer;
+    --mdc-icon-size: 16px;
   }
-  .gh-pill.active {
-    background: var(--m-active-bg);
+  .gh-chip.active {
     color: var(--miraie-accent);
+  }
+  .gh-chip-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    --mdc-icon-size: 16px;
   }
 `;
