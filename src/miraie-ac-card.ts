@@ -791,18 +791,18 @@ export class MirAIeACCard extends LitElement {
           ${cvSorted.length > 0 ? html`
             <div class="gh-select-wrapper" style="${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
-                <span>${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? parseCv(stateObj.attributes.preset_mode) + '% Cap' : '100% Cap'}</span>
+                <span>${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? (parseCv(stateObj.attributes.preset_mode) === 0 ? 'Normal' : parseCv(stateObj.attributes.preset_mode) + '% Cap') : 'Normal'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${this._ghDropdown === 'cv' ? html`
                 <div class="gh-dropdown-menu">
                   ${cvSorted.map((cv: string) => {
                     const pct = parseCv(cv);
-                    const isActive = stateObj.attributes.preset_mode === cv || (pct === 100 && (!stateObj.attributes.preset_mode || !/^cv[\s_]/.test(stateObj.attributes.preset_mode)));
+                    const isActive = stateObj.attributes.preset_mode === cv || (pct === 0 && (!stateObj.attributes.preset_mode || !/^cv[\s_]/.test(stateObj.attributes.preset_mode)));
                     return html`
                       <button class="gh-dropdown-item ${isActive ? 'active' : ''}" 
                            @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: cv }); }}>
-                        ${pct === 0 ? '100% Cap' : pct + '% Cap'}
+                        ${pct === 0 ? 'Normal' : pct + '% Cap'}
                       </button>
                     `;
                   })}
