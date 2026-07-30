@@ -650,7 +650,7 @@ export class MirAIeACCard extends LitElement {
       <ha-card style="${cardStyle}" class="compact-card" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
         <div class="compact-header">
           <button class="compact-icon-btn ${isOn ? 'on' : ''}" @click=${(e: Event) => { e.stopPropagation(); this._togglePower(stateObj); }}>
-            <ha-icon icon="${isOn ? this._modeIcon(hvacMode) : 'mdi:power'}"></ha-icon>
+            <ha-icon icon="mdi:power"></ha-icon>
           </button>
           <div class="compact-title">${name}</div>
           <ha-icon class="compact-chevron" icon="mdi:chevron-right"></ha-icon>
