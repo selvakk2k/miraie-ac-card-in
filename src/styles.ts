@@ -285,9 +285,6 @@ export const styles = css`
     padding: 4px;
     box-sizing: border-box;
   }
-  .compact-card:hover {
-    background: var(--m-surface-hover);
-  }
   .compact-header {
     display: flex;
     align-items: center;
@@ -302,9 +299,9 @@ export const styles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: 1px solid var(--m-border);
-    color: var(--m-text-2);
+    background: var(--m-surface-hover);
+    border: none;
+    color: var(--m-text);
     cursor: pointer;
     transition: 0.2s;
     outline: none;
@@ -314,7 +311,6 @@ export const styles = css`
   }
   .compact-icon-btn.on {
     background: var(--m-active-bg);
-    border-color: var(--m-active-border);
     color: var(--miraie-accent);
   }
   .compact-title {
@@ -352,8 +348,8 @@ export const styles = css`
     width: 40px;
     height: 40px;
     border-radius: 20px;
-    background: transparent;
-    border: 1px solid var(--m-border);
+    background: var(--m-surface-hover);
+    border: none;
     display: flex;
     justify-content: center;
     align-items: center;
