@@ -474,9 +474,12 @@ export const styles = css`
     gap: 8px;
     padding-bottom: 8px;
   }
-  .gh-custom-select {
+  .gh-select-wrapper {
     flex: 1 1 calc(33.33% - 8px);
     position: relative;
+  }
+  .gh-custom-select {
+    width: 100%;
     background: rgba(128, 128, 128, 0.15);
     border-radius: 20px;
     border: none;

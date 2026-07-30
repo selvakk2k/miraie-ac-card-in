@@ -717,9 +717,11 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-select-container">
           <!-- Mode Dropdown -->
-          <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
-            <span>${this._modeLabel(hvacMode)}</span>
-            <ha-icon icon="mdi:chevron-down"></ha-icon>
+          <div class="gh-select-wrapper">
+            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
+              <span>${this._modeLabel(hvacMode)}</span>
+              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            </button>
             ${this._ghDropdown === 'mode' ? html`
               <div class="gh-dropdown-menu">
                 ${modes.map((mode: string) => html`
@@ -730,12 +732,14 @@ export class MirAIeACCard extends LitElement {
                 `)}
               </div>
             ` : ''}
-          </button>
+          </div>
 
           <!-- Preset Dropdown -->
-          <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
-            <span>${stateObj.attributes.preset_mode === 'none' ? 'Normal' : (stateObj.attributes.preset_mode || 'Normal').charAt(0).toUpperCase() + (stateObj.attributes.preset_mode || 'Normal').slice(1)}</span>
-            <ha-icon icon="mdi:chevron-down"></ha-icon>
+          <div class="gh-select-wrapper">
+            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
+              <span>${stateObj.attributes.preset_mode === 'none' ? 'Normal' : (stateObj.attributes.preset_mode || 'Normal').charAt(0).toUpperCase() + (stateObj.attributes.preset_mode || 'Normal').slice(1)}</span>
+              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            </button>
             ${this._ghDropdown === 'preset' ? html`
               <div class="gh-dropdown-menu">
                 ${['none', 'eco', 'boost'].map((p: string) => html`
@@ -746,13 +750,15 @@ export class MirAIeACCard extends LitElement {
                 `)}
               </div>
             ` : ''}
-          </button>
+          </div>
 
           <!-- Convertible Dropdown -->
           ${fanModes.includes('100%') ? html`
-            <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
-              <span>${stateObj.attributes.fan_mode || '100%'} Cap</span>
-              <ha-icon icon="mdi:chevron-down"></ha-icon>
+            <div class="gh-select-wrapper">
+              <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
+                <span>${stateObj.attributes.fan_mode || '100%'} Cap</span>
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
+              </button>
               ${this._ghDropdown === 'cv' ? html`
                 <div class="gh-dropdown-menu">
                   ${['100%', '80%', '60%', '40%'].map((cv: string) => html`
@@ -763,7 +769,7 @@ export class MirAIeACCard extends LitElement {
                   `)}
                 </div>
               ` : ''}
-            </button>
+            </div>
           ` : ''}
         </div>
 
@@ -773,7 +779,7 @@ export class MirAIeACCard extends LitElement {
             ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
             ${coilBtn || coilSensor ? html`<div class="gh-chip ${coilSensor?.state === 'on' ? 'active' : ''}" @click=${() => coilBtn ? this._pressButton(cfg.coil_clean_button!) : null}><ha-icon icon="mdi:spray"></ha-icon>${coilSensor?.state === 'on' ? 'Cleaning...' : 'Clean Coil'}</div>` : ''}
             ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${fmt2(energyToday.state)} kWh</div>` : ''}
-            ${energyYest ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yest: ${fmt2(energyYest.state)} kWh</div>` : ''}
+            ${energyYest ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yesterday: ${fmt2(energyYest.state)} kWh</div>` : ''}
           </div>
         ` : ''}
         
