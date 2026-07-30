@@ -726,7 +726,7 @@ export class MirAIeACCard extends LitElement {
             ${nanoe ? html`<div class="gh-chip ${nanoe.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.nanoe_switch!, nanoe.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>` : ''}
             ${display ? html`<div class="gh-chip ${display.state === 'on' ? 'active' : ''}" @click=${() => this._toggleSwitch(cfg.display_switch!, display.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>` : ''}
             ${coilBtn ? html`<div class="gh-chip" @click=${() => this.hass.callService('button', 'press', { entity_id: cfg.coil_clean_button! })}><ha-icon icon="mdi:spray"></ha-icon>Clean Coil</div>` : ''}
-            ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${energyToday.state} kWh</div>` : ''}
+            ${energyToday ? html`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${fmt2(energyToday.state)} kWh</div>` : ''}
             ${rssi ? html`<div class="gh-chip-text"><ha-icon icon="mdi:wifi"></ha-icon>${rssi.state} dBm</div>` : ''}
           </div>
         ` : ''}

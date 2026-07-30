@@ -919,7 +919,7 @@ const ct={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:b},lt=(t=ct
             ${m?L`<div class="gh-chip ${"on"===m.state?"active":""}" @click=${()=>this._toggleSwitch(p.nanoe_switch,m.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>`:""}
             ${u?L`<div class="gh-chip ${"on"===u.state?"active":""}" @click=${()=>this._toggleSwitch(p.display_switch,u.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>`:""}
             ${g?L`<div class="gh-chip" @click=${()=>this.hass.callService("button","press",{entity_id:p.coil_clean_button})}><ha-icon icon="mdi:spray"></ha-icon>Clean Coil</div>`:""}
-            ${v?L`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${v.state} kWh</div>`:""}
+            ${v?L`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${ut(v.state)} kWh</div>`:""}
             ${f?L`<div class="gh-chip-text"><ha-icon icon="mdi:wifi"></ha-icon>${f.state} dBm</div>`:""}
           </div>
         `:""}
