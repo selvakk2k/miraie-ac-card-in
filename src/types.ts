@@ -5,6 +5,7 @@ export interface MirAIeCardConfig {
   // Theming
   theme?: string;
   layout?: string;
+  full_layout?: string;
   accent_color?: string;
   main_color?: string;
   // Optional sensor overrides

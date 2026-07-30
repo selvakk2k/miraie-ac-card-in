@@ -371,4 +371,216 @@ export const styles = css`
     font-size: 0.9rem;
     font-weight: 500;
   }
+
+  /* ──────────────────────────────────────────────────────────
+     Google Home Full View
+     ────────────────────────────────────────────────────────── */
+  .gh-full-card {
+    background: var(--m-bg);
+    border-radius: 28px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  .gh-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 24px;
+  }
+  .gh-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gh-icon {
+    color: var(--m-text-2);
+    --mdc-icon-size: 20px;
+  }
+  .gh-title {
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--m-text);
+  }
+  .gh-power-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--m-text-2);
+    cursor: pointer;
+    transition: 0.2s;
+    outline: none;
+  }
+  .gh-power-btn:hover {
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .gh-power-btn.on {
+    background: var(--m-active-bg);
+    color: var(--miraie-accent);
+  }
+  .gh-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0 16px 0;
+  }
+  .gh-value-large {
+    font-size: 5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--m-text);
+  }
+  .gh-subtitle-large {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--m-text-2);
+    margin-top: 8px;
+  }
+  .gh-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
+  }
+  .gh-circular-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(128, 128, 128, 0.15);
+    border: none;
+    color: var(--m-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    --mdc-icon-size: 32px;
+  }
+  .gh-circular-btn:hover {
+    background: rgba(128, 128, 128, 0.25);
+  }
+  .gh-circular-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .gh-select-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+  .gh-select-wrapper {
+    flex: 1 1 calc(33.33% - 8px);
+    position: relative;
+  }
+  .gh-custom-select {
+    width: 100%;
+    background: rgba(128, 128, 128, 0.15);
+    border-radius: 20px;
+    border: none;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
+    color: var(--m-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gh-custom-select span,
+  .gh-custom-select ha-icon {
+    pointer-events: none;
+  }
+  .gh-custom-select ha-icon {
+    color: var(--m-text-2);
+    --mdc-icon-size: 20px;
+  }
+  .gh-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: var(--m-surface, var(--card-background-color));
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .gh-dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--m-text);
+    transition: 0.2s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gh-dropdown-item:hover {
+    background: rgba(128, 128, 128, 0.1);
+  }
+  .gh-dropdown-item.active {
+    color: var(--miraie-accent);
+    background: rgba(128, 128, 128, 0.05);
+  }
+  .gh-extra-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 16px;
+  }
+  .gh-footer-text {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--m-text-2);
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    opacity: 0.6;
+    --mdc-icon-size: 14px;
+  }
+  .gh-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    cursor: pointer;
+    --mdc-icon-size: 16px;
+  }
+  .gh-chip.active {
+    color: var(--miraie-accent);
+  }
+  .gh-chip-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--m-text-2);
+    font-size: 0.8rem;
+    --mdc-icon-size: 16px;
+  }
 `;
