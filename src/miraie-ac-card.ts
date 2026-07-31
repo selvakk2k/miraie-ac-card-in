@@ -262,6 +262,21 @@ export class MirAIeACCard extends LitElement {
       return this._renderGoogleHomeFull(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
     }
 
+    // Build an informative subtitle for the Classic layout
+    let activeStrs: string[] = [];
+    if (isOn) {
+      activeStrs.push(this._modeLabel(hvacMode));
+      if (presetMode && presetMode !== 'none') {
+        if (/^cv[\s_]/.test(presetMode)) {
+          const pct = parseCv(presetMode);
+          activeStrs.push(pct === 0 ? 'Normal Limit' : pct + '% Limit');
+        } else {
+          activeStrs.push(presetMode.charAt(0).toUpperCase() + presetMode.slice(1));
+        }
+      }
+      activeStrs.push(`Fan: ${fanMode ?? 'Auto'}`);
+    }
+
     return html`
       <ha-card style="${cardStyle}">
 
@@ -273,9 +288,7 @@ export class MirAIeACCard extends LitElement {
               <span class="title">${friendlyName}</span>
             </div>
             <div class="subtitle">
-              ${isOnline
-                ? `${this._modeLabel(hvacMode)} • Fan: ${fanMode ?? 'Auto'}`
-                : 'Offline'}
+              ${isOnline ? (isOn ? activeStrs.join(' • ') : 'Off') : 'Offline'}
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -715,6 +728,16 @@ export class MirAIeACCard extends LitElement {
     const rssi         = cfg.rssi_sensor               ? this.hass.states[cfg.rssi_sensor]               : undefined;
     const isCleaning   = coilSensor?.state === 'on';
 
+    const presetMode = a.preset_mode;
+    let activeStrs: string[] = [];
+    if (isOn) {
+      activeStrs.push(this._modeLabel(hvacMode));
+      if (presetMode && presetMode !== 'none' && !/^cv[\s_]/.test(presetMode)) {
+        activeStrs.push(presetMode.charAt(0).toUpperCase() + presetMode.slice(1));
+      }
+    }
+    const modeString = activeStrs.join(' • ');
+
     return html`
       <ha-card style="${cardStyle}" class="gh-full-card">
         <div class="gh-header">
@@ -724,7 +747,7 @@ export class MirAIeACCard extends LitElement {
           </div>
           <div style="display: flex; gap: 8px;">
             ${this._config.layout === 'compact' ? html`
-              <button class="gh-power-btn" style="background: transparent; color: var(--m-text-2);" @click=${() => this._expanded = false}>
+              <button class="gh-power-btn" style="background: transparent; color: var(--m-text-2);" @click=${() => { this._haptic('light'); this._expanded = false; }}>
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
             ` : ''}
@@ -736,7 +759,10 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-center">
           <div class="gh-value-large">${displayValue}</div>
-          <div class="gh-subtitle-large">${subValue}</div>
+          <div class="gh-subtitle-large">
+            <div>${subValue}</div>
+            ${modeString ? html`<div style="font-size: 1rem; opacity: 0.7; margin-top: 4px;">${modeString}</div>` : ''}
+          </div>
         </div>
 
         <div class="gh-action-row" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
@@ -837,6 +863,23 @@ export class MirAIeACCard extends LitElement {
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
     const isCleaning = this.hass.states[this._config.coil_cleaning_sensor!]?.state === 'on';
+    
+    const a = stateObj.attributes;
+    const presetMode = a.preset_mode;
+    let activeStrs: string[] = [];
+    if (isOn) {
+      activeStrs.push(this._modeLabel(hvacMode));
+      if (presetMode && presetMode !== 'none') {
+        if (/^cv[\s_]/.test(presetMode)) {
+          const pct = parseCv(presetMode);
+          activeStrs.push(pct === 0 ? 'Normal' : pct + '%');
+        } else {
+          activeStrs.push(presetMode.charAt(0).toUpperCase() + presetMode.slice(1));
+        }
+      }
+    }
+    const modeString = activeStrs.length ? activeStrs.join(' • ') : '';
+
     return html`
       <ha-card style="${cardStyle}" class="compact-card" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
         <div class="compact-header">
@@ -855,7 +898,10 @@ export class MirAIeACCard extends LitElement {
           <button class="compact-action-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-1, targetTemp, minTemp); }}>
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
-          <div class="compact-subtitle">Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</div>
+          <div class="compact-subtitle" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+            <div>Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</div>
+            ${modeString ? html`<div style="font-size: 0.75rem; opacity: 0.7;">${modeString}</div>` : ''}
+          </div>
           <button class="compact-action-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(1, targetTemp, maxTemp); }}>
             <ha-icon icon="mdi:plus"></ha-icon>
           </button>
