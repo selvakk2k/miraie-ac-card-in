@@ -476,6 +476,7 @@ export const styles = css`
   }
   .gh-select-wrapper {
     flex: 1 1 calc(33.33% - 8px);
+    min-width: 120px;
     position: relative;
   }
   .gh-custom-select {
