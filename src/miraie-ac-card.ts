@@ -701,6 +701,12 @@ export class MirAIeACCard extends LitElement {
     const cfg = this._config;
     const a = stateObj.attributes;
     const modes = a.hvac_modes || [];
+    const fanMode      = a.fan_mode;
+    const fanModes     = a.fan_modes || [];
+    const swingV       = a.swing_mode;
+    const swingVModes  = a.swing_modes || [];
+    const swingH       = a.swing_horizontal_mode;
+    const swingHModes  = a.swing_horizontal_modes || [];
     
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
@@ -834,6 +840,66 @@ export class MirAIeACCard extends LitElement {
                       </button>
                     `;
                   })}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Fan Speed Dropdown -->
+          ${fanModes.length > 0 ? html`
+            <div class="gh-select-wrapper" style="${!isOn || hvacMode === 'dry' ? 'opacity: 0.5; pointer-events: none;' : ''}">
+              <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'fan' ? null : 'fan'; }}>
+                <span>Fan: ${fanMode ? (fanMode.charAt(0).toUpperCase() + fanMode.slice(1)) : 'Auto'}</span>
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
+              </button>
+              ${this._ghDropdown === 'fan' ? html`
+                <div class="gh-dropdown-menu">
+                  ${fanModes.map((m: string) => html`
+                    <button class="gh-dropdown-item ${fanMode === m ? 'active' : ''}" 
+                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setFanMode(stateObj, m); }}>
+                      ${m.charAt(0).toUpperCase() + m.slice(1)}
+                    </button>
+                  `)}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Vertical Swing (Vanes V) Dropdown -->
+          ${swingVModes.length > 0 || swingV != null ? html`
+            <div class="gh-select-wrapper" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
+              <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'swing_v' ? null : 'swing_v'; }}>
+                <span>Swing V: ${swingV ? (swingV.charAt(0).toUpperCase() + swingV.slice(1)) : 'Auto'}</span>
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
+              </button>
+              ${this._ghDropdown === 'swing_v' ? html`
+                <div class="gh-dropdown-menu">
+                  ${swingVModes.map((m: string) => html`
+                    <button class="gh-dropdown-item ${swingV === m ? 'active' : ''}" 
+                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setSwing(stateObj, m); }}>
+                      ${m.charAt(0).toUpperCase() + m.slice(1)}
+                    </button>
+                  `)}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Horizontal Swing (Vanes H) Dropdown -->
+          ${swingHModes.length > 0 || swingH != null ? html`
+            <div class="gh-select-wrapper" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
+              <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'swing_h' ? null : 'swing_h'; }}>
+                <span>Swing H: ${swingH ? (swingH.charAt(0).toUpperCase() + swingH.slice(1)) : 'Auto'}</span>
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
+              </button>
+              ${this._ghDropdown === 'swing_h' ? html`
+                <div class="gh-dropdown-menu">
+                  ${swingHModes.map((m: string) => html`
+                    <button class="gh-dropdown-item ${swingH === m ? 'active' : ''}" 
+                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setHSwing(stateObj, m); }}>
+                      ${m.charAt(0).toUpperCase() + m.slice(1)}
+                    </button>
+                  `)}
                 </div>
               ` : ''}
             </div>
