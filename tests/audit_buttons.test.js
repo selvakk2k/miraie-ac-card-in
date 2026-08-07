@@ -54,6 +54,14 @@ if (/\.toggle-card\s+ha-switch\s*\{[^}]*pointer-events:\s*none/i.test(cssContent
   errors++;
 }
 
+// Test 4: Verify --m-surface-hover uses color-mix to prevent contrast loss on hover
+if (/--m-surface-hover:\s*color-mix/i.test(cssContent)) {
+  console.log('✅ Passed: --m-surface-hover uses color-mix for safe theme contrast on hover.');
+} else {
+  console.error('❌ Failed: --m-surface-hover does not use color-mix.');
+  errors++;
+}
+
 if (errors > 0) {
   console.error(`\n❌ Audit completed with ${errors} error(s).`);
   process.exit(1);
