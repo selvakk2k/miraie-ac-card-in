@@ -113,6 +113,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
     background: var(--m-surface); color: var(--m-text-2);
     transition: all 0.2s; --mdc-icon-size: 22px;
   }
+  .power-btn:hover:not(:disabled) { background: var(--m-surface-hover); }
   .power-btn.on { background: var(--miraie-accent); color: var(--m-on-accent); }
   .power-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
@@ -255,9 +256,11 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
     padding: 10px 12px; border-radius: 14px;
     border: 1px solid var(--m-border); background: var(--m-surface);
     cursor: pointer; transition: background 0.15s;
+    overflow: hidden;
   }
   .toggle-card:hover:not(.disabled) { background: var(--m-surface-hover); }
   .toggle-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+  .toggle-card ha-switch { pointer-events: none; }
   .toggle-left { display: flex; align-items: center; gap: 9px; }
   .toggle-icon {
     width: 32px; height: 32px; border-radius: 9px;
@@ -604,7 +607,11 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
     color: var(--m-text-2);
     font-size: 0.8rem;
     cursor: pointer;
+    transition: 0.2s;
     --mdc-icon-size: 16px;
+  }
+  .gh-chip:hover {
+    background: rgba(128, 128, 128, 0.25);
   }
   .gh-chip.active {
     color: var(--miraie-accent);
