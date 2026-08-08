@@ -482,6 +482,9 @@ export const styles = css`
     min-width: 120px;
     position: relative;
   }
+  .gh-select-wrapper.active {
+    z-index: 100;
+  }
   .gh-custom-select {
     width: 100%;
     background: rgba(128, 128, 128, 0.15);
