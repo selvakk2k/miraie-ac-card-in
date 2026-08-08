@@ -60,8 +60,9 @@ export class MirAIeACCard extends LitElement {
     super.disconnectedCallback();
   }
 
-  private _handleWindowClick = () => {
-    if (this._ghDropdown) {
+  private _handleWindowClick = (e: MouseEvent) => {
+    const path = e.composedPath();
+    if (this._ghDropdown && !path.includes(this)) {
       this._ghDropdown = null;
     }
   };
@@ -716,7 +717,7 @@ export class MirAIeACCard extends LitElement {
     let stdPresets: string[] = ['none'];
     let cvOptions: string[] = [];
     if (a.preset_modes) {
-      stdPresets = ['none', ...a.preset_modes.filter((p: string) => !/^cv[\s_]/.test(p))];
+      stdPresets = Array.from(new Set(['none', ...a.preset_modes.filter((p: string) => !/^cv[\s_]/.test(p))]));
       cvOptions = a.preset_modes.filter((p: string) => /^cv[\s_]/.test(p));
       if (cvOptions.length > 0) {
         const cvPrefix = cvOptions[0].substring(0, 3);
@@ -772,18 +773,18 @@ export class MirAIeACCard extends LitElement {
         </div>
 
         <div class="gh-action-row" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
-          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(-0.5, targetTemp, minTemp); }}>
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); const step = Number(a.target_temp_step ?? 1); this._adjustTemp(-step, targetTemp, minTemp); }}>
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
           <div style="width: 48px;"></div>
-          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(0.5, targetTemp, maxTemp); }}>
+          <button class="gh-circular-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); const step = Number(a.target_temp_step ?? 1); this._adjustTemp(step, targetTemp, maxTemp); }}>
             <ha-icon icon="mdi:plus"></ha-icon>
           </button>
         </div>
 
         <div class="gh-select-container" style="${isCleaning ? 'opacity: 0.5; pointer-events: none;' : ''}">
           <!-- Mode Dropdown -->
-          <div class="gh-select-wrapper">
+          <div class="gh-select-wrapper ${this._ghDropdown === 'mode' ? 'active' : ''}">
             <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'mode' ? null : 'mode'; }}>
               <span>Mode: ${this._modeLabel(hvacMode)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
@@ -792,7 +793,7 @@ export class MirAIeACCard extends LitElement {
               <div class="gh-dropdown-menu">
                 ${modes.map((mode: string) => html`
                   <button class="gh-dropdown-item ${hvacMode === mode ? 'active' : ''}" 
-                       @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_hvac_mode', { entity_id: this._config.entity, hvac_mode: mode }); }}>
+                       @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setHvacMode(mode); }}>
                     ${this._modeLabel(mode)}
                   </button>
                 `)}
@@ -801,7 +802,7 @@ export class MirAIeACCard extends LitElement {
           </div>
 
           <!-- Preset Dropdown -->
-          <div class="gh-select-wrapper" style="${!isOn || hvacMode === 'fan_only' ? 'opacity: 0.5; pointer-events: none;' : ''}">
+          <div class="gh-select-wrapper ${this._ghDropdown === 'preset' ? 'active' : ''}" style="${!isOn || hvacMode === 'fan_only' ? 'opacity: 0.5; pointer-events: none;' : ''}">
             <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'preset' ? null : 'preset'; }}>
               <span>Preset: ${stateObj.attributes.preset_mode === 'none' || !stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? 'Normal' : stateObj.attributes.preset_mode.charAt(0).toUpperCase() + stateObj.attributes.preset_mode.slice(1)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
@@ -812,7 +813,7 @@ export class MirAIeACCard extends LitElement {
                   const isActive = stateObj.attributes.preset_mode === p || (p === 'none' && (!stateObj.attributes.preset_mode || /^cv[\s_]/.test(stateObj.attributes.preset_mode)));
                   return html`
                     <button class="gh-dropdown-item ${isActive ? 'active' : ''}" 
-                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: p }); }}>
+                         @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setPreset(p); }}>
                       ${p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)}
                     </button>
                   `;
@@ -823,7 +824,7 @@ export class MirAIeACCard extends LitElement {
 
           <!-- Convertible Dropdown -->
           ${cvSorted.length > 0 ? html`
-            <div class="gh-select-wrapper" style="${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
+            <div class="gh-select-wrapper ${this._ghDropdown === 'cv' ? 'active' : ''}" style="${!isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'cv' ? null : 'cv'; }}>
                 <span>Limit: ${stateObj.attributes.preset_mode && /^cv[\s_]/.test(stateObj.attributes.preset_mode) ? (parseCv(stateObj.attributes.preset_mode) === 0 ? 'Normal' : parseCv(stateObj.attributes.preset_mode) + '%') : 'Normal'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
@@ -835,7 +836,7 @@ export class MirAIeACCard extends LitElement {
                     const isActive = stateObj.attributes.preset_mode === cv || (pct === 0 && (!stateObj.attributes.preset_mode || !/^cv[\s_]/.test(stateObj.attributes.preset_mode)));
                     return html`
                       <button class="gh-dropdown-item ${isActive ? 'active' : ''}" 
-                           @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this.hass.callService('climate', 'set_preset_mode', { entity_id: this._config.entity, preset_mode: cv }); }}>
+                           @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = null; this._setPreset(cv); }}>
                         ${pct === 0 ? 'Normal' : pct + '%'}
                       </button>
                     `;
@@ -847,7 +848,7 @@ export class MirAIeACCard extends LitElement {
 
           <!-- Fan Speed Dropdown -->
           ${fanModes.length > 0 ? html`
-            <div class="gh-select-wrapper" style="${!isOn || hvacMode === 'dry' ? 'opacity: 0.5; pointer-events: none;' : ''}">
+            <div class="gh-select-wrapper ${this._ghDropdown === 'fan' ? 'active' : ''}" style="${!isOn || hvacMode === 'dry' ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'fan' ? null : 'fan'; }}>
                 <span>Fan: ${fanMode ? (fanMode.charAt(0).toUpperCase() + fanMode.slice(1)) : 'Auto'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
@@ -867,7 +868,7 @@ export class MirAIeACCard extends LitElement {
 
           <!-- Vertical Swing (Vanes V) Dropdown -->
           ${swingVModes.length > 0 || swingV != null ? html`
-            <div class="gh-select-wrapper" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
+            <div class="gh-select-wrapper ${this._ghDropdown === 'swing_v' ? 'active' : ''}" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'swing_v' ? null : 'swing_v'; }}>
                 <span>Swing V: ${swingV ? (swingV.charAt(0).toUpperCase() + swingV.slice(1)) : 'Auto'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
@@ -887,7 +888,7 @@ export class MirAIeACCard extends LitElement {
 
           <!-- Horizontal Swing (Vanes H) Dropdown -->
           ${swingHModes.length > 0 || swingH != null ? html`
-            <div class="gh-select-wrapper" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
+            <div class="gh-select-wrapper ${this._ghDropdown === 'swing_h' ? 'active' : ''}" style="${!isOn ? 'opacity: 0.5; pointer-events: none;' : ''}">
               <button class="gh-custom-select" @click=${(e: Event) => { e.stopPropagation(); this._ghDropdown = this._ghDropdown === 'swing_h' ? null : 'swing_h'; }}>
                 <span>Swing H: ${swingH ? (swingH.charAt(0).toUpperCase() + swingH.slice(1)) : 'Auto'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
