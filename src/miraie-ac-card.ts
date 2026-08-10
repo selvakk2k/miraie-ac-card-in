@@ -686,6 +686,17 @@ export class MirAIeACCard extends LitElement {
     return map[m] ?? 'mdi:air-conditioner';
   }
 
+  private _modeColor(m: string): string {
+    const map: Record<string, string> = {
+      cool:     'rgba(100, 181, 246, 0.18)',
+      dry:      'rgba(129, 199, 132, 0.18)',
+      fan_only: 'rgba(179, 157, 219, 0.18)',
+      auto:     'rgba(255, 183,  77, 0.18)',
+      heat:     'rgba(255, 138, 101, 0.18)',
+    };
+    return map[m] ?? 'rgba(128, 128, 128, 0.12)';
+  }
+
   private _presetIcon(p: string): string {
     const map: Record<string, string> = {
       eco: 'mdi:leaf', boost: 'mdi:rocket', none: 'mdi:close-circle-outline',
@@ -767,11 +778,23 @@ export class MirAIeACCard extends LitElement {
         <div class="gh-center">
           <div class="gh-value-large">${displayValue}</div>
           <div class="gh-subtitle-large">
-            <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
-              <span>${subValue}</span>
-              ${humidVal != null ? html`<span style="opacity: 0.75;">Humidity ${humidVal}%</span>` : ''}
+            <div style="display: flex; align-items: center; gap: 16px; justify-content: center;">
+              ${currentTemp != null ? html`
+                <span style="display: flex; align-items: center; gap: 5px;">
+                  <ha-icon icon="mdi:thermometer" style="--mdc-icon-size: 16px;"></ha-icon>${currentTemp}°
+                </span>` : ''}
+              ${humidVal != null ? html`
+                <span style="display: flex; align-items: center; gap: 5px;">
+                  <ha-icon icon="mdi:water-percent" style="--mdc-icon-size: 16px;"></ha-icon>${humidVal}%
+                </span>` : ''}
             </div>
-            ${modeString ? html`<div style="font-size: 1rem; opacity: 0.7; margin-top: 4px;">${modeString}</div>` : ''}
+            ${isOn ? html`
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <span class="gh-mode-pill" style="background: ${this._modeColor(hvacMode)};">
+                  <ha-icon icon="${this._modeIcon(hvacMode)}" style="--mdc-icon-size: 14px;"></ha-icon>
+                  ${this._modeLabel(hvacMode)}
+                </span>
+              </div>` : ''}
           </div>
         </div>
 
@@ -973,9 +996,15 @@ export class MirAIeACCard extends LitElement {
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
           <div class="compact-subtitle" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span>Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</span>
-              ${humidVal != null ? html`<span style="opacity: 0.75;">Humidity ${humidVal}%</span>` : ''}
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${currentTemp != null ? html`
+                <span style="display: flex; align-items: center; gap: 4px;">
+                  <ha-icon icon="mdi:thermometer" style="--mdc-icon-size: 14px;"></ha-icon>${currentTemp}°
+                </span>` : ''}
+              ${humidVal != null ? html`
+                <span style="display: flex; align-items: center; gap: 4px;">
+                  <ha-icon icon="mdi:water-percent" style="--mdc-icon-size: 14px;"></ha-icon>${humidVal}%
+                </span>` : ''}
             </div>
             ${modeString ? html`<div style="font-size: 0.75rem; opacity: 0.7;">${modeString}</div>` : ''}
           </div>
