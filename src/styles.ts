@@ -444,6 +444,17 @@ export const styles = css`
     color: var(--m-text-2);
     margin-top: 8px;
   }
+  .gh-mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--m-text);
+    letter-spacing: 0.02em;
+  }
   .gh-action-row {
     display: flex;
     align-items: center;
