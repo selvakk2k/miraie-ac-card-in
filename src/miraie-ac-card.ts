@@ -256,11 +256,11 @@ export class MirAIeACCard extends LitElement {
     const cardStyle = `${accentStyle ? `--miraie-accent: ${accentStyle}; ` : ''}${mainStyle ? `--m-bg: ${mainStyle}; ` : ''}`;
 
     if (cfg.layout === 'compact' && !this._expanded) {
-      return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
+      return this._renderCompact(stateObj, friendlyName, isOn, targetTemp, currentTemp, humidVal, hvacMode, minTemp, maxTemp, cardStyle);
     }
 
     if (cfg.full_layout === 'google_home') {
-      return this._renderGoogleHomeFull(stateObj, friendlyName, isOn, targetTemp, currentTemp, hvacMode, minTemp, maxTemp, cardStyle);
+      return this._renderGoogleHomeFull(stateObj, friendlyName, isOn, targetTemp, currentTemp, humidVal, hvacMode, minTemp, maxTemp, cardStyle);
     }
 
     // Build an informative subtitle for the Classic layout
@@ -695,7 +695,7 @@ export class MirAIeACCard extends LitElement {
 
   private _renderGoogleHomeFull(
     stateObj: any, name: string, isOn: boolean,
-    targetTemp: number, currentTemp: number,
+    targetTemp: number, currentTemp: number, humidVal: any,
     hvacMode: string, minTemp: number, maxTemp: number,
     cardStyle: string
   ) {
@@ -767,7 +767,10 @@ export class MirAIeACCard extends LitElement {
         <div class="gh-center">
           <div class="gh-value-large">${displayValue}</div>
           <div class="gh-subtitle-large">
-            <div>${subValue}</div>
+            <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+              <span>${subValue}</span>
+              ${humidVal != null ? html`<span style="opacity: 0.75;">Humidity ${humidVal}%</span>` : ''}
+            </div>
             ${modeString ? html`<div style="font-size: 1rem; opacity: 0.7; margin-top: 4px;">${modeString}</div>` : ''}
           </div>
         </div>
@@ -930,7 +933,7 @@ export class MirAIeACCard extends LitElement {
     `;
   }
 
-  private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
+  private _renderCompact(stateObj: any, name: string, isOn: boolean, targetTemp: any, currentTemp: any, humidVal: any, hvacMode: string, minTemp: any, maxTemp: any, cardStyle: string): TemplateResult {
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
     const isCleaning = this.hass.states[this._config.coil_cleaning_sensor!]?.state === 'on';
@@ -970,7 +973,10 @@ export class MirAIeACCard extends LitElement {
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
           <div class="compact-subtitle" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-            <div>Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span>Indoor ${currentTemp != null ? `${currentTemp}°` : '--'}</span>
+              ${humidVal != null ? html`<span style="opacity: 0.75;">Humidity ${humidVal}%</span>` : ''}
+            </div>
             ${modeString ? html`<div style="font-size: 0.75rem; opacity: 0.7;">${modeString}</div>` : ''}
           </div>
           <button class="compact-action-btn" ?disabled=${!isOn || hvacMode === 'fan_only'} @click=${(e: Event) => { e.stopPropagation(); this._adjustTemp(1, targetTemp, maxTemp); }}>
