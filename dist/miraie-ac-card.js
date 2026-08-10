@@ -630,7 +630,7 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
     font-size: 0.8rem;
     --mdc-icon-size: 16px;
   }
-`;function mt(t){const e=/^cv[\s_]+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends rt{constructor(){super(...arguments),this._openPanel=null,this._expanded=!1,this._ghDropdown=null,this._handleWindowClick=t=>{const e=t.composedPath();this._ghDropdown&&!e.includes(this)&&(this._ghDropdown=null)}}static get styles(){return ht}connectedCallback(){super.connectedCallback(),window.addEventListener("click",this._handleWindowClick)}disconnectedCallback(){window.removeEventListener("click",this._handleWindowClick),super.disconnectedCallback()}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"theme",selector:{select:{options:[{label:"Default HA Theme",value:"default"},{label:"Material You",value:"material_you"}]}}},{name:"layout",selector:{select:{options:[{label:"Default (Full)",value:"default"},{label:"Compact (Expandable)",value:"compact"}]}}},{name:"full_layout",selector:{select:{options:[{label:"Classic",value:"default"},{label:"Google Home",value:"google_home"}]}}},{name:"accent_color",selector:{ui_color:{}}},{name:"main_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}updated(t){if(super.updated(t),t.has("_config")){const t=this._config?.theme||"default";this.getAttribute("theme")!==t&&this.setAttribute("theme",t)}}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel")||t.has("_expanded")||t.has("_ghDropdown"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return I`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,o="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",r=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,p=i.swing_mode,h=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0;let g=u?u.state:i.current_temperature;null==g||isNaN(Number(g))||(g=Number(g).toFixed(1));const v=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0;let _=v?v.state:void 0;null==_||isNaN(Number(_))||(_=Number(_).toFixed(1));const f=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,b=t.display_switch?this.hass.states[t.display_switch]:void 0,y=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,$=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,x=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,w=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,A=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,k=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0,C="on"===$?.state;let S=[],P="cv_";i.preset_modes&&i.preset_modes.some(t=>/^cv[\s_]/.test(t))&&(S=i.preset_modes.filter(t=>/^cv[\s_]/.test(t)),P=S[0].substring(0,3),S.includes(`${P}0`)||S.push(`${P}0`));let E=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${P}0`;const z=S.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),D=[`${P}0`,...z],N=D.indexOf(E),U=(j=S,j?.length?j.some(t=>60===mt(t))&&j.some(t=>50===mt(t))?"Converti8":"Converti7":"Convertible");var j;const H=z.length>0?N/(D.length-1)*100:0;let M="";if(this._config.accent_color)if(Array.isArray(this._config.accent_color))M=`rgb(${this._config.accent_color.join(",")})`;else if("string"==typeof this._config.accent_color){const t=this._config.accent_color.toLowerCase();M="primary"===t?"var(--primary-color)":"accent"===t?"var(--accent-color)":/^[a-z-]+$/.test(t)?`var(--${t}-color, ${t})`:t}let T="";if(this._config.main_color)if(Array.isArray(this._config.main_color))T=`rgb(${this._config.main_color.join(",")})`;else if("string"==typeof this._config.main_color){const t=this._config.main_color.toLowerCase();T="primary"===t?"var(--primary-color)":"accent"===t?"var(--accent-color)":/^[a-z-]+$/.test(t)?`var(--${t}-color, ${t})`:t}const O=`${M?`--miraie-accent: ${M}; `:""}${T?`--m-bg: ${T}; `:""}`;if("compact"===t.layout&&!this._expanded)return this._renderCompact(e,n,o,r,g,l,a,c,O);if("google_home"===t.full_layout)return this._renderGoogleHomeFull(e,n,o,r,g,l,a,c,O);let R=[];if(o){if(R.push(this._modeLabel(l)),m&&"none"!==m)if(/^cv[\s_]/.test(m)){const t=mt(m);R.push(0===t?"Normal Limit":t+"% Limit")}else R.push(m.charAt(0).toUpperCase()+m.slice(1));R.push(`Fan: ${d??"Auto"}`)}return I`
+`;function mt(t){const e=/^cv[\s_]+(\d+)$/.exec((t??"").trim());return e?parseInt(e[1],10):-1}function ut(t){const e=Number(t);return isNaN(e)?String(t):e.toFixed(2)}window.customCards=window.customCards||[],window.customCards.push({type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0});let gt=class extends rt{constructor(){super(...arguments),this._openPanel=null,this._expanded=!1,this._ghDropdown=null,this._handleWindowClick=t=>{const e=t.composedPath();this._ghDropdown&&!e.includes(this)&&(this._ghDropdown=null)}}static get styles(){return ht}connectedCallback(){super.connectedCallback(),window.addEventListener("click",this._handleWindowClick)}disconnectedCallback(){window.removeEventListener("click",this._handleWindowClick),super.disconnectedCallback()}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate"}}},{name:"name",selector:{text:{}}},{name:"theme",selector:{select:{options:[{label:"Default HA Theme",value:"default"},{label:"Material You",value:"material_you"}]}}},{name:"layout",selector:{select:{options:[{label:"Default (Full)",value:"default"},{label:"Compact (Expandable)",value:"compact"}]}}},{name:"full_layout",selector:{select:{options:[{label:"Classic",value:"default"},{label:"Google Home",value:"google_home"}]}}},{name:"accent_color",selector:{ui_color:{}}},{name:"main_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch"}}},{name:"display_switch",selector:{entity:{domain:"switch"}}},{name:"coil_clean_button",selector:{entity:{domain:"button"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor"}}}]}]}}static getStubConfig(){return{type:"custom:miraie-ac-card-in",entity:""}}setConfig(t){if(!t.entity||!t.entity.startsWith("climate."))throw new Error("Please define a valid climate entity.");this._config={...t},this._openPanel=null}updated(t){if(super.updated(t),t.has("_config")){const t=this._config?.theme||"default";this.getAttribute("theme")!==t&&this.setAttribute("theme",t)}}shouldUpdate(t){if(t.has("_config")||t.has("_openPanel")||t.has("_expanded")||t.has("_ghDropdown"))return!0;if(t.has("hass")&&this._config){const e=t.get("hass");if(!e)return!0;const i=this._config;return[i.entity,i.room_temp_sensor,i.humidity_sensor,i.nanoe_switch,i.display_switch,i.coil_clean_button,i.coil_cleaning_sensor,i.filter_alert_sensor,i.rssi_sensor,i.energy_today_sensor,i.energy_yesterday_sensor].filter(Boolean).some(t=>e.states[t]!==this.hass.states[t])}return!1}render(){if(!this.hass||!this._config)return null;const t=this._config,e=this.hass.states[t.entity];if(!e)return I`<ha-card><div class="error">Entity not found: ${t.entity}</div></ha-card>`;const i=e.attributes,s="unavailable"!==e.state&&"unknown"!==e.state,o="off"!==e.state&&s,n=t.name||i.friendly_name||"AC",r=i.temperature,a=i.min_temp??16,c=i.max_temp??30,l=e.state,d=i.fan_mode,p=i.swing_mode,h=i.swing_horizontal_mode,m=i.preset_mode,u=t.room_temp_sensor?this.hass.states[t.room_temp_sensor]:void 0;let g=u?u.state:i.current_temperature;null==g||isNaN(Number(g))||(g=Number(g).toFixed(1));const v=t.humidity_sensor?this.hass.states[t.humidity_sensor]:void 0;let _=v?v.state:void 0;null==_||isNaN(Number(_))||(_=Number(_).toFixed(1));const f=t.nanoe_switch?this.hass.states[t.nanoe_switch]:void 0,b=t.display_switch?this.hass.states[t.display_switch]:void 0,y=t.coil_clean_button?this.hass.states[t.coil_clean_button]:void 0,$=t.coil_cleaning_sensor?this.hass.states[t.coil_cleaning_sensor]:void 0,x=t.filter_alert_sensor?this.hass.states[t.filter_alert_sensor]:void 0,w=t.rssi_sensor?this.hass.states[t.rssi_sensor]:void 0,A=t.energy_today_sensor?this.hass.states[t.energy_today_sensor]:void 0,k=t.energy_yesterday_sensor?this.hass.states[t.energy_yesterday_sensor]:void 0,C="on"===$?.state;let S=[],P="cv_";i.preset_modes&&i.preset_modes.some(t=>/^cv[\s_]/.test(t))&&(S=i.preset_modes.filter(t=>/^cv[\s_]/.test(t)),P=S[0].substring(0,3),S.includes(`${P}0`)||S.push(`${P}0`));let E=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${P}0`;const z=S.filter(t=>mt(t)>0).sort((t,e)=>mt(t)-mt(e)),D=[`${P}0`,...z],N=D.indexOf(E),U=(j=S,j?.length?j.some(t=>60===mt(t))&&j.some(t=>50===mt(t))?"Converti8":"Converti7":"Convertible");var j;const H=z.length>0?N/(D.length-1)*100:0;let M="";if(this._config.accent_color)if(Array.isArray(this._config.accent_color))M=`rgb(${this._config.accent_color.join(",")})`;else if("string"==typeof this._config.accent_color){const t=this._config.accent_color.toLowerCase();M="primary"===t?"var(--primary-color)":"accent"===t?"var(--accent-color)":/^[a-z-]+$/.test(t)?`var(--${t}-color, ${t})`:t}let T="";if(this._config.main_color)if(Array.isArray(this._config.main_color))T=`rgb(${this._config.main_color.join(",")})`;else if("string"==typeof this._config.main_color){const t=this._config.main_color.toLowerCase();T="primary"===t?"var(--primary-color)":"accent"===t?"var(--accent-color)":/^[a-z-]+$/.test(t)?`var(--${t}-color, ${t})`:t}const O=`${M?`--miraie-accent: ${M}; `:""}${T?`--m-bg: ${T}; `:""}`;if("compact"===t.layout&&!this._expanded)return this._renderCompact(e,n,o,r,g,_,l,a,c,O);if("google_home"===t.full_layout)return this._renderGoogleHomeFull(e,n,o,r,g,_,l,a,c,O);let R=[];if(o){if(R.push(this._modeLabel(l)),m&&"none"!==m)if(/^cv[\s_]/.test(m)){const t=mt(m);R.push(0===t?"Normal Limit":t+"% Limit")}else R.push(m.charAt(0).toUpperCase()+m.slice(1));R.push(`Fan: ${d??"Auto"}`)}return I`
       <ha-card style="${O}">
 
         <!-- ── Header ── -->
@@ -937,8 +937,8 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           </div>
         `:""}
       </ha-card>
-    `}_togglePanel(t){this._haptic("selection"),this._openPanel=this._openPanel===t?null:t}_haptic(t="light"){this.dispatchEvent(new CustomEvent("haptic",{detail:t,bubbles:!0,composed:!0}))}_showMoreInfo(t){this._haptic("selection"),this.dispatchEvent(new CustomEvent("hass-more-info",{bubbles:!0,composed:!0,detail:{entityId:t}}))}_togglePower(t){this._haptic("medium"),"off"!==t.state?this.hass.callService("climate","set_hvac_mode",{entity_id:t.entity_id,hvac_mode:"off"}):this.hass.callService("climate","turn_on",{entity_id:t.entity_id})}_adjustTemp(t,e,i){if(this._haptic("light"),null==e)return;const s=Number(e)+t;null!=i&&(t<0&&s<Number(i)||t>0&&s>Number(i))||this.hass.callService("climate","set_temperature",{entity_id:this._config.entity,temperature:s})}_setHvacMode(t){this._haptic("light"),this.hass.callService("climate","set_hvac_mode",{entity_id:this._config.entity,hvac_mode:t})}_setFanMode(t,e){this._haptic("selection"),this.hass.callService("climate","set_fan_mode",{entity_id:t.entity_id,fan_mode:e})}_setSwing(t,e){this._haptic("selection"),this.hass.callService("climate","set_swing_mode",{entity_id:t.entity_id,swing_mode:e})}_setHSwing(t,e){this._haptic("selection"),this.hass.callService("climate","set_swing_horizontal_mode",{entity_id:t.entity_id,swing_horizontal_mode:e})}_setPreset(t){this._haptic("light"),this.hass.callService("climate","set_preset_mode",{entity_id:this._config.entity,preset_mode:t})}_toggleSwitch(t,e){this._haptic("light"),this.hass.callService("switch","on"===e?"turn_off":"turn_on",{entity_id:t})}_pressButton(t){this._haptic("medium"),this.hass.callService("button","press",{entity_id:t})}_modeLabel(t){return{cool:"Cool",dry:"Dry",fan_only:"Fan",auto:"Auto",heat:"Heat",off:"Off"}[t]??t.charAt(0).toUpperCase()+t.slice(1)}_modeIcon(t){return{cool:"mdi:snowflake",dry:"mdi:water-percent",fan_only:"mdi:fan",auto:"mdi:cached",heat:"mdi:fire"}[t]??"mdi:air-conditioner"}_presetIcon(t){return{eco:"mdi:leaf",boost:"mdi:rocket",none:"mdi:close-circle-outline"}[t]??"mdi:play-circle-outline"}_renderGoogleHomeFull(t,e,i,s,o,n,r,a,c){const l=this._config,d=t.attributes,p=d.hvac_modes||[],h=d.fan_mode,m=d.fan_modes||[],u=d.swing_mode,g=d.swing_modes||[],v=d.swing_horizontal_mode,_=d.swing_horizontal_modes||[];"unavailable"!==t.state&&t.state;const f=i?"fan_only"===n?"FA":null!=s?`${s}°`:"--":"Off",b=null!=o?`Indoor ${o}°`:"";let y=["none"],$=[];if(d.preset_modes&&(y=Array.from(new Set(["none",...d.preset_modes.filter(t=>!/^cv[\s_]/.test(t))])),$=d.preset_modes.filter(t=>/^cv[\s_]/.test(t)),$.length>0)){const t=$[0].substring(0,3);$.includes(`${t}0`)||$.push(`${t}0`)}const x=$.sort((t,e)=>mt(e)-mt(t)),w=l.nanoe_switch?this.hass.states[l.nanoe_switch]:void 0,A=l.display_switch?this.hass.states[l.display_switch]:void 0,k=l.coil_clean_button?this.hass.states[l.coil_clean_button]:void 0,C=l.coil_cleaning_sensor?this.hass.states[l.coil_cleaning_sensor]:void 0,S=l.energy_today_sensor?this.hass.states[l.energy_today_sensor]:void 0,P=l.energy_yesterday_sensor?this.hass.states[l.energy_yesterday_sensor]:void 0,E=l.rssi_sensor?this.hass.states[l.rssi_sensor]:void 0,z="on"===C?.state,D=d.preset_mode;let N=[];i&&(N.push(this._modeLabel(n)),D&&"none"!==D&&!/^cv[\s_]/.test(D)&&N.push(D.charAt(0).toUpperCase()+D.slice(1)));const U=N.join(" • ");return I`
-      <ha-card style="${c}" class="gh-full-card">
+    `}_togglePanel(t){this._haptic("selection"),this._openPanel=this._openPanel===t?null:t}_haptic(t="light"){this.dispatchEvent(new CustomEvent("haptic",{detail:t,bubbles:!0,composed:!0}))}_showMoreInfo(t){this._haptic("selection"),this.dispatchEvent(new CustomEvent("hass-more-info",{bubbles:!0,composed:!0,detail:{entityId:t}}))}_togglePower(t){this._haptic("medium"),"off"!==t.state?this.hass.callService("climate","set_hvac_mode",{entity_id:t.entity_id,hvac_mode:"off"}):this.hass.callService("climate","turn_on",{entity_id:t.entity_id})}_adjustTemp(t,e,i){if(this._haptic("light"),null==e)return;const s=Number(e)+t;null!=i&&(t<0&&s<Number(i)||t>0&&s>Number(i))||this.hass.callService("climate","set_temperature",{entity_id:this._config.entity,temperature:s})}_setHvacMode(t){this._haptic("light"),this.hass.callService("climate","set_hvac_mode",{entity_id:this._config.entity,hvac_mode:t})}_setFanMode(t,e){this._haptic("selection"),this.hass.callService("climate","set_fan_mode",{entity_id:t.entity_id,fan_mode:e})}_setSwing(t,e){this._haptic("selection"),this.hass.callService("climate","set_swing_mode",{entity_id:t.entity_id,swing_mode:e})}_setHSwing(t,e){this._haptic("selection"),this.hass.callService("climate","set_swing_horizontal_mode",{entity_id:t.entity_id,swing_horizontal_mode:e})}_setPreset(t){this._haptic("light"),this.hass.callService("climate","set_preset_mode",{entity_id:this._config.entity,preset_mode:t})}_toggleSwitch(t,e){this._haptic("light"),this.hass.callService("switch","on"===e?"turn_off":"turn_on",{entity_id:t})}_pressButton(t){this._haptic("medium"),this.hass.callService("button","press",{entity_id:t})}_modeLabel(t){return{cool:"Cool",dry:"Dry",fan_only:"Fan",auto:"Auto",heat:"Heat",off:"Off"}[t]??t.charAt(0).toUpperCase()+t.slice(1)}_modeIcon(t){return{cool:"mdi:snowflake",dry:"mdi:water-percent",fan_only:"mdi:fan",auto:"mdi:cached",heat:"mdi:fire"}[t]??"mdi:air-conditioner"}_presetIcon(t){return{eco:"mdi:leaf",boost:"mdi:rocket",none:"mdi:close-circle-outline"}[t]??"mdi:play-circle-outline"}_renderGoogleHomeFull(t,e,i,s,o,n,r,a,c,l){const d=this._config,p=t.attributes,h=p.hvac_modes||[],m=p.fan_mode,u=p.fan_modes||[],g=p.swing_mode,v=p.swing_modes||[],_=p.swing_horizontal_mode,f=p.swing_horizontal_modes||[];"unavailable"!==t.state&&t.state;const b=i?"fan_only"===r?"FA":null!=s?`${s}°`:"--":"Off",y=null!=o?`Indoor ${o}°`:"";let $=["none"],x=[];if(p.preset_modes&&($=Array.from(new Set(["none",...p.preset_modes.filter(t=>!/^cv[\s_]/.test(t))])),x=p.preset_modes.filter(t=>/^cv[\s_]/.test(t)),x.length>0)){const t=x[0].substring(0,3);x.includes(`${t}0`)||x.push(`${t}0`)}const w=x.sort((t,e)=>mt(e)-mt(t)),A=d.nanoe_switch?this.hass.states[d.nanoe_switch]:void 0,k=d.display_switch?this.hass.states[d.display_switch]:void 0,C=d.coil_clean_button?this.hass.states[d.coil_clean_button]:void 0,S=d.coil_cleaning_sensor?this.hass.states[d.coil_cleaning_sensor]:void 0,P=d.energy_today_sensor?this.hass.states[d.energy_today_sensor]:void 0,E=d.energy_yesterday_sensor?this.hass.states[d.energy_yesterday_sensor]:void 0,z=d.rssi_sensor?this.hass.states[d.rssi_sensor]:void 0,D="on"===S?.state,N=p.preset_mode;let U=[];i&&(U.push(this._modeLabel(r)),N&&"none"!==N&&!/^cv[\s_]/.test(N)&&U.push(N.charAt(0).toUpperCase()+N.slice(1)));const j=U.join(" • ");return I`
+      <ha-card style="${l}" class="gh-full-card">
         <div class="gh-header">
           <div class="gh-header-left">
             <ha-icon class="gh-icon" icon="mdi:air-conditioner"></ha-icon>
@@ -950,41 +950,44 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
             `:""}
-            <button class="gh-power-btn ${i?"on":""}" ?disabled=${z} style="${z?"opacity: 0.5; pointer-events: none;":""}" @click=${e=>this._togglePower(t)}>
+            <button class="gh-power-btn ${i?"on":""}" ?disabled=${D} style="${D?"opacity: 0.5; pointer-events: none;":""}" @click=${e=>this._togglePower(t)}>
               <ha-icon icon="mdi:power"></ha-icon>
             </button>
           </div>
         </div>
 
         <div class="gh-center">
-          <div class="gh-value-large">${f}</div>
+          <div class="gh-value-large">${b}</div>
           <div class="gh-subtitle-large">
-            <div>${b}</div>
-            ${U?I`<div style="font-size: 1rem; opacity: 0.7; margin-top: 4px;">${U}</div>`:""}
+            <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+              <span>${y}</span>
+              ${null!=n?I`<span style="opacity: 0.75;">Humidity ${n}%</span>`:""}
+            </div>
+            ${j?I`<div style="font-size: 1rem; opacity: 0.7; margin-top: 4px;">${j}</div>`:""}
           </div>
         </div>
 
-        <div class="gh-action-row" style="${z?"opacity: 0.5; pointer-events: none;":""}">
-          <button class="gh-circular-btn" ?disabled=${!i||"fan_only"===n} @click=${t=>{t.stopPropagation();const e=Number(d.target_temp_step??1);this._adjustTemp(-e,s,r)}}>
+        <div class="gh-action-row" style="${D?"opacity: 0.5; pointer-events: none;":""}">
+          <button class="gh-circular-btn" ?disabled=${!i||"fan_only"===r} @click=${t=>{t.stopPropagation();const e=Number(p.target_temp_step??1);this._adjustTemp(-e,s,a)}}>
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
           <div style="width: 48px;"></div>
-          <button class="gh-circular-btn" ?disabled=${!i||"fan_only"===n} @click=${t=>{t.stopPropagation();const e=Number(d.target_temp_step??1);this._adjustTemp(e,s,a)}}>
+          <button class="gh-circular-btn" ?disabled=${!i||"fan_only"===r} @click=${t=>{t.stopPropagation();const e=Number(p.target_temp_step??1);this._adjustTemp(e,s,c)}}>
             <ha-icon icon="mdi:plus"></ha-icon>
           </button>
         </div>
 
-        <div class="gh-select-container" style="${z?"opacity: 0.5; pointer-events: none;":""}">
+        <div class="gh-select-container" style="${D?"opacity: 0.5; pointer-events: none;":""}">
           <!-- Mode Dropdown -->
           <div class="gh-select-wrapper ${"mode"===this._ghDropdown?"active":""}">
             <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="mode"===this._ghDropdown?null:"mode"}}>
-              <span>Mode: ${this._modeLabel(n)}</span>
+              <span>Mode: ${this._modeLabel(r)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
             </button>
             ${"mode"===this._ghDropdown?I`
               <div class="gh-dropdown-menu">
-                ${p.map(t=>I`
-                  <button class="gh-dropdown-item ${n===t?"active":""}" 
+                ${h.map(t=>I`
+                  <button class="gh-dropdown-item ${r===t?"active":""}" 
                        @click=${e=>{e.stopPropagation(),this._ghDropdown=null,this._setHvacMode(t)}}>
                     ${this._modeLabel(t)}
                   </button>
@@ -994,14 +997,14 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           </div>
 
           <!-- Preset Dropdown -->
-          <div class="gh-select-wrapper ${"preset"===this._ghDropdown?"active":""}" style="${i&&"fan_only"!==n?"":"opacity: 0.5; pointer-events: none;"}">
+          <div class="gh-select-wrapper ${"preset"===this._ghDropdown?"active":""}" style="${i&&"fan_only"!==r?"":"opacity: 0.5; pointer-events: none;"}">
             <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="preset"===this._ghDropdown?null:"preset"}}>
               <span>Preset: ${"none"===t.attributes.preset_mode||!t.attributes.preset_mode||/^cv[\s_]/.test(t.attributes.preset_mode)?"Normal":t.attributes.preset_mode.charAt(0).toUpperCase()+t.attributes.preset_mode.slice(1)}</span>
               <ha-icon icon="mdi:chevron-down"></ha-icon>
             </button>
             ${"preset"===this._ghDropdown?I`
               <div class="gh-dropdown-menu">
-                ${y.map(e=>{const i=t.attributes.preset_mode===e||"none"===e&&(!t.attributes.preset_mode||/^cv[\s_]/.test(t.attributes.preset_mode));return I`
+                ${$.map(e=>{const i=t.attributes.preset_mode===e||"none"===e&&(!t.attributes.preset_mode||/^cv[\s_]/.test(t.attributes.preset_mode));return I`
                     <button class="gh-dropdown-item ${i?"active":""}" 
                          @click=${t=>{t.stopPropagation(),this._ghDropdown=null,this._setPreset(e)}}>
                       ${"none"===e?"Normal":e.charAt(0).toUpperCase()+e.slice(1)}
@@ -1012,15 +1015,15 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           </div>
 
           <!-- Convertible Dropdown -->
-          ${x.length>0?I`
-            <div class="gh-select-wrapper ${"cv"===this._ghDropdown?"active":""}" style="${!i||["dry","auto","fan_only"].includes(n)?"opacity: 0.5; pointer-events: none;":""}">
+          ${w.length>0?I`
+            <div class="gh-select-wrapper ${"cv"===this._ghDropdown?"active":""}" style="${!i||["dry","auto","fan_only"].includes(r)?"opacity: 0.5; pointer-events: none;":""}">
               <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="cv"===this._ghDropdown?null:"cv"}}>
                 <span>Limit: ${t.attributes.preset_mode&&/^cv[\s_]/.test(t.attributes.preset_mode)?0===mt(t.attributes.preset_mode)?"Normal":mt(t.attributes.preset_mode)+"%":"Normal"}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${"cv"===this._ghDropdown?I`
                 <div class="gh-dropdown-menu">
-                  ${x.map(e=>{const i=mt(e),s=t.attributes.preset_mode===e||0===i&&(!t.attributes.preset_mode||!/^cv[\s_]/.test(t.attributes.preset_mode));return I`
+                  ${w.map(e=>{const i=mt(e),s=t.attributes.preset_mode===e||0===i&&(!t.attributes.preset_mode||!/^cv[\s_]/.test(t.attributes.preset_mode));return I`
                       <button class="gh-dropdown-item ${s?"active":""}" 
                            @click=${t=>{t.stopPropagation(),this._ghDropdown=null,this._setPreset(e)}}>
                         ${0===i?"Normal":i+"%"}
@@ -1032,16 +1035,16 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           `:""}
 
           <!-- Fan Speed Dropdown -->
-          ${m.length>0?I`
-            <div class="gh-select-wrapper ${"fan"===this._ghDropdown?"active":""}" style="${i&&"dry"!==n?"":"opacity: 0.5; pointer-events: none;"}">
+          ${u.length>0?I`
+            <div class="gh-select-wrapper ${"fan"===this._ghDropdown?"active":""}" style="${i&&"dry"!==r?"":"opacity: 0.5; pointer-events: none;"}">
               <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="fan"===this._ghDropdown?null:"fan"}}>
-                <span>Fan: ${h?h.charAt(0).toUpperCase()+h.slice(1):"Auto"}</span>
+                <span>Fan: ${m?m.charAt(0).toUpperCase()+m.slice(1):"Auto"}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${"fan"===this._ghDropdown?I`
                 <div class="gh-dropdown-menu">
-                  ${m.map(e=>I`
-                    <button class="gh-dropdown-item ${h===e?"active":""}" 
+                  ${u.map(e=>I`
+                    <button class="gh-dropdown-item ${m===e?"active":""}" 
                          @click=${i=>{i.stopPropagation(),this._ghDropdown=null,this._setFanMode(t,e)}}>
                       ${e.charAt(0).toUpperCase()+e.slice(1)}
                     </button>
@@ -1052,16 +1055,16 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           `:""}
 
           <!-- Vertical Swing (Vanes V) Dropdown -->
-          ${g.length>0||null!=u?I`
+          ${v.length>0||null!=g?I`
             <div class="gh-select-wrapper ${"swing_v"===this._ghDropdown?"active":""}" style="${i?"":"opacity: 0.5; pointer-events: none;"}">
               <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="swing_v"===this._ghDropdown?null:"swing_v"}}>
-                <span>Swing V: ${u?u.charAt(0).toUpperCase()+u.slice(1):"Auto"}</span>
+                <span>Swing V: ${g?g.charAt(0).toUpperCase()+g.slice(1):"Auto"}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${"swing_v"===this._ghDropdown?I`
                 <div class="gh-dropdown-menu">
-                  ${g.map(e=>I`
-                    <button class="gh-dropdown-item ${u===e?"active":""}" 
+                  ${v.map(e=>I`
+                    <button class="gh-dropdown-item ${g===e?"active":""}" 
                          @click=${i=>{i.stopPropagation(),this._ghDropdown=null,this._setSwing(t,e)}}>
                       ${e.charAt(0).toUpperCase()+e.slice(1)}
                     </button>
@@ -1072,16 +1075,16 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           `:""}
 
           <!-- Horizontal Swing (Vanes H) Dropdown -->
-          ${_.length>0||null!=v?I`
+          ${f.length>0||null!=_?I`
             <div class="gh-select-wrapper ${"swing_h"===this._ghDropdown?"active":""}" style="${i?"":"opacity: 0.5; pointer-events: none;"}">
               <button class="gh-custom-select" @click=${t=>{t.stopPropagation(),this._ghDropdown="swing_h"===this._ghDropdown?null:"swing_h"}}>
-                <span>Swing H: ${v?v.charAt(0).toUpperCase()+v.slice(1):"Auto"}</span>
+                <span>Swing H: ${_?_.charAt(0).toUpperCase()+_.slice(1):"Auto"}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${"swing_h"===this._ghDropdown?I`
                 <div class="gh-dropdown-menu">
-                  ${_.map(e=>I`
-                    <button class="gh-dropdown-item ${v===e?"active":""}" 
+                  ${f.map(e=>I`
+                    <button class="gh-dropdown-item ${_===e?"active":""}" 
                          @click=${i=>{i.stopPropagation(),this._ghDropdown=null,this._setHSwing(t,e)}}>
                       ${e.charAt(0).toUpperCase()+e.slice(1)}
                     </button>
@@ -1092,30 +1095,30 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
           `:""}
         </div>
 
-        ${w||A||k||S||P?I`
+        ${A||k||C||P||E?I`
           <div class="gh-extra-chips">
-            ${w?I`<div class="gh-chip ${"on"===w.state?"active":""}" style="${z?"opacity: 0.5; pointer-events: none;":""}" @click=${()=>this._toggleSwitch(l.nanoe_switch,w.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>`:""}
-            ${A?I`<div class="gh-chip ${"on"===A.state?"active":""}" style="${z?"opacity: 0.5; pointer-events: none;":""}" @click=${()=>this._toggleSwitch(l.display_switch,A.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>`:""}
-            ${k||C?I`<div class="gh-chip ${"on"===C?.state?"active":""}" @click=${()=>k?this._pressButton(l.coil_clean_button):null}><ha-icon icon="mdi:spray"></ha-icon>${"on"===C?.state?"Cleaning...":"Clean Coil"}</div>`:""}
-            ${S&&P?I`
-              <div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${ut(S.state)} kWh • Yesterday: ${ut(P.state)} kWh</div>
+            ${A?I`<div class="gh-chip ${"on"===A.state?"active":""}" style="${D?"opacity: 0.5; pointer-events: none;":""}" @click=${()=>this._toggleSwitch(d.nanoe_switch,A.state)}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>`:""}
+            ${k?I`<div class="gh-chip ${"on"===k.state?"active":""}" style="${D?"opacity: 0.5; pointer-events: none;":""}" @click=${()=>this._toggleSwitch(d.display_switch,k.state)}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>`:""}
+            ${C||S?I`<div class="gh-chip ${"on"===S?.state?"active":""}" @click=${()=>C?this._pressButton(d.coil_clean_button):null}><ha-icon icon="mdi:spray"></ha-icon>${"on"===S?.state?"Cleaning...":"Clean Coil"}</div>`:""}
+            ${P&&E?I`
+              <div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${ut(P.state)} kWh • Yesterday: ${ut(E.state)} kWh</div>
             `:I`
-              ${S?I`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${ut(S.state)} kWh</div>`:""}
-              ${P?I`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yesterday: ${ut(P.state)} kWh</div>`:""}
+              ${P?I`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Today: ${ut(P.state)} kWh</div>`:""}
+              ${E?I`<div class="gh-chip-text"><ha-icon icon="mdi:lightning-bolt"></ha-icon>Yesterday: ${ut(E.state)} kWh</div>`:""}
             `}
           </div>
         `:""}
         
-        ${E?I`
+        ${z?I`
           <div class="gh-footer-text">
-            <ha-icon icon="mdi:wifi"></ha-icon> ${E.state} dBm
+            <ha-icon icon="mdi:wifi"></ha-icon> ${z.state} dBm
           </div>
         `:""}
       </ha-card>
-    `}_renderCompact(t,e,i,s,o,n,r,a,c){"unavailable"!==t.state&&t.state;const l=i?"fan_only"===n?"FA":null!=s?`${s}°`:"--":"Off",d="on"===this.hass.states[this._config.coil_cleaning_sensor]?.state,p=t.attributes.preset_mode;let h=[];if(i&&(h.push(this._modeLabel(n)),p&&"none"!==p))if(/^cv[\s_]/.test(p)){const t=mt(p);h.push(0===t?"Normal":t+"%")}else h.push(p.charAt(0).toUpperCase()+p.slice(1));const m=h.length?h.join(" • "):"";return I`
-      <ha-card style="${c}" class="compact-card" @click=${()=>{this._haptic("selection"),this._expanded=!0}}>
+    `}_renderCompact(t,e,i,s,o,n,r,a,c,l){"unavailable"!==t.state&&t.state;const d=i?"fan_only"===r?"FA":null!=s?`${s}°`:"--":"Off",p="on"===this.hass.states[this._config.coil_cleaning_sensor]?.state,h=t.attributes.preset_mode;let m=[];if(i&&(m.push(this._modeLabel(r)),h&&"none"!==h))if(/^cv[\s_]/.test(h)){const t=mt(h);m.push(0===t?"Normal":t+"%")}else m.push(h.charAt(0).toUpperCase()+h.slice(1));const u=m.length?m.join(" • "):"";return I`
+      <ha-card style="${l}" class="compact-card" @click=${()=>{this._haptic("selection"),this._expanded=!0}}>
         <div class="compact-header">
-          <button class="compact-icon-btn ${i?"on":""}" ?disabled=${d} @click=${e=>{e.stopPropagation(),this._togglePower(t)}}>
+          <button class="compact-icon-btn ${i?"on":""}" ?disabled=${p} @click=${e=>{e.stopPropagation(),this._togglePower(t)}}>
             <ha-icon icon="mdi:power"></ha-icon>
           </button>
           <div class="compact-title">${e}</div>
@@ -1123,18 +1126,21 @@ const ct={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:b},lt=(t=ct
         </div>
         
         <div class="compact-center">
-          <div class="compact-value">${l}</div>
+          <div class="compact-value">${d}</div>
         </div>
 
         <div class="compact-footer">
-          <button class="compact-action-btn" ?disabled=${!i||"fan_only"===n} @click=${t=>{t.stopPropagation(),this._adjustTemp(-1,s,r)}}>
+          <button class="compact-action-btn" ?disabled=${!i||"fan_only"===r} @click=${t=>{t.stopPropagation(),this._adjustTemp(-1,s,a)}}>
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
           <div class="compact-subtitle" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-            <div>Indoor ${null!=o?`${o}°`:"--"}</div>
-            ${m?I`<div style="font-size: 0.75rem; opacity: 0.7;">${m}</div>`:""}
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span>Indoor ${null!=o?`${o}°`:"--"}</span>
+              ${null!=n?I`<span style="opacity: 0.75;">Humidity ${n}%</span>`:""}
+            </div>
+            ${u?I`<div style="font-size: 0.75rem; opacity: 0.7;">${u}</div>`:""}
           </div>
-          <button class="compact-action-btn" ?disabled=${!i||"fan_only"===n} @click=${t=>{t.stopPropagation(),this._adjustTemp(1,s,a)}}>
+          <button class="compact-action-btn" ?disabled=${!i||"fan_only"===r} @click=${t=>{t.stopPropagation(),this._adjustTemp(1,s,c)}}>
             <ha-icon icon="mdi:plus"></ha-icon>
           </button>
         </div>
