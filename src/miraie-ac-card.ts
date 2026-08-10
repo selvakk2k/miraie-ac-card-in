@@ -81,8 +81,8 @@ export class MirAIeACCard extends LitElement {
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
-            { name: 'room_temp_sensor', selector: { entity: { domain: 'sensor' } } },
-            { name: 'humidity_sensor',  selector: { entity: { domain: 'sensor' } } },
+            { name: 'room_temp_sensor', selector: { entity: { domain: 'sensor', device_class: 'temperature' } } },
+            { name: 'humidity_sensor',  selector: { entity: { domain: 'sensor', device_class: 'humidity'    } } },
           ],
         },
         {
