@@ -17,6 +17,13 @@ export interface MirAIeCardConfig {
   coil_clean_button?: string;
   coil_cleaning_sensor?: string;
   filter_alert_sensor?: string;
+  // 2.0 Hybrid Architecture Controls & Diagnostics
+  hybrid_submode_switch?: string;
+  active_backend_switch?: string;
+  ir_blaster_sensor?: string;
+  cloud_mqtt_sensor?: string;
+  device_online_sensor?: string;
+  control_source_sensor?: string;
   // Diagnostics
   rssi_sensor?: string;
   energy_today_sensor?: string;

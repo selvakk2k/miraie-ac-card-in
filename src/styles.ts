@@ -7,20 +7,20 @@ export const styles = css`
   :host {
     --miraie-accent:        var(--primary-color, #f39c12);
 
-    /* Surfaces */
+    /* Surfaces - color-mix ensures deep contrast in both light & dark themes */
     --m-bg:                 var(--ha-card-background, var(--card-background-color, var(--lovelace-background)));
-    --m-surface:            var(--secondary-background-color, rgba(128,128,128,0.08));
-    --m-surface-hover:      color-mix(in srgb, var(--m-text) 8%, var(--m-surface));
-    --m-border:             var(--divider-color, rgba(128,128,128,0.14));
+    --m-surface:            color-mix(in srgb, var(--primary-text-color, #000) 10%, var(--ha-card-background, var(--card-background-color, #fff)));
+    --m-surface-hover:      color-mix(in srgb, var(--primary-text-color, #000) 18%, var(--m-surface));
+    --m-border:             color-mix(in srgb, var(--primary-text-color, #000) 24%, transparent);
 
     /* Text */
-    --m-text:               var(--primary-text-color);
-    --m-text-2:             var(--secondary-text-color);
+    --m-text:               var(--primary-text-color, #111111);
+    --m-text-2:             color-mix(in srgb, var(--primary-text-color, #000) 80%, transparent);
     --m-on-accent:          var(--text-primary-color, var(--m-bg));
 
     /* Active state */
-    --m-active-bg:          color-mix(in srgb, var(--miraie-accent) 15%, transparent);
-    --m-active-border:      color-mix(in srgb, var(--miraie-accent) 50%, transparent);
+    --m-active-bg:          color-mix(in srgb, var(--miraie-accent) 22%, var(--m-surface));
+    --m-active-border:      color-mix(in srgb, var(--miraie-accent) 75%, transparent);
   }
 
   /* ──────────────────────────────────────────────────────────
@@ -29,20 +29,19 @@ export const styles = css`
   :host([theme="material_you"]) {
     --miraie-accent:        var(--md-sys-color-primary, var(--primary-color, #f39c12));
 
-    /* Surfaces - using surface-variant or surface-container for better contrast against background */
     --m-bg:                 var(--md-sys-color-surface-variant, var(--md-sys-color-surface, var(--ha-card-background, var(--card-background-color, var(--lovelace-background)))));
-    --m-surface:            var(--md-sys-color-surface, var(--secondary-background-color, rgba(128,128,128,0.08)));
-    --m-surface-hover:      color-mix(in srgb, var(--md-sys-color-on-surface, var(--m-text)) 8%, var(--m-surface));
-    --m-border:             var(--md-sys-color-outline-variant, var(--md-sys-color-outline, var(--divider-color, rgba(128,128,128,0.14))));
+    --m-surface:            var(--md-sys-color-surface, color-mix(in srgb, var(--primary-text-color, #000) 10%, var(--ha-card-background, var(--card-background-color, #fff))));
+    --m-surface-hover:      color-mix(in srgb, var(--md-sys-color-on-surface, var(--m-text)) 18%, var(--m-surface));
+    --m-border:             var(--md-sys-color-outline-variant, var(--md-sys-color-outline, color-mix(in srgb, var(--primary-text-color, #000) 24%, transparent)));
 
     /* Text */
-    --m-text:               var(--md-sys-color-on-surface, var(--primary-text-color));
-    --m-text-2:             var(--md-sys-color-on-surface-variant, var(--secondary-text-color));
+    --m-text:               var(--md-sys-color-on-surface, var(--primary-text-color, #111111));
+    --m-text-2:             var(--md-sys-color-on-surface-variant, color-mix(in srgb, var(--primary-text-color, #000) 80%, transparent));
     --m-on-accent:          var(--md-sys-color-on-primary, var(--text-primary-color, var(--m-bg)));
 
     /* Active state */
-    --m-active-bg:          var(--md-sys-color-secondary-container, color-mix(in srgb, var(--miraie-accent) 15%, transparent));
-    --m-active-border:      var(--md-sys-color-secondary, color-mix(in srgb, var(--miraie-accent) 50%, transparent));
+    --m-active-bg:          var(--md-sys-color-secondary-container, color-mix(in srgb, var(--miraie-accent) 22%, var(--m-surface)));
+    --m-active-border:      var(--md-sys-color-secondary, color-mix(in srgb, var(--miraie-accent) 75%, transparent));
   }
 
   ha-card {
@@ -59,60 +58,67 @@ export const styles = css`
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 18px;
   }
-  .header-left { display: flex; flex-direction: column; gap: 3px; }
-  .title-row   { display: flex; align-items: center; gap: 7px; }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .title-row   { display: flex; align-items: center; gap: 8px; }
 
   .status-dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: var(--m-text-2); flex-shrink: 0;
+    background: var(--disabled-color, #e74c3c); flex-shrink: 0;
+    transition: background 0.3s;
   }
-  .status-dot.online { background: var(--success-color, #2ecc71); }
+  .status-dot.online { background: #2ecc71; }
 
-  .title   { font-size: 1.05rem; font-weight: 700; }
-  .subtitle { font-size: 0.78rem; color: var(--m-text-2); padding-left: 15px; }
+  .title   { font-size: 1.15rem; font-weight: 700; color: var(--m-text); line-height: 1.2; }
+  .subtitle { font-size: 0.8rem; font-weight: 600; color: var(--m-text-2); }
 
   .power-btn {
-    width: 46px; height: 46px; border-radius: 50%; border: none;
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--m-border);
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    background: var(--m-surface); color: var(--m-text-2);
-    transition: all 0.2s; --mdc-icon-size: 22px;
+    background: var(--m-surface); color: var(--m-text);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); --mdc-icon-size: 22px;
   }
-  .power-btn:hover:not(:disabled) { background: var(--m-surface-hover); }
-  .power-btn.on { background: var(--miraie-accent); color: var(--m-on-accent); }
-  .power-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .power-btn:hover:not(:disabled):not(.disabled) { background: var(--m-surface-hover); }
+  .power-btn.on { 
+    background: var(--miraie-accent);
+    border-color: var(--miraie-accent);
+    color: var(--m-on-accent);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--miraie-accent) 40%, transparent);
+  }
+  .power-btn:disabled, .power-btn.disabled { opacity: 0.55; cursor: not-allowed; }
 
   /* ── Temperature block ── */
   .temp-block {
-    background: var(--m-surface); border-radius: 16px;
-    padding: 14px 20px;
+    background: var(--m-surface); border: 1.5px solid var(--m-border);
+    border-radius: 16px;
+    padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
   .temp-btn {
-    width: 38px; height: 38px; border-radius: 50%; border: none;
-    background: transparent; color: var(--m-text-2); cursor: pointer;
+    width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--m-border);
+    background: var(--m-bg); color: var(--m-text); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s; --mdc-icon-size: 20px;
+    transition: all 0.18s; --mdc-icon-size: 20px;
   }
-  .temp-btn:hover:not(:disabled) { background: var(--m-surface-hover); }
-  .temp-btn:disabled { opacity: 0.25; cursor: not-allowed; }
-  .temp-center { text-align: center; flex: 1; }
-  .temp-value  { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
+  .temp-btn:hover:not(:disabled):not(.disabled) { background: var(--m-surface-hover); }
+  .temp-btn:disabled, .temp-btn.disabled { opacity: 0.55; cursor: not-allowed; }
+  .temp-center { text-align: center; }
+  .temp-value  { font-size: 2rem; font-weight: 800; letter-spacing: -1px; color: var(--m-text); }
   .temp-meta {
     display: flex; align-items: center; justify-content: center;
     gap: 16px; margin-top: 8px;
   }
   .temp-meta-item {
     display: flex; align-items: center; gap: 6px;
-    font-size: 0.95rem; font-weight: 500; color: var(--m-text);
+    font-size: 0.95rem; font-weight: 600; color: var(--m-text);
   }
   .temp-meta-item ha-icon { --mdc-icon-size: 16px; color: var(--m-text-2); }
 
   /* ── Generic section ── */
   .section { margin-bottom: 22px; }
   .section-title {
-    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--m-text-2); margin-bottom: 8px;
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
 
   /* ── Pills ── */
@@ -120,18 +126,33 @@ export const styles = css`
   .pill {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 16px; border-radius: 24px;
-    border: 1px solid var(--m-border);
-    background: var(--m-surface); color: var(--m-text-2);
-    font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+    border: 1.5px solid var(--m-border);
+    background: var(--m-surface); color: var(--m-text);
+    font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap;
     transition: all 0.18s; --mdc-icon-size: 15px;
   }
-  .pill:hover:not(:disabled) { background: var(--m-surface-hover); }
+  .pill:hover:not(:disabled):not(.disabled) { background: var(--m-surface-hover); }
   .pill.active {
     background: var(--m-active-bg);
     border-color: var(--m-active-border);
-    color: var(--miraie-accent);
+    color: color-mix(in srgb, var(--miraie-accent) 85%, #000);
+    font-weight: 800;
   }
-  .pill:disabled { opacity: 0.28; cursor: not-allowed; }
+  .pill:disabled, .pill.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    color: color-mix(in srgb, var(--m-text) 65%, transparent);
+    background: color-mix(in srgb, var(--primary-text-color, #000) 4%, var(--m-surface));
+    border-color: color-mix(in srgb, var(--primary-text-color, #000) 14%, transparent);
+  }
+  .pill.active:disabled, .pill.active.disabled,
+  .gh-chip.active[style*="not-allowed"] {
+    opacity: 0.8;
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--miraie-accent) 18%, var(--m-surface));
+    border-color: color-mix(in srgb, var(--miraie-accent) 55%, transparent);
+    color: color-mix(in srgb, var(--miraie-accent) 85%, #000);
+  }
 
   @media (max-width: 450px) {
     .pills { gap: 6px; }
@@ -223,7 +244,7 @@ export const styles = css`
     overflow: hidden;
   }
   .toggle-card:hover:not(.disabled) { background: var(--m-surface-hover); }
-  .toggle-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+  .toggle-card.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
   .toggle-card ha-switch { pointer-events: none; }
   .toggle-left { display: flex; align-items: center; gap: 9px; }
   .toggle-icon {
@@ -593,6 +614,10 @@ export const styles = css`
   }
   .gh-chip.active {
     color: var(--miraie-accent);
+  }
+  .gh-chip.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
   .gh-chip-text {
     display: flex;
