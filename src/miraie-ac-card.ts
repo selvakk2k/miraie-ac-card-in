@@ -540,7 +540,7 @@ export class MirAIeACCard extends LitElement {
               ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
                 <div class="pill" style="cursor: default; opacity: 0.85;" title="Last control origin">
                   <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
-                  Via: ${controlSource.state.toUpperCase()}
+                  Via: ${this._sourceLabel(controlSource.state)}
                 </div>
               ` : ''}
             </div>
@@ -1018,6 +1018,13 @@ export class MirAIeACCard extends LitElement {
     return map[p] ?? 'mdi:play-circle-outline';
   }
 
+  private _sourceLabel(s: string): string {
+    const lower = (s || '').toLowerCase();
+    if (lower === 'ir') return 'IR';
+    if (lower === 'cloud') return 'Cloud';
+    return (s || '').charAt(0).toUpperCase() + (s || '').slice(1).toLowerCase();
+  }
+
   private _renderGoogleHomeFull(
     stateObj: any, name: string, isOn: boolean,
     targetTemp: number, currentTemp: number, humidVal: any,
@@ -1490,7 +1497,7 @@ export class MirAIeACCard extends LitElement {
             ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
               <div class="gh-chip" style="cursor: default; opacity: 0.85;" title="Last control origin">
                 <ha-icon icon="${controlSource.state.toLowerCase().includes('ir') ? 'mdi:remote' : 'mdi:cloud-check'}"></ha-icon>
-                <span>Via: ${controlSource.state}</span>
+                <span>Via: ${this._sourceLabel(controlSource.state)}</span>
               </div>
             ` : ''}
           </div>
