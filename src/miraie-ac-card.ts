@@ -225,11 +225,13 @@ export class MirAIeACCard extends LitElement {
     const targetTemp   = a.temperature;
     const minTemp      = a.min_temp ?? 16;
     const maxTemp      = a.max_temp ?? 30;
+    const presetMode   = a.preset_mode;
+    const effectiveMin = presetMode === 'eco' ? 16 : minTemp;
+    const effectiveMax = presetMode === 'eco' ? 30 : maxTemp;
     const hvacMode     = stateObj.state;
     const fanMode      = a.fan_mode;
     const swingV       = a.swing_mode;
     const swingH       = a.swing_horizontal_mode;
-    const presetMode   = a.preset_mode;
 
     /* Room temperature: external sensor overrides AC built-in */
     const roomSensor   = cfg.room_temp_sensor ? this.hass.states[cfg.room_temp_sensor] : undefined;
@@ -421,8 +423,8 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Temperature ── -->
         <div class="temp-block">
           <button
-            class="temp-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(minTemp)) || isCleaning ? 'disabled' : ''}"
-            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) <= Number(minTemp) ? `Minimum temperature reached (${minTemp}°)` : 'Decrease Temperature')))}"
+            class="temp-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(effectiveMin)) || isCleaning ? 'disabled' : ''}"
+            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) <= Number(effectiveMin) ? `Minimum temperature reached (${effectiveMin}°)` : 'Decrease Temperature')))}"
             @click=${() => {
               if (isCleaning) {
                 this._showToast('Temperature cannot be adjusted while coil cleaning is active');
@@ -430,10 +432,10 @@ export class MirAIeACCard extends LitElement {
                 this._showToast('Turn on the AC to adjust temperature');
               } else if (hvacMode === 'fan_only') {
                 this._showToast('Temperature cannot be adjusted in Fan Only mode');
-              } else if (targetTemp != null && Number(targetTemp) <= Number(minTemp)) {
-                this._showToast(`Minimum temperature reached (${minTemp}°)`);
+              } else if (targetTemp != null && Number(targetTemp) <= Number(effectiveMin)) {
+                this._showToast(`Minimum temperature reached (${effectiveMin}°)`);
               } else {
-                this._adjustTemp(-1, targetTemp, minTemp);
+                this._adjustTemp(-1, targetTemp, effectiveMin);
               }
             }}
           >
@@ -459,8 +461,8 @@ export class MirAIeACCard extends LitElement {
           </div>
 
           <button
-            class="temp-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(maxTemp)) || isCleaning ? 'disabled' : ''}"
-            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) >= Number(maxTemp) ? `Maximum temperature reached (${maxTemp}°)` : 'Increase Temperature')))}"
+            class="temp-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(effectiveMax)) || isCleaning ? 'disabled' : ''}"
+            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) >= Number(effectiveMax) ? `Maximum temperature reached (${effectiveMax}°)` : 'Increase Temperature')))}"
             @click=${() => {
               if (isCleaning) {
                 this._showToast('Temperature cannot be adjusted while coil cleaning is active');
@@ -468,10 +470,10 @@ export class MirAIeACCard extends LitElement {
                 this._showToast('Turn on the AC to adjust temperature');
               } else if (hvacMode === 'fan_only') {
                 this._showToast('Temperature cannot be adjusted in Fan Only mode');
-              } else if (targetTemp != null && Number(targetTemp) >= Number(maxTemp)) {
-                this._showToast(`Maximum temperature reached (${maxTemp}°)`);
+              } else if (targetTemp != null && Number(targetTemp) >= Number(effectiveMax)) {
+                this._showToast(`Maximum temperature reached (${effectiveMax}°)`);
               } else {
-                this._adjustTemp(1, targetTemp, maxTemp);
+                this._adjustTemp(1, targetTemp, effectiveMax);
               }
             }}
           >
@@ -610,7 +612,7 @@ export class MirAIeACCard extends LitElement {
                 }}
               >
                 <ha-icon icon="mdi:arrow-up-down"></ha-icon>
-                Swing V: ${swingV}
+                V-Swing: ${swingV}
               </button>
             ` : ''}
 
@@ -629,7 +631,7 @@ export class MirAIeACCard extends LitElement {
                 }}
               >
                 <ha-icon icon="mdi:arrow-left-right"></ha-icon>
-                Swing H: ${swingH}
+                H-Swing: ${swingH}
               </button>
             ` : ''}
           </div>
@@ -673,11 +675,11 @@ export class MirAIeACCard extends LitElement {
           <div class="section-title">Comfort Presets</div>
           <div class="pills">
             ${['none', 'eco', 'boost'].map(p => {
-              const isBlocked = !isOn || (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none') || isCleaning;
+              const isBlocked = !isOn || (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none') || isCleaning || (curCvIdx > 0 && p !== 'none');
               return html`
                 <button
                   class="pill ${presetMode === p ? 'active' : ''} ${isBlocked ? 'disabled' : ''}"
-                  title="${isCleaning ? 'Presets cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to select presets' : (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none' ? `Presets are not available in ${this._modeLabel(hvacMode)} mode` : (p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1))))}"
+                  title="${isCleaning ? 'Presets cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to select presets' : (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none' ? `Presets are not available in ${this._modeLabel(hvacMode)} mode` : (curCvIdx > 0 && p !== 'none' ? 'Presets cannot be changed while capacity limit is active' : (p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)))))}"
                   @click=${() => {
                     if (isCleaning) {
                       this._showToast('Presets cannot be changed while coil cleaning is active');
@@ -685,6 +687,8 @@ export class MirAIeACCard extends LitElement {
                       this._showToast('Turn on the AC to select presets');
                     } else if (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none') {
                       this._showToast(`Presets are not available in ${this._modeLabel(hvacMode)} mode`);
+                    } else if (curCvIdx > 0 && p !== 'none') {
+                      this._showToast('Presets cannot be changed while capacity limit is active');
                     } else {
                       this._setPreset(p);
                     }
@@ -717,7 +721,8 @@ export class MirAIeACCard extends LitElement {
                 </div>
                 <div class="step-notches">
                   ${allCvSteps.map((opt, i) => {
-                    const isCvBlocked = !isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) || isCleaning;
+                    const isPresetActive = ['eco', 'boost', 'powerful'].includes(presetMode);
+                    const isCvBlocked = !isOn || ['dry', 'auto', 'fan_only'].includes(hvacMode) || isCleaning || (isPresetActive && i > 0);
                     return html`
                       <div class="notch-wrapper">
                         <button
@@ -725,7 +730,7 @@ export class MirAIeACCard extends LitElement {
                             ${i < curCvIdx  ? 'filled'  : ''}
                             ${i === curCvIdx ? 'current' : ''}
                             ${isCvBlocked ? 'disabled' : ''}"
-                          title="${isCleaning ? 'Capacity limit cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to set capacity limits' : (['dry', 'auto', 'fan_only'].includes(hvacMode) ? `Capacity limit is not available in ${this._modeLabel(hvacMode)} mode` : (i === 0 ? 'Normal' : `${parseCv(opt)}%`)))}"
+                          title="${isCleaning ? 'Capacity limit cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to set capacity limits' : (['dry', 'auto', 'fan_only'].includes(hvacMode) ? `Capacity limit is not available in ${this._modeLabel(hvacMode)} mode` : (isPresetActive && i > 0 ? `Capacity limit cannot be changed while ${this._presetLabel(presetMode)} mode is active` : (i === 0 ? 'Normal' : `${parseCv(opt)}%`))))}"
                           @click=${() => {
                             if (isCleaning) {
                               this._showToast('Capacity limit cannot be changed while coil cleaning is active');
@@ -733,6 +738,8 @@ export class MirAIeACCard extends LitElement {
                               this._showToast('Turn on the AC to set capacity limits');
                             } else if (['dry', 'auto', 'fan_only'].includes(hvacMode)) {
                               this._showToast(`Capacity limit is not available in ${this._modeLabel(hvacMode)} mode`);
+                            } else if (isPresetActive && i > 0) {
+                              this._showToast(`Capacity limit cannot be changed while ${this._presetLabel(presetMode)} mode is active`);
                             } else {
                               this._setPreset(opt);
                             }
@@ -1042,6 +1049,9 @@ export class MirAIeACCard extends LitElement {
     const swingHModes  = a.swing_horizontal_modes || [];
     
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
+    const presetMode   = a.preset_mode;
+    const effectiveMin = presetMode === 'eco' ? 16 : minTemp;
+    const effectiveMax = presetMode === 'eco' ? 30 : maxTemp;
     const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
     const subValue = currentTemp != null ? `Indoor ${currentTemp}°` : '';
 
@@ -1117,7 +1127,6 @@ export class MirAIeACCard extends LitElement {
       'cloud_mqtt'
     ]);
 
-    const presetMode = a.preset_mode;
     let activeStrs: string[] = [];
     if (isOn) {
       activeStrs.push(this._modeLabel(hvacMode));
@@ -1183,8 +1192,8 @@ export class MirAIeACCard extends LitElement {
 
         <div class="gh-action-row">
           <button
-            class="gh-circular-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(minTemp)) || isCleaning ? 'disabled' : ''}"
-            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) <= Number(minTemp) ? `Minimum temperature reached (${minTemp}°)` : 'Decrease Temperature')))}"
+            class="gh-circular-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) <= Number(effectiveMin)) || isCleaning ? 'disabled' : ''}"
+            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) <= Number(effectiveMin) ? `Minimum temperature reached (${effectiveMin}°)` : 'Decrease Temperature')))}"
             @click=${(e: Event) => {
               e.stopPropagation();
               if (isCleaning) {
@@ -1193,11 +1202,11 @@ export class MirAIeACCard extends LitElement {
                 this._showToast('Turn on the AC to adjust temperature');
               } else if (hvacMode === 'fan_only') {
                 this._showToast('Temperature cannot be adjusted in Fan Only mode');
-              } else if (targetTemp != null && Number(targetTemp) <= Number(minTemp)) {
-                this._showToast(`Minimum temperature reached (${minTemp}°)`);
+              } else if (targetTemp != null && Number(targetTemp) <= Number(effectiveMin)) {
+                this._showToast(`Minimum temperature reached (${effectiveMin}°)`);
               } else {
                 const step = Number(a.target_temp_step ?? 1);
-                this._adjustTemp(-step, targetTemp, minTemp);
+                this._adjustTemp(-step, targetTemp, effectiveMin);
               }
             }}
           >
@@ -1205,8 +1214,8 @@ export class MirAIeACCard extends LitElement {
           </button>
           <div style="width: 48px;"></div>
           <button
-            class="gh-circular-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(maxTemp)) || isCleaning ? 'disabled' : ''}"
-            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) >= Number(maxTemp) ? `Maximum temperature reached (${maxTemp}°)` : 'Increase Temperature')))}"
+            class="gh-circular-btn ${!isOn || hvacMode === 'fan_only' || (targetTemp != null && Number(targetTemp) >= Number(effectiveMax)) || isCleaning ? 'disabled' : ''}"
+            title="${isCleaning ? 'Temperature cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust temperature' : (hvacMode === 'fan_only' ? 'Temperature cannot be adjusted in Fan Only mode' : (targetTemp != null && Number(targetTemp) >= Number(effectiveMax) ? `Maximum temperature reached (${effectiveMax}°)` : 'Increase Temperature')))}"
             @click=${(e: Event) => {
               e.stopPropagation();
               if (isCleaning) {
@@ -1215,11 +1224,11 @@ export class MirAIeACCard extends LitElement {
                 this._showToast('Turn on the AC to adjust temperature');
               } else if (hvacMode === 'fan_only') {
                 this._showToast('Temperature cannot be adjusted in Fan Only mode');
-              } else if (targetTemp != null && Number(targetTemp) >= Number(maxTemp)) {
-                this._showToast(`Maximum temperature reached (${maxTemp}°)`);
+              } else if (targetTemp != null && Number(targetTemp) >= Number(effectiveMax)) {
+                this._showToast(`Maximum temperature reached (${effectiveMax}°)`);
               } else {
                 const step = Number(a.target_temp_step ?? 1);
-                this._adjustTemp(step, targetTemp, maxTemp);
+                this._adjustTemp(step, targetTemp, effectiveMax);
               }
             }}
           >
@@ -1369,7 +1378,7 @@ export class MirAIeACCard extends LitElement {
                   this._ghDropdown = this._ghDropdown === 'swing_v' ? null : 'swing_v';
                 }
               }}>
-                <span>Swing V: ${swingV ? (swingV.charAt(0).toUpperCase() + swingV.slice(1)) : 'Auto'}</span>
+                <span>V-Swing: ${swingV ? (swingV.charAt(0).toUpperCase() + swingV.slice(1)) : 'Auto'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${this._ghDropdown === 'swing_v' ? html`
@@ -1399,7 +1408,7 @@ export class MirAIeACCard extends LitElement {
                   this._ghDropdown = this._ghDropdown === 'swing_h' ? null : 'swing_h';
                 }
               }}>
-                <span>Swing H: ${swingH ? (swingH.charAt(0).toUpperCase() + swingH.slice(1)) : 'Auto'}</span>
+                <span>H-Swing: ${swingH ? (swingH.charAt(0).toUpperCase() + swingH.slice(1)) : 'Auto'}</span>
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
               ${this._ghDropdown === 'swing_h' ? html`
