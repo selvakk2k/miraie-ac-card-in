@@ -535,7 +535,7 @@ export class MirAIeACCard extends LitElement {
                   }}
                 >
                   <ha-icon icon="${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'mdi:refresh-auto' : 'mdi:hand-back-right'}"></ha-icon>
-                  Mode: ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
+                  ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
                 </button>
               ` : ''}
 
@@ -1499,7 +1499,7 @@ export class MirAIeACCard extends LitElement {
                 }}
               >
                 <ha-icon icon="${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'mdi:refresh-auto' : 'mdi:hand-back-right'}"></ha-icon>
-                Mode: ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
+                ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
               </div>
             ` : ''}
 
