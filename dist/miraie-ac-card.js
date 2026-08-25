@@ -152,22 +152,31 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
 
   /* ── Generic section ── */
   .section { margin-bottom: 22px; }
-  .section-title-row {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px;
-  }
   .section-title {
     font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
     letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 8px; border-radius: 6px;
-    background: var(--m-surface); border: 1px solid var(--m-border);
-    font-size: 0.72rem; font-weight: 700; color: var(--m-text-2);
-    --mdc-icon-size: 13px;
+
+  /* ── Connection Controls & Status ── */
+  .connection-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .status-badge ha-icon { color: var(--miraie-accent); }
+  .connection-switches {
+    flex: 1;
+  }
+  .connection-status-pill {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 12px; border-radius: 12px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    color: var(--m-text-2); font-size: 0.78rem; font-weight: 700;
+    white-space: nowrap; cursor: default; pointer-events: none; user-select: none;
+    --mdc-icon-size: 15px;
+  }
+  .connection-status-pill ha-icon {
+    color: var(--miraie-accent);
+  }
 
   /* ── 2.0 Transport Status Strip ── */
   .transport-strip {
@@ -307,6 +316,8 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
   }
 
   @media (max-width: 450px) {
+    .connection-status-pill { padding: 8px 8px; font-size: 0.72rem; gap: 4px; border-radius: 10px; }
+    .connection-status-pill ha-icon { --mdc-icon-size: 13px; }
     .transport-item { padding: 7px 4px; font-size: 0.72rem; gap: 3px; }
     .transport-item ha-icon { --mdc-icon-size: 13px; }
     .segmented-item { padding: 8px 4px; font-size: 0.76rem; gap: 4px; }
@@ -886,38 +897,39 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         <!-- ── Connection / Transport Controls ── -->
         ${z||E?I`
           <div class="section">
-            <div class="section-title-row">
-              <div class="section-title" style="margin-bottom: 0;">Connection</div>
+            <div class="section-title">Connection</div>
+            <div class="connection-row">
+              <div class="segmented-bar connection-switches">
+                ${z?I`
+                  ${(()=>{const e="cloud"===z.state||"on"===z.state,t=E&&("auto"===E.state||"on"===E.state);return I`
+                      <button
+                        class="segmented-item ${t?"":"active"} ${t||S?"disabled":""}"
+                        title="${t?"Backend transport is managed automatically in Auto Failover mode":S?"Backend cannot be switched while coil cleaning is active":"Click to toggle primary transport backend"}"
+                        @click=${()=>{t?this._showToast("Backend transport is managed automatically in Auto Failover mode"):S?this._showToast("Backend cannot be switched while coil cleaning is active"):this._toggleSwitch(z.entity_id,z.state)}}
+                      >
+                        <ha-icon icon="${e?"mdi:cloud-sync":"mdi:remote"}"></ha-icon>
+                        ${e?"Backend: Cloud":"Backend: IR"}
+                      </button>
+                    `})()}
+                `:""}
+
+                ${E?I`
+                  <button
+                    class="segmented-item ${"auto"===E.state||"on"===E.state?"active":""} ${S?"disabled":""}"
+                    title="${S?"Hybrid mode cannot be toggled while coil cleaning is active":"Click to toggle between Auto Failover and Manual backend"}"
+                    @click=${()=>{S?this._showToast("Hybrid mode cannot be toggled while coil cleaning is active"):this._toggleSwitch(E.entity_id,E.state)}}
+                  >
+                    <ha-icon icon="${"auto"===E.state||"on"===E.state?"mdi:refresh-auto":"mdi:hand-back-right"}"></ha-icon>
+                    ${"auto"===E.state||"on"===E.state?"Auto Failover":"Manual"}
+                  </button>
+                `:""}
+              </div>
+
               ${M&&M.state&&"unknown"!==M.state&&"unavailable"!==M.state?I`
-                <div class="status-badge" title="Last command origin">
+                <div class="connection-status-pill" title="Last command execution origin (telemetry)">
                   <ha-icon icon="${"cloud"===M.state?"mdi:cloud-outline":"ir"===M.state?"mdi:remote":"mdi:information-outline"}"></ha-icon>
                   <span>Via: ${this._sourceLabel(M.state)}</span>
                 </div>
-              `:""}
-            </div>
-            <div class="segmented-bar">
-              ${z?I`
-                ${(()=>{const e="cloud"===z.state||"on"===z.state,t=E&&("auto"===E.state||"on"===E.state);return I`
-                    <button
-                      class="segmented-item ${t?"":"active"} ${t||S?"disabled":""}"
-                      title="${t?"Backend transport is managed automatically in Auto Failover mode":S?"Backend cannot be switched while coil cleaning is active":"Click to toggle primary transport backend"}"
-                      @click=${()=>{t?this._showToast("Backend transport is managed automatically in Auto Failover mode"):S?this._showToast("Backend cannot be switched while coil cleaning is active"):this._toggleSwitch(z.entity_id,z.state)}}
-                    >
-                      <ha-icon icon="${e?"mdi:cloud-sync":"mdi:remote"}"></ha-icon>
-                      Backend: ${e?"Cloud":"IR"}
-                    </button>
-                  `})()}
-              `:""}
-
-              ${E?I`
-                <button
-                  class="segmented-item ${"auto"===E.state||"on"===E.state?"active":""} ${S?"disabled":""}"
-                  title="${S?"Hybrid mode cannot be toggled while coil cleaning is active":"Click to toggle between Auto Failover and Manual backend"}"
-                  @click=${()=>{S?this._showToast("Hybrid mode cannot be toggled while coil cleaning is active"):this._toggleSwitch(E.entity_id,E.state)}}
-                >
-                  <ha-icon icon="${"auto"===E.state||"on"===E.state?"mdi:refresh-auto":"mdi:hand-back-right"}"></ha-icon>
-                  ${"auto"===E.state||"on"===E.state?"Auto Failover":"Manual"}
-                </button>
               `:""}
             </div>
           </div>
