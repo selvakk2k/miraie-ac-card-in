@@ -495,56 +495,57 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Connection / Transport Controls ── -->
         ${activeBackendSwitch || hybridSwitch ? html`
           <div class="section">
-            <div class="section-title-row">
-              <div class="section-title" style="margin-bottom: 0;">Connection</div>
+            <div class="section-title">Connection</div>
+            <div class="connection-row">
+              <div class="segmented-bar connection-switches">
+                ${activeBackendSwitch ? html`
+                  ${(() => {
+                    const isCloud = activeBackendSwitch.state === 'cloud' || activeBackendSwitch.state === 'on';
+                    const isAuto = hybridSwitch && (hybridSwitch.state === 'auto' || hybridSwitch.state === 'on');
+                    return html`
+                      <button
+                        class="segmented-item ${!isAuto ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
+                        title="${isAuto ? 'Backend transport is managed automatically in Auto Failover mode' : (isCleaning ? 'Backend cannot be switched while coil cleaning is active' : 'Click to toggle primary transport backend')}"
+                        @click=${() => {
+                          if (isAuto) {
+                            this._showToast('Backend transport is managed automatically in Auto Failover mode');
+                          } else if (isCleaning) {
+                            this._showToast('Backend cannot be switched while coil cleaning is active');
+                          } else {
+                            this._toggleSwitch(activeBackendSwitch.entity_id, activeBackendSwitch.state);
+                          }
+                        }}
+                      >
+                        <ha-icon icon="${isCloud ? 'mdi:cloud-sync' : 'mdi:remote'}"></ha-icon>
+                        ${isCloud ? 'Backend: Cloud' : 'Backend: IR'}
+                      </button>
+                    `;
+                  })()}
+                ` : ''}
+
+                ${hybridSwitch ? html`
+                  <button
+                    class="segmented-item ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
+                    title="${isCleaning ? 'Hybrid mode cannot be toggled while coil cleaning is active' : 'Click to toggle between Auto Failover and Manual backend'}"
+                    @click=${() => {
+                      if (isCleaning) {
+                        this._showToast('Hybrid mode cannot be toggled while coil cleaning is active');
+                      } else {
+                        this._toggleSwitch(hybridSwitch.entity_id, hybridSwitch.state);
+                      }
+                    }}
+                  >
+                    <ha-icon icon="${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'mdi:refresh-auto' : 'mdi:hand-back-right'}"></ha-icon>
+                    ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
+                  </button>
+                ` : ''}
+              </div>
+
               ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
-                <div class="status-badge" title="Last command origin">
+                <div class="connection-status-pill" title="Last command execution origin (telemetry)">
                   <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
                   <span>Via: ${this._sourceLabel(controlSource.state)}</span>
                 </div>
-              ` : ''}
-            </div>
-            <div class="segmented-bar">
-              ${activeBackendSwitch ? html`
-                ${(() => {
-                  const isCloud = activeBackendSwitch.state === 'cloud' || activeBackendSwitch.state === 'on';
-                  const isAuto = hybridSwitch && (hybridSwitch.state === 'auto' || hybridSwitch.state === 'on');
-                  return html`
-                    <button
-                      class="segmented-item ${!isAuto ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
-                      title="${isAuto ? 'Backend transport is managed automatically in Auto Failover mode' : (isCleaning ? 'Backend cannot be switched while coil cleaning is active' : 'Click to toggle primary transport backend')}"
-                      @click=${() => {
-                        if (isAuto) {
-                          this._showToast('Backend transport is managed automatically in Auto Failover mode');
-                        } else if (isCleaning) {
-                          this._showToast('Backend cannot be switched while coil cleaning is active');
-                        } else {
-                          this._toggleSwitch(activeBackendSwitch.entity_id, activeBackendSwitch.state);
-                        }
-                      }}
-                    >
-                      <ha-icon icon="${isCloud ? 'mdi:cloud-sync' : 'mdi:remote'}"></ha-icon>
-                      Backend: ${isCloud ? 'Cloud' : 'IR'}
-                    </button>
-                  `;
-                })()}
-              ` : ''}
-
-              ${hybridSwitch ? html`
-                <button
-                  class="segmented-item ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
-                  title="${isCleaning ? 'Hybrid mode cannot be toggled while coil cleaning is active' : 'Click to toggle between Auto Failover and Manual backend'}"
-                  @click=${() => {
-                    if (isCleaning) {
-                      this._showToast('Hybrid mode cannot be toggled while coil cleaning is active');
-                    } else {
-                      this._toggleSwitch(hybridSwitch.entity_id, hybridSwitch.state);
-                    }
-                  }}
-                >
-                  <ha-icon icon="${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'mdi:refresh-auto' : 'mdi:hand-back-right'}"></ha-icon>
-                  ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
-                </button>
               ` : ''}
             </div>
           </div>

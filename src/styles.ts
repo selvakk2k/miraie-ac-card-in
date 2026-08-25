@@ -116,22 +116,31 @@ export const styles = css`
 
   /* ── Generic section ── */
   .section { margin-bottom: 22px; }
-  .section-title-row {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px;
-  }
   .section-title {
     font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
     letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 8px; border-radius: 6px;
-    background: var(--m-surface); border: 1px solid var(--m-border);
-    font-size: 0.72rem; font-weight: 700; color: var(--m-text-2);
-    --mdc-icon-size: 13px;
+
+  /* ── Connection Controls & Status ── */
+  .connection-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .status-badge ha-icon { color: var(--miraie-accent); }
+  .connection-switches {
+    flex: 1;
+  }
+  .connection-status-pill {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 12px; border-radius: 12px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    color: var(--m-text-2); font-size: 0.78rem; font-weight: 700;
+    white-space: nowrap; cursor: default; pointer-events: none; user-select: none;
+    --mdc-icon-size: 15px;
+  }
+  .connection-status-pill ha-icon {
+    color: var(--miraie-accent);
+  }
 
   /* ── 2.0 Transport Status Strip ── */
   .transport-strip {
@@ -271,6 +280,8 @@ export const styles = css`
   }
 
   @media (max-width: 450px) {
+    .connection-status-pill { padding: 8px 8px; font-size: 0.72rem; gap: 4px; border-radius: 10px; }
+    .connection-status-pill ha-icon { --mdc-icon-size: 13px; }
     .transport-item { padding: 7px 4px; font-size: 0.72rem; gap: 3px; }
     .transport-item ha-icon { --mdc-icon-size: 13px; }
     .segmented-item { padding: 8px 4px; font-size: 0.76rem; gap: 4px; }
