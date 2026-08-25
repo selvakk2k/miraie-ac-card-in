@@ -612,7 +612,7 @@ export class MirAIeACCard extends LitElement {
                 }}
               >
                 <ha-icon icon="mdi:arrow-up-down"></ha-icon>
-                V-Swing: ${swingV}
+                V-Swing: ${swingV === 'Auto Swing' ? 'Auto' : swingV}
               </button>
             ` : ''}
 
@@ -631,7 +631,7 @@ export class MirAIeACCard extends LitElement {
                 }}
               >
                 <ha-icon icon="mdi:arrow-left-right"></ha-icon>
-                H-Swing: ${swingH}
+                H-Swing: ${swingH === 'Auto Swing' ? 'Auto' : swingH}
               </button>
             ` : ''}
           </div>
