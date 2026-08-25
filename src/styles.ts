@@ -121,6 +121,102 @@ export const styles = css`
     letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
 
+  /* ── 2.0 Transport Status Strip ── */
+  .transport-strip {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: 12px; padding: 4px; gap: 4px;
+  }
+  .transport-item {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 6px; border-radius: 8px; border: none; background: transparent;
+    color: var(--m-text); font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    transition: all 0.18s ease; --mdc-icon-size: 15px;
+  }
+  .transport-item:hover:not(:disabled):not(.disabled) {
+    background: var(--m-surface-hover);
+  }
+  .transport-item.active {
+    background: var(--m-active-bg);
+    color: color-mix(in srgb, var(--miraie-accent) 85%, #000);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--miraie-accent) 25%, transparent);
+  }
+  .transport-item:disabled, .transport-item.disabled {
+    opacity: 0.5; cursor: not-allowed;
+  }
+
+  /* ── Segmented Control Bar (Modes & Presets) ── */
+  .segmented-bar {
+    display: flex; align-items: center;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: 12px; padding: 4px; gap: 4px;
+  }
+  .segmented-item {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 8px; border-radius: 8px; border: none; background: transparent;
+    color: var(--m-text-2); font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    transition: all 0.2s ease; --mdc-icon-size: 16px;
+  }
+  .segmented-item:hover:not(:disabled):not(.disabled) {
+    background: var(--m-surface-hover); color: var(--m-text);
+  }
+  .segmented-item.active {
+    background: var(--miraie-accent);
+    color: #000; font-weight: 800;
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--miraie-accent) 45%, transparent);
+  }
+  .segmented-item:disabled, .segmented-item.disabled {
+    opacity: 0.45; cursor: not-allowed;
+  }
+
+  /* ── Fan & Swing Setting Tiles ── */
+  .setting-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+    gap: 8px;
+  }
+  .setting-tile {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between;
+    padding: 10px 12px; border-radius: 12px;
+    border: 1px solid var(--m-border); background: var(--m-surface);
+    cursor: pointer; transition: all 0.18s ease; text-align: left; min-width: 0;
+  }
+  .setting-tile:hover:not(:disabled):not(.disabled) {
+    background: var(--m-surface-hover);
+    border-color: color-mix(in srgb, var(--miraie-accent) 40%, var(--m-border));
+  }
+  .setting-tile.active {
+    background: var(--m-active-bg);
+    border-color: var(--m-active-border);
+  }
+  .setting-tile:disabled, .setting-tile.disabled {
+    opacity: 0.5; cursor: not-allowed;
+  }
+  .setting-tile-label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--m-text-2);
+  }
+  .setting-tile-label ha-icon { --mdc-icon-size: 13px; color: var(--m-text-2); }
+  .setting-tile-value-row {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    margin-top: 6px;
+  }
+  .setting-tile-value {
+    font-size: 0.92rem; font-weight: 800; color: var(--m-text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .setting-tile-chevron {
+    --mdc-icon-size: 14px; color: var(--m-text-2);
+    transition: transform 0.2s ease; flex-shrink: 0;
+  }
+  .setting-tile.active .setting-tile-chevron {
+    transform: rotate(180deg);
+    color: var(--miraie-accent);
+  }
+
   /* ── Action Buttons / Pills ── */
   .pills {
     display: grid;
@@ -163,6 +259,12 @@ export const styles = css`
   }
 
   @media (max-width: 450px) {
+    .transport-item { padding: 7px 4px; font-size: 0.72rem; gap: 3px; }
+    .transport-item ha-icon { --mdc-icon-size: 13px; }
+    .segmented-item { padding: 8px 4px; font-size: 0.76rem; gap: 4px; }
+    .segmented-item ha-icon { --mdc-icon-size: 14px; }
+    .setting-tile { padding: 8px 10px; }
+    .setting-tile-value { font-size: 0.85rem; }
     .pills {
       gap: 6px;
       grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
