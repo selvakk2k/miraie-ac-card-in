@@ -116,10 +116,22 @@ export const styles = css`
 
   /* ── Generic section ── */
   .section { margin-bottom: 22px; }
+  .section-title-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
   .section-title {
     font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
     letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px; border-radius: 6px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    font-size: 0.72rem; font-weight: 700; color: var(--m-text-2);
+    --mdc-icon-size: 13px;
+  }
+  .status-badge ha-icon { color: var(--miraie-accent); }
 
   /* ── 2.0 Transport Status Strip ── */
   .transport-strip {
@@ -138,9 +150,9 @@ export const styles = css`
     background: var(--m-surface-hover);
   }
   .transport-item.active {
-    background: var(--m-active-bg);
-    color: color-mix(in srgb, var(--miraie-accent) 85%, #000);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--miraie-accent) 25%, transparent);
+    background: var(--miraie-accent);
+    color: var(--m-on-accent); font-weight: 800;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--miraie-accent) 55%, transparent), 0 2px 8px color-mix(in srgb, var(--miraie-accent) 35%, transparent);
   }
   .transport-item:disabled, .transport-item.disabled {
     opacity: 0.5; cursor: not-allowed;
@@ -164,8 +176,8 @@ export const styles = css`
   }
   .segmented-item.active {
     background: var(--miraie-accent);
-    color: #000; font-weight: 800;
-    box-shadow: 0 2px 10px color-mix(in srgb, var(--miraie-accent) 45%, transparent);
+    color: var(--m-on-accent); font-weight: 800;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--miraie-accent) 55%, transparent), 0 2px 8px color-mix(in srgb, var(--miraie-accent) 35%, transparent);
   }
   .segmented-item:disabled, .segmented-item.disabled {
     opacity: 0.45; cursor: not-allowed;
