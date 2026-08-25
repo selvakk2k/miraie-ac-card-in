@@ -122,13 +122,18 @@ export const styles = css`
   }
 
   /* ── Pills ── */
-  .pills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+  }
   .pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 16px; border-radius: 24px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 12px; border-radius: 24px;
     border: 1.5px solid var(--m-border);
     background: var(--m-surface); color: var(--m-text);
     font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; min-width: 0;
     transition: all 0.18s; --mdc-icon-size: 15px;
   }
   .pill:hover:not(:disabled):not(.disabled) { background: var(--m-surface-hover); }
@@ -155,9 +160,12 @@ export const styles = css`
   }
 
   @media (max-width: 450px) {
-    .pills { gap: 6px; }
-    .pill { padding: 7px 11px; font-size: 0.78rem; gap: 4px; }
-    .pill ha-icon { --mdc-icon-size: 14px; }
+    .pills {
+      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+    .pill { padding: 7px 6px; font-size: 0.76rem; gap: 4px; }
+    .pill ha-icon { --mdc-icon-size: 13px; flex-shrink: 0; }
   }
 
   /* ── Picker panel (fan / swing) ── */
