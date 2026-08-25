@@ -121,22 +121,25 @@ export const styles = css`
     letter-spacing: 0.08em; color: var(--m-text); opacity: 0.9; margin-bottom: 8px;
   }
 
-  /* ── Pills ── */
+  /* ── Action Buttons / Pills ── */
   .pills {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
     gap: 8px;
   }
   .pill {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 8px 12px; border-radius: 24px;
-    border: 1.5px solid var(--m-border);
+    padding: 10px 8px; border-radius: 12px;
+    border: 1px solid var(--m-border);
     background: var(--m-surface); color: var(--m-text);
-    font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis; min-width: 0;
-    transition: all 0.18s; --mdc-icon-size: 15px;
+    transition: all 0.18s ease; --mdc-icon-size: 15px;
   }
-  .pill:hover:not(:disabled):not(.disabled) { background: var(--m-surface-hover); }
+  .pill:hover:not(:disabled):not(.disabled) {
+    background: var(--m-surface-hover);
+    border-color: color-mix(in srgb, var(--miraie-accent) 40%, var(--m-border));
+  }
   .pill.active {
     background: var(--m-active-bg);
     border-color: var(--m-active-border);
@@ -162,9 +165,9 @@ export const styles = css`
   @media (max-width: 450px) {
     .pills {
       gap: 6px;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
     }
-    .pill { padding: 7px 6px; font-size: 0.76rem; gap: 4px; }
+    .pill { padding: 8px 4px; font-size: 0.74rem; gap: 4px; border-radius: 10px; }
     .pill ha-icon { --mdc-icon-size: 13px; flex-shrink: 0; }
   }
 
