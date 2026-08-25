@@ -22,7 +22,10 @@ const interactiveSelectors = [
   '.gh-power-btn',
   '.gh-circular-btn',
   '.gh-dropdown-item',
-  '.gh-chip'
+  '.gh-chip',
+  '.transport-item',
+  '.segmented-item',
+  '.setting-tile'
 ];
 
 let errors = 0;

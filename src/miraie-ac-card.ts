@@ -492,18 +492,18 @@ export class MirAIeACCard extends LitElement {
           </div>
         ` : ''}
 
-        <!-- ── 2.0 Hybrid Transport Controls ── -->
+        <!-- ── Connection / Transport Controls ── -->
         ${activeBackendSwitch || hybridSwitch ? html`
           <div class="section">
-            <div class="section-title">Hybrid Transport</div>
-            <div class="pills">
+            <div class="section-title">Connection</div>
+            <div class="transport-strip">
               ${activeBackendSwitch ? html`
                 ${(() => {
                   const isCloud = activeBackendSwitch.state === 'cloud' || activeBackendSwitch.state === 'on';
                   const isAuto = hybridSwitch && (hybridSwitch.state === 'auto' || hybridSwitch.state === 'on');
                   return html`
                     <button
-                      class="pill ${isCloud ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
+                      class="transport-item ${isCloud ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
                       title="${isAuto ? 'Backend transport is managed automatically in Auto Failover mode' : (isCleaning ? 'Backend cannot be switched while coil cleaning is active' : 'Click to toggle primary transport backend')}"
                       @click=${() => {
                         if (isAuto) {
@@ -516,7 +516,7 @@ export class MirAIeACCard extends LitElement {
                       }}
                     >
                       <ha-icon icon="${isCloud ? 'mdi:cloud-sync' : 'mdi:remote'}"></ha-icon>
-                      Backend: ${isCloud ? 'Cloud' : 'IR'}
+                      ${isCloud ? 'Backend: Cloud' : 'Backend: IR'}
                     </button>
                   `;
                 })()}
@@ -524,7 +524,7 @@ export class MirAIeACCard extends LitElement {
 
               ${hybridSwitch ? html`
                 <button
-                  class="pill ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
+                  class="transport-item ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
                   title="${isCleaning ? 'Hybrid mode cannot be toggled while coil cleaning is active' : 'Click to toggle between Auto Failover and Manual backend'}"
                   @click=${() => {
                     if (isCleaning) {
@@ -540,7 +540,7 @@ export class MirAIeACCard extends LitElement {
               ` : ''}
 
               ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
-                <div class="pill" style="cursor: default; opacity: 0.85;" title="Last control origin">
+                <div class="transport-item" style="cursor: default; opacity: 0.85;" title="Last control origin">
                   <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
                   Via: ${this._sourceLabel(controlSource.state)}
                 </div>
@@ -552,10 +552,10 @@ export class MirAIeACCard extends LitElement {
         <!-- ── HVAC Modes ── -->
         <div class="section">
           <div class="section-title">Modes</div>
-          <div class="pills">
+          <div class="segmented-bar">
             ${(a.hvac_modes || []).filter((m: string) => m !== 'off').map((m: string) => html`
               <button
-                class="pill ${hvacMode === m && isOn ? 'active' : ''} ${!isOnline || isCleaning ? 'disabled' : ''}"
+                class="segmented-item ${hvacMode === m && isOn ? 'active' : ''} ${!isOnline || isCleaning ? 'disabled' : ''}"
                 title="${isCleaning ? 'HVAC mode cannot be changed while coil cleaning is active' : (!isOnline ? 'Device is offline' : this._modeLabel(m))}"
                 @click=${() => {
                   if (isCleaning) {
@@ -577,9 +577,9 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Fan & Swing ── -->
         <div class="section">
           <div class="section-title">Fan & Swing</div>
-          <div class="pills">
-            <button
-              class="pill ${this._openPanel === 'fan' ? 'active' : ''} ${!isOn || hvacMode === 'dry' || isCleaning ? 'disabled' : ''}"
+          <div class="setting-tiles">
+            <div
+              class="setting-tile ${this._openPanel === 'fan' ? 'active' : ''} ${!isOn || hvacMode === 'dry' || isCleaning ? 'disabled' : ''}"
               title="${isCleaning ? 'Fan speed cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust fan speed' : (hvacMode === 'dry' ? 'Fan speed is automatically managed in Dry mode' : 'Adjust fan speed'))}"
               @click=${() => {
                 if (isCleaning) {
@@ -593,13 +593,19 @@ export class MirAIeACCard extends LitElement {
                 }
               }}
             >
-              <ha-icon icon="mdi:fan"></ha-icon>
-              Fan: ${fanMode ? (fanMode.charAt(0).toUpperCase() + fanMode.slice(1)) : 'Auto'}
-            </button>
+              <div class="setting-tile-label">
+                <ha-icon icon="mdi:fan"></ha-icon>
+                <span>Fan</span>
+              </div>
+              <div class="setting-tile-value-row">
+                <span class="setting-tile-value">${fanMode ? (fanMode.charAt(0).toUpperCase() + fanMode.slice(1)) : 'Auto'}</span>
+                <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
+              </div>
+            </div>
 
             ${swingV != null ? html`
-              <button
-                class="pill ${this._openPanel === 'swing_v' ? 'active' : ''} ${!isOn || isCleaning ? 'disabled' : ''}"
+              <div
+                class="setting-tile ${this._openPanel === 'swing_v' ? 'active' : ''} ${!isOn || isCleaning ? 'disabled' : ''}"
                 title="${isCleaning ? 'Swing vanes cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust swing vanes' : 'Adjust vertical swing')}"
                 @click=${() => {
                   if (isCleaning) {
@@ -611,14 +617,20 @@ export class MirAIeACCard extends LitElement {
                   }
                 }}
               >
-                <ha-icon icon="mdi:arrow-up-down"></ha-icon>
-                V-Swing: ${swingV === 'Auto Swing' ? 'Auto' : swingV}
-              </button>
+                <div class="setting-tile-label">
+                  <ha-icon icon="mdi:arrow-up-down"></ha-icon>
+                  <span>V-Swing</span>
+                </div>
+                <div class="setting-tile-value-row">
+                  <span class="setting-tile-value">${swingV === 'Auto Swing' ? 'Auto' : swingV}</span>
+                  <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
+                </div>
+              </div>
             ` : ''}
 
             ${swingH != null ? html`
-              <button
-                class="pill ${this._openPanel === 'swing_h' ? 'active' : ''} ${!isOn || isCleaning ? 'disabled' : ''}"
+              <div
+                class="setting-tile ${this._openPanel === 'swing_h' ? 'active' : ''} ${!isOn || isCleaning ? 'disabled' : ''}"
                 title="${isCleaning ? 'Horizontal swing cannot be adjusted while coil cleaning is active' : (!isOn ? 'Turn on the AC to adjust horizontal swing' : 'Adjust horizontal swing')}"
                 @click=${() => {
                   if (isCleaning) {
@@ -630,9 +642,15 @@ export class MirAIeACCard extends LitElement {
                   }
                 }}
               >
-                <ha-icon icon="mdi:arrow-left-right"></ha-icon>
-                H-Swing: ${swingH === 'Auto Swing' ? 'Auto' : swingH}
-              </button>
+                <div class="setting-tile-label">
+                  <ha-icon icon="mdi:arrow-left-right"></ha-icon>
+                  <span>H-Swing</span>
+                </div>
+                <div class="setting-tile-value-row">
+                  <span class="setting-tile-value">${swingH === 'Auto Swing' ? 'Auto' : swingH}</span>
+                  <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
+                </div>
+              </div>
             ` : ''}
           </div>
 
@@ -673,12 +691,12 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Comfort Presets ── -->
         <div class="section">
           <div class="section-title">Comfort Presets</div>
-          <div class="pills">
+          <div class="segmented-bar">
             ${['none', 'eco', 'boost'].map(p => {
               const isBlocked = !isOn || (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none') || isCleaning || (curCvIdx > 0 && p !== 'none');
               return html`
                 <button
-                  class="pill ${presetMode === p ? 'active' : ''} ${isBlocked ? 'disabled' : ''}"
+                  class="segmented-item ${presetMode === p ? 'active' : ''} ${isBlocked ? 'disabled' : ''}"
                   title="${isCleaning ? 'Presets cannot be changed while coil cleaning is active' : (!isOn ? 'Turn on the AC to select presets' : (['dry', 'auto', 'fan_only'].includes(hvacMode) && p !== 'none' ? `Presets are not available in ${this._modeLabel(hvacMode)} mode` : (curCvIdx > 0 && p !== 'none' ? 'Presets cannot be changed while capacity limit is active' : (p === 'none' ? 'Normal' : p.charAt(0).toUpperCase() + p.slice(1)))))}"
                   @click=${() => {
                     if (isCleaning) {
