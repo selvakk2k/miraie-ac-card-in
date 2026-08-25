@@ -495,15 +495,23 @@ export class MirAIeACCard extends LitElement {
         <!-- ── Connection / Transport Controls ── -->
         ${activeBackendSwitch || hybridSwitch ? html`
           <div class="section">
-            <div class="section-title">Connection</div>
-            <div class="transport-strip">
+            <div class="section-title-row">
+              <div class="section-title" style="margin-bottom: 0;">Connection</div>
+              ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
+                <div class="status-badge" title="Last command origin">
+                  <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
+                  <span>Via: ${this._sourceLabel(controlSource.state)}</span>
+                </div>
+              ` : ''}
+            </div>
+            <div class="segmented-bar">
               ${activeBackendSwitch ? html`
                 ${(() => {
                   const isCloud = activeBackendSwitch.state === 'cloud' || activeBackendSwitch.state === 'on';
                   const isAuto = hybridSwitch && (hybridSwitch.state === 'auto' || hybridSwitch.state === 'on');
                   return html`
                     <button
-                      class="transport-item ${isCloud ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
+                      class="segmented-item ${!isAuto ? 'active' : ''} ${isAuto || isCleaning ? 'disabled' : ''}"
                       title="${isAuto ? 'Backend transport is managed automatically in Auto Failover mode' : (isCleaning ? 'Backend cannot be switched while coil cleaning is active' : 'Click to toggle primary transport backend')}"
                       @click=${() => {
                         if (isAuto) {
@@ -516,7 +524,7 @@ export class MirAIeACCard extends LitElement {
                       }}
                     >
                       <ha-icon icon="${isCloud ? 'mdi:cloud-sync' : 'mdi:remote'}"></ha-icon>
-                      ${isCloud ? 'Backend: Cloud' : 'Backend: IR'}
+                      Backend: ${isCloud ? 'Cloud' : 'IR'}
                     </button>
                   `;
                 })()}
@@ -524,7 +532,7 @@ export class MirAIeACCard extends LitElement {
 
               ${hybridSwitch ? html`
                 <button
-                  class="transport-item ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
+                  class="segmented-item ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'active' : ''} ${isCleaning ? 'disabled' : ''}"
                   title="${isCleaning ? 'Hybrid mode cannot be toggled while coil cleaning is active' : 'Click to toggle between Auto Failover and Manual backend'}"
                   @click=${() => {
                     if (isCleaning) {
@@ -537,13 +545,6 @@ export class MirAIeACCard extends LitElement {
                   <ha-icon icon="${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'mdi:refresh-auto' : 'mdi:hand-back-right'}"></ha-icon>
                   ${hybridSwitch.state === 'auto' || hybridSwitch.state === 'on' ? 'Auto Failover' : 'Manual'}
                 </button>
-              ` : ''}
-
-              ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
-                <div class="transport-item" style="cursor: default; opacity: 0.85;" title="Last control origin">
-                  <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
-                  Via: ${this._sourceLabel(controlSource.state)}
-                </div>
               ` : ''}
             </div>
           </div>
