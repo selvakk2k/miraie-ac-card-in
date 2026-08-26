@@ -1046,10 +1046,26 @@ export class MirAIeACCard extends LitElement {
   }
 
   private _sourceLabel(s: string): string {
-    const lower = (s || '').toLowerCase();
+    if (!s) return 'Unknown';
+    const trimmed = s.trim();
+    const lower = trimmed.toLowerCase();
     if (lower === 'ir') return 'IR';
     if (lower === 'cloud') return 'Cloud';
-    return (s || '').charAt(0).toUpperCase() + (s || '').slice(1).toLowerCase();
+    if (lower === 'ir blaster' || lower === 'ir_blaster') return 'IR Blaster';
+    if (lower === 'ir remote' || lower === 'ir_remote') return 'IR Remote';
+    if (lower === 'ir failover' || lower === 'ir_failover') return 'IR Failover';
+    if (lower === 'ir failover (offline)' || lower === 'ir_failover (offline)') return 'IR Failover (Offline)';
+
+    return trimmed
+      .split(/[\s_]+/)
+      .map(w => {
+        const lw = w.toLowerCase();
+        if (lw === 'ir') return 'IR';
+        if (lw === 'mqtt') return 'MQTT';
+        if (lw === 'ha') return 'HA';
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+      })
+      .join(' ');
   }
 
   private _renderGoogleHomeFull(
