@@ -439,11 +439,56 @@ export const styles = css`
      ────────────────────────────────────────────────────────── */
   .compact-card {
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  .compact-card.classic {
+    border-radius: 16px;
+    border: 1px solid var(--m-border);
+    background: rgba(128, 128, 128, 0.08);
+    padding: 4px;
+  }
+  .compact-card.classic .compact-icon-btn {
+    border-radius: 10px;
+    border: 1px solid var(--m-border);
+    background: var(--m-surface);
+  }
+  .compact-card.classic .compact-icon-btn.on {
+    background: var(--miraie-accent);
+    color: var(--m-on-accent, #ffffff);
+    border-color: var(--miraie-accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .compact-card.classic .compact-action-btn {
+    border-radius: 10px;
+    border: 1px solid var(--m-border);
+    background: var(--m-surface);
+  }
+  .compact-card.classic .compact-value {
+    font-weight: 800;
+  }
+  .compact-card.google-home {
     background: var(--m-bg);
     border-radius: 28px;
+    border: 1px solid var(--m-border);
     padding: 4px;
-    box-sizing: border-box;
+  }
+  .compact-card.google-home .compact-icon-btn {
+    border-radius: 50%;
+    border: none;
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .compact-card.google-home .compact-icon-btn.on {
+    background: var(--m-active-bg);
+    color: var(--miraie-accent);
+  }
+  .compact-card.google-home .compact-action-btn {
+    border-radius: 50%;
+    border: none;
+    background: rgba(128, 128, 128, 0.15);
+  }
+  .compact-card.google-home .compact-value {
+    font-weight: 400;
   }
   .compact-header {
     display: flex;
