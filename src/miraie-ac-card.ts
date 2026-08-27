@@ -389,7 +389,7 @@ export class MirAIeACCard extends LitElement {
         <div class="header">
           <div class="header-left">
             <div class="title-row">
-              <span class="status-dot ${isOnline ? 'online' : ''}"></span>
+              <ha-icon class="header-icon" icon="mdi:air-conditioner"></ha-icon>
               <span class="title">${friendlyName}</span>
             </div>
             <div class="subtitle">
@@ -398,7 +398,7 @@ export class MirAIeACCard extends LitElement {
           </div>
           <div style="display: flex; gap: 8px;">
             ${cfg.layout === 'compact' ? html`
-              <button class="power-btn" style="background: transparent;" @click=${() => { this._haptic('light'); this._expanded = false; }}>
+              <button class="collapse-btn" title="Collapse card" @click=${() => { this._haptic('light'); this._expanded = false; }}>
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
             ` : ''}
