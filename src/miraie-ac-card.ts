@@ -1548,28 +1548,33 @@ export class MirAIeACCard extends LitElement {
           </div>
         ` : ''}
         
-        ${rssi || irBlaster || cloudMqtt ? html`
-          <div class="gh-footer-text" style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap;">
-            ${irBlaster ? html`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <span class="status-dot ${irBlaster.state === 'on' ? 'online' : ''}"></span>
-                IR Blaster
-              </span>
-            ` : ''}
-            ${cloudMqtt ? html`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <span class="status-dot ${cloudMqtt.state === 'on' ? 'online' : ''}"></span>
-                Cloud MQTT
-              </span>
-            ` : ''}
-            ${rssi ? html`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <ha-icon icon="mdi:wifi" style="--mdc-icon-size: 14px;"></ha-icon>
-                ${rssi.state} ${rssi.attributes.unit_of_measurement ?? 'dBm'}
-              </span>
-            ` : ''}
-          </div>
-        ` : ''}
+        <!-- Footer Telemetry Status Row -->
+        <div class="footer-telemetry-row">
+          ${irBlaster ? html`
+            <div class="connection-status-pill">
+              <span class="status-dot ${irBlaster.state === 'on' ? 'online' : ''}"></span>
+              <span>IR Blaster</span>
+            </div>
+          ` : ''}
+          ${cloudMqtt ? html`
+            <div class="connection-status-pill">
+              <span class="status-dot ${cloudMqtt.state === 'on' ? 'online' : ''}"></span>
+              <span>Cloud MQTT</span>
+            </div>
+          ` : ''}
+          ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
+            <div class="connection-status-pill">
+              <ha-icon icon="${controlSource.state.toLowerCase().includes('ir') ? 'mdi:remote' : 'mdi:cloud-check'}" style="--mdc-icon-size: 14px;"></ha-icon>
+              <span>Last controlled by: ${this._sourceLabel(controlSource.state)}</span>
+            </div>
+          ` : ''}
+          ${rssi ? html`
+            <div class="connection-status-pill">
+              <ha-icon icon="mdi:wifi" style="--mdc-icon-size: 14px;"></ha-icon>
+              <span>${rssi.state} ${rssi.attributes.unit_of_measurement ?? 'dBm'}</span>
+            </div>
+          ` : ''}
+        </div>
       </ha-card>
     `;
   }
