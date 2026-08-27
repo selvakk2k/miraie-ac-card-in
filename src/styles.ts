@@ -792,4 +792,23 @@ export const styles = css`
     font-size: 0.8rem;
     --mdc-icon-size: 16px;
   }
+  .footer-telemetry-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--m-border);
+    font-size: 0.76rem;
+    color: var(--m-text-2);
+    flex-wrap: wrap;
+  }
+  .connection-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--m-text-2);
+  }
 `;

@@ -828,6 +828,25 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
     font-size: 0.8rem;
     --mdc-icon-size: 16px;
   }
+  .footer-telemetry-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--m-border);
+    font-size: 0.76rem;
+    color: var(--m-text-2);
+    flex-wrap: wrap;
+  }
+  .connection-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--m-text-2);
+  }
 `,me={type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0,domain:"climate",domains:["climate"],documentationURL:"https://github.com/selvakk2k/miraie-ac-card-in"};window.customCards=window.customCards||[];const ue=window.customCards.findIndex(e=>"miraie-ac-card-in"===e.type||"custom:miraie-ac-card-in"===e.type);function ge(e){const t=/^cv[\s_]+(\d+)$/.exec((e??"").trim());return t?parseInt(t[1],10):-1}function ve(e){const t=Number(e);return isNaN(t)?String(e):t.toFixed(2)}ue>=0?window.customCards[ue]=me:window.customCards.push(me);let be=class extends ne{constructor(){super(...arguments),this._openPanel=null,this._expanded=!1,this._ghDropdown=null,this._handleWindowClick=e=>{const t=e.composedPath();this._ghDropdown&&!t.includes(this)&&(this._ghDropdown=null)}}static get styles(){return pe}connectedCallback(){super.connectedCallback(),window.addEventListener("click",this._handleWindowClick)}disconnectedCallback(){window.removeEventListener("click",this._handleWindowClick),super.disconnectedCallback()}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate",integration:"miraie_in"}}},{name:"name",selector:{text:{}}},{name:"theme",selector:{select:{options:[{label:"Default HA Theme",value:"default"},{label:"Material You",value:"material_you"}]}}},{name:"layout",selector:{select:{options:[{label:"Default (Full)",value:"default"},{label:"Compact (Expandable)",value:"compact"}]}}},{name:"full_layout",selector:{select:{options:[{label:"Classic",value:"default"},{label:"Google Home",value:"google_home"}]}}},{name:"accent_color",selector:{ui_color:{}}},{name:"main_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor",device_class:"temperature"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor",device_class:"humidity"}}}]},{name:"",type:"expandable",title:"2.0 Hybrid Transport Architecture (Auto-Discovered if blank)",icon:"mdi:swap-horizontal-circle-outline",schema:[{name:"hybrid_submode_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"active_backend_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"ir_blaster_sensor",selector:{entity:{domain:["binary_sensor","infrared","remote"]}}},{name:"cloud_mqtt_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"control_source_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"display_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"coil_clean_button",selector:{entity:{domain:"button",integration:"miraie_in"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]}]}}static getStubConfig(e,t,i){let o="";return t&&t.length&&(o=t.find(e=>e.startsWith("climate."))||""),!o&&i&&i.length&&(o=i.find(e=>e.startsWith("climate."))||""),!o&&e&&e.states&&(o=Object.keys(e.states).find(e=>e.startsWith("climate."))||""),{type:"custom:miraie-ac-card-in",entity:o}}setConfig(e){if(!e)throw new Error("Invalid configuration");this._config={...e},this._openPanel=null}updated(e){if(super.updated(e),e.has("_config")){const e=this._config?.theme||"default";this.getAttribute("theme")!==e&&this.setAttribute("theme",e)}}shouldUpdate(e){if(e.has("_config")||e.has("_openPanel")||e.has("_expanded")||e.has("_ghDropdown"))return!0;if(e.has("hass")&&this._config){const t=e.get("hass");if(!t)return!0;const i=this._config;if(!i.entity)return!0;const o=i.entity.replace(/^climate\./,""),s=Object.keys(this.hass.states);for(const e of s)if((e===i.entity||e.includes(o))&&t.states[e]!==this.hass.states[e])return!0;return!1}return!1}render(){if(!this.hass||!this._config)return null;const e=this._config;if(!e.entity)return I`
         <ha-card class="m-card" style="padding: 24px; text-align: center;">
           <div style="font-size: 16px; font-weight: 700; color: var(--primary-text-color);">MirAIe AC Card</div>
@@ -1470,28 +1489,33 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
           </div>
         `:""}
         
-        ${D||F||R?I`
-          <div class="gh-footer-text" style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap;">
-            ${F?I`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <span class="status-dot ${"on"===F.state?"online":""}"></span>
-                IR Blaster
-              </span>
-            `:""}
-            ${R?I`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <span class="status-dot ${"on"===R.state?"online":""}"></span>
-                Cloud MQTT
-              </span>
-            `:""}
-            ${D?I`
-              <span style="display: inline-flex; align-items: center; gap: 4px;">
-                <ha-icon icon="mdi:wifi" style="--mdc-icon-size: 14px;"></ha-icon>
-                ${D.state} ${D.attributes.unit_of_measurement??"dBm"}
-              </span>
-            `:""}
-          </div>
-        `:""}
+        <!-- Footer Telemetry Status Row -->
+        <div class="footer-telemetry-row">
+          ${F?I`
+            <div class="connection-status-pill">
+              <span class="status-dot ${"on"===F.state?"online":""}"></span>
+              <span>IR Blaster</span>
+            </div>
+          `:""}
+          ${R?I`
+            <div class="connection-status-pill">
+              <span class="status-dot ${"on"===R.state?"online":""}"></span>
+              <span>Cloud MQTT</span>
+            </div>
+          `:""}
+          ${U&&U.state&&"unknown"!==U.state&&"unavailable"!==U.state?I`
+            <div class="connection-status-pill">
+              <ha-icon icon="${U.state.toLowerCase().includes("ir")?"mdi:remote":"mdi:cloud-check"}" style="--mdc-icon-size: 14px;"></ha-icon>
+              <span>Last controlled by: ${this._sourceLabel(U.state)}</span>
+            </div>
+          `:""}
+          ${D?I`
+            <div class="connection-status-pill">
+              <ha-icon icon="mdi:wifi" style="--mdc-icon-size: 14px;"></ha-icon>
+              <span>${D.state} ${D.attributes.unit_of_measurement??"dBm"}</span>
+            </div>
+          `:""}
+        </div>
       </ha-card>
     `}_renderCompact(e,t,i,o,s,a,n,r,c,l){const d="unavailable"!==e.state&&"unknown"!==e.state,h=i?"fan_only"===n?"FA":null!=o?`${o}°`:"--":"Off",p=this._config.coil_cleaning_sensor?this.hass.states[this._config.coil_cleaning_sensor]:void 0,m="on"===p?.state,u=[];if(i){u.push(this._modeLabel(n));const t=e.attributes.preset_mode;if(t&&"none"!==t)if(/^cv[\s_]/.test(t)){const e=ge(t);u.push(0===e?"Normal":e+"%")}else u.push(this._presetLabel(t))}const g=u.length?u.join(" • "):"";return I`
       <ha-card style="${l}" class="compact-card ${"google_home"===this._config.full_layout?"google-home":"classic"}" @click=${()=>{this._haptic("selection"),this._expanded=!0}}>
