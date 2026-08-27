@@ -1605,7 +1605,7 @@ export class MirAIeACCard extends LitElement {
     const modeString = activeStrs.length ? activeStrs.join(' • ') : '';
 
     return html`
-      <ha-card style="${cardStyle}" class="compact-card" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
+      <ha-card style="${cardStyle}" class="compact-card ${this._config.full_layout === 'google_home' ? 'google-home' : 'classic'}" @click=${() => { this._haptic('selection'); this._expanded = true; }}>
         <div class="compact-header">
           <button
             class="compact-icon-btn ${isOn ? 'on' : ''} ${!isOnline || isCleaning ? 'disabled' : ''}"
