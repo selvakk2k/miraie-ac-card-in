@@ -81,7 +81,7 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
   }
 
   ha-card {
-    background: var(--m-bg);
+    background: var(--m-bg, var(--ha-card-background, var(--card-background-color, #1e1e24)));
     border-radius: 18px;
     padding: 20px 18px 18px;
     color: var(--m-text);
