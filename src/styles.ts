@@ -446,11 +446,17 @@ export const styles = css`
   /* ──────────────────────────────────────────────────────────
      Compact View (Google Home Style)
      ────────────────────────────────────────────────────────── */
+  /* ── Compact Views: Classic vs Google Home ── */
   .compact-card {
     cursor: pointer;
     transition: all 0.2s ease;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
+
+  /* Classic Compact */
   .compact-card.classic {
     border-radius: 16px;
     border: 1px solid var(--m-border);
@@ -458,9 +464,10 @@ export const styles = css`
     padding: 16px;
   }
   .compact-card.classic .compact-icon-btn {
-    border-radius: 10px;
-    border: 1px solid var(--m-border);
-    background: var(--m-surface);
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--m-border); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: var(--m-surface); color: var(--m-text);
+    transition: all 0.2s ease; flex-shrink: 0;
   }
   .compact-card.classic .compact-icon-btn.on {
     background: var(--miraie-accent);
@@ -469,13 +476,18 @@ export const styles = css`
     box-shadow: 0 4px 14px color-mix(in srgb, var(--miraie-accent) 40%, transparent);
   }
   .compact-card.classic .compact-action-btn {
-    border-radius: 10px;
-    border: 1px solid var(--m-border);
-    background: var(--m-surface);
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--m-border); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: var(--m-surface); color: var(--m-text);
+    transition: all 0.2s ease;
   }
   .compact-card.classic .compact-value {
+    font-size: 2.4rem;
     font-weight: 800;
+    color: var(--m-text);
   }
+
+  /* Google Home Compact */
   .compact-card.google-home {
     background: var(--m-bg);
     border-radius: 28px;
@@ -484,107 +496,64 @@ export const styles = css`
     padding: 16px;
   }
   .compact-card.google-home .compact-icon-btn {
-    border-radius: 50%;
-    border: none;
-    background: rgba(128, 128, 128, 0.15);
+    width: 40px; height: 40px; border-radius: 50%;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: rgba(128, 128, 128, 0.15); color: var(--m-text-2);
+    transition: all 0.2s ease; flex-shrink: 0;
   }
   .compact-card.google-home .compact-icon-btn.on {
     background: var(--m-active-bg);
     color: var(--miraie-accent);
   }
   .compact-card.google-home .compact-action-btn {
-    border-radius: 50%;
-    border: none;
-    background: rgba(128, 128, 128, 0.15);
+    width: 40px; height: 40px; border-radius: 50%;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: rgba(128, 128, 128, 0.15); color: var(--m-text);
+    transition: all 0.2s ease;
   }
   .compact-card.google-home .compact-value {
-    font-weight: 400;
-  }
-  .compact-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 12px 12px 0 12px;
-  }
-  .compact-icon-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 1px solid var(--m-border);
-    color: var(--m-text-2);
-    cursor: pointer;
-    transition: 0.2s;
-    outline: none;
-  }
-  .compact-icon-btn:hover {
-    background: rgba(128, 128, 128, 0.15);
-  }
-  .compact-icon-btn.on {
-    background: var(--m-active-bg);
-    border-color: var(--m-active-border);
-    color: var(--miraie-accent);
-  }
-  .compact-title {
-    font-weight: 500;
-    font-size: 1rem;
-    flex: 1;
-    margin-left: 4px;
-    color: var(--m-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .compact-chevron {
-    color: var(--m-text-2);
-    opacity: 0.5;
-  }
-  .compact-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px 0;
-  }
-  .compact-value {
     font-size: 2.5rem;
     font-weight: 400;
     color: var(--m-text);
+  }
+
+  .compact-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .compact-title {
+    font-size: 1rem;
+    font-weight: 600;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--m-text);
+  }
+  .compact-chevron {
+    color: var(--m-text-2);
+    opacity: 0.7;
+  }
+  .compact-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .compact-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px 12px 12px;
+    padding: 0 4px;
   }
-  .compact-action-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    background: transparent;
-    border: 1px solid var(--m-border);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--m-text);
-    cursor: pointer;
-    transition: 0.2s;
-    outline: none;
-  }
-  .compact-action-btn:hover:not(:disabled) {
-    background: rgba(128, 128, 128, 0.15);
-  }
-  .compact-action-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
+  .compact-icon-btn:hover { background: var(--m-surface-hover); }
+  .compact-icon-btn.disabled { opacity: 0.4; pointer-events: none; }
+  .compact-action-btn:hover { background: var(--m-surface-hover); }
+  .compact-action-btn:disabled, .compact-action-btn.disabled { opacity: 0.3; pointer-events: none; }
   .compact-subtitle {
-    color: var(--m-text-2);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 500;
+    color: var(--m-text-2);
   }
 
   /* ──────────────────────────────────────────────────────────
