@@ -541,12 +541,7 @@ export class MirAIeACCard extends LitElement {
                 ` : ''}
               </div>
 
-              ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
-                <div class="connection-status-pill" title="Last command execution origin (telemetry)">
-                  <ha-icon icon="${controlSource.state === 'cloud' ? 'mdi:cloud-outline' : (controlSource.state === 'ir' ? 'mdi:remote' : 'mdi:information-outline')}"></ha-icon>
-                  <span>Via: ${this._sourceLabel(controlSource.state)}</span>
-                </div>
-              ` : ''}
+
             </div>
           </div>
         ` : ''}
@@ -1539,12 +1534,7 @@ export class MirAIeACCard extends LitElement {
               </div>
             ` : ''}
 
-            ${controlSource && controlSource.state && controlSource.state !== 'unknown' && controlSource.state !== 'unavailable' ? html`
-              <div class="gh-chip" style="cursor: default; opacity: 0.85;" title="Last control origin">
-                <ha-icon icon="${controlSource.state.toLowerCase().includes('ir') ? 'mdi:remote' : 'mdi:cloud-check'}"></ha-icon>
-                <span>Via: ${this._sourceLabel(controlSource.state)}</span>
-              </div>
-            ` : ''}
+
           </div>
         ` : ''}
         

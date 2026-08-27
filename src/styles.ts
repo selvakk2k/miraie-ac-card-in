@@ -140,15 +140,15 @@ export const styles = css`
     flex: 1;
   }
   .connection-status-pill {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 12px; border-radius: 12px;
-    background: var(--m-surface); border: 1px solid var(--m-border);
-    color: var(--m-text-2); font-size: 0.78rem; font-weight: 700;
-    white-space: nowrap; cursor: default; pointer-events: none; user-select: none;
-    --mdc-icon-size: 15px;
-  }
-  .connection-status-pill ha-icon {
-    color: var(--miraie-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--m-text-2);
+    background: transparent;
+    border: none;
+    padding: 0;
+    --mdc-icon-size: 14px;
   }
 
   /* ── 2.0 Transport Status Strip ── */
