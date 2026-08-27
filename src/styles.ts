@@ -71,6 +71,15 @@ export const styles = css`
   .title   { font-size: 1.15rem; font-weight: 700; color: var(--m-text); line-height: 1.2; }
   .subtitle { font-size: 0.8rem; font-weight: 600; color: var(--m-text-2); }
 
+  .collapse-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1.5px solid var(--m-border); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: var(--m-surface); color: var(--m-text-2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+  }
+  .collapse-btn:hover { background: var(--m-surface-hover); color: var(--m-text); }
+
   .power-btn {
     width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--m-border);
     cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -445,8 +454,8 @@ export const styles = css`
   .compact-card.classic {
     border-radius: 16px;
     border: 1px solid var(--m-border);
-    background: rgba(128, 128, 128, 0.08);
-    padding: 4px;
+    background: var(--m-bg);
+    padding: 16px;
   }
   .compact-card.classic .compact-icon-btn {
     border-radius: 10px;
@@ -457,7 +466,7 @@ export const styles = css`
     background: var(--miraie-accent);
     color: var(--m-on-accent, #ffffff);
     border-color: var(--miraie-accent);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--miraie-accent) 40%, transparent);
   }
   .compact-card.classic .compact-action-btn {
     border-radius: 10px;
@@ -470,8 +479,9 @@ export const styles = css`
   .compact-card.google-home {
     background: var(--m-bg);
     border-radius: 28px;
-    border: 1px solid var(--m-border);
-    padding: 4px;
+    border: none;
+    box-shadow: none;
+    padding: 16px;
   }
   .compact-card.google-home .compact-icon-btn {
     border-radius: 50%;
@@ -583,6 +593,8 @@ export const styles = css`
   .gh-full-card {
     background: var(--m-bg);
     border-radius: 28px;
+    border: none;
+    box-shadow: none;
     padding: 16px;
     box-sizing: border-box;
   }
