@@ -547,9 +547,9 @@ export const styles = css`
     padding: 0 4px;
   }
   .compact-icon-btn:hover { background: var(--m-surface-hover); }
-  .compact-icon-btn.disabled { opacity: 0.4; pointer-events: none; }
+  .compact-icon-btn.disabled { opacity: 0.4; cursor: not-allowed; }
   .compact-action-btn:hover { background: var(--m-surface-hover); }
-  .compact-action-btn:disabled, .compact-action-btn.disabled { opacity: 0.3; pointer-events: none; }
+  .compact-action-btn:disabled, .compact-action-btn.disabled { opacity: 0.3; cursor: not-allowed; }
   .compact-subtitle {
     font-size: 0.82rem;
     font-weight: 500;
