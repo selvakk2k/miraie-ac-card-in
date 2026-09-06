@@ -62,11 +62,14 @@ export const styles = css`
   .title-row   { display: flex; align-items: center; gap: 8px; }
 
   .status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--disabled-color, #e74c3c); flex-shrink: 0;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #e74c3c; flex-shrink: 0;
     transition: background 0.3s;
   }
-  .status-dot.online { background: #2ecc71; }
+  .status-dot.online {
+    background: #2ecc71;
+    box-shadow: 0 0 6px rgba(46, 204, 113, 0.5);
+  }
 
   .title   { font-size: 1.15rem; font-weight: 700; color: var(--m-text); line-height: 1.2; }
   .subtitle { font-size: 0.8rem; font-weight: 600; color: var(--m-text-2); }
