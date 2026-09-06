@@ -960,6 +960,10 @@ export class MirAIeACCard extends LitElement {
     if (current == null) return;
     const next = Number(current) + delta;
     if (limit != null && ((delta < 0 && next < Number(limit)) || (delta > 0 && next > Number(limit)))) return;
+    const stateObj = this.hass?.states[this._config.entity];
+    if (stateObj?.state === 'auto') {
+      this._showToast(`Temperature ${next}°C queued`);
+    }
     this.hass.callService('climate', 'set_temperature', { entity_id: this._config.entity, temperature: next });
   }
 
