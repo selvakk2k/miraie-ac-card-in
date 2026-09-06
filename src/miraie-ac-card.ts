@@ -1096,7 +1096,7 @@ private _sourceLabel(s: string): string {
     const presetMode   = a.preset_mode;
     const effectiveMin = presetMode === 'eco' ? 16 : minTemp;
     const effectiveMax = presetMode === 'eco' ? 30 : maxTemp;
-    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : (isOnline ? 'Off' : 'Offline');
     const subValue = currentTemp != null ? `Indoor ${currentTemp}°` : '';
 
     // Split presets into standard presets and convertible options
@@ -1593,7 +1593,7 @@ private _sourceLabel(s: string): string {
     cardStyle: string
   ) {
     const isOnline = stateObj.state !== 'unavailable' && stateObj.state !== 'unknown';
-    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : 'Off';
+    const displayValue = isOn ? (hvacMode === 'fan_only' ? 'FA' : (targetTemp != null ? `${targetTemp}°` : '--')) : (isOnline ? 'Off' : 'Offline');
     const coilSensor = this._config.coil_cleaning_sensor ? this.hass.states[this._config.coil_cleaning_sensor] : undefined;
     const isCleaning = coilSensor?.state === 'on';
     
