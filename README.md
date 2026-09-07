@@ -1,7 +1,10 @@
 # MirAIe AC Thermostat Card (`miraie-ac-card-in`)
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![Version](https://img.shields.io/github/v/release/selvakk2k/miraie-ac-card-in)](https://github.com/selvakk2k/miraie-ac-card-in/releases)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](https://github.com/hacs/default)
+[![Stable](https://img.shields.io/github/v/release/selvakk2k/miraie-ac-card-in?label=Stable&style=flat-square)](https://github.com/selvakk2k/miraie-ac-card-in/releases/latest)
+[![Beta](https://img.shields.io/github/v/release/selvakk2k/miraie-ac-card-in?include_prereleases&label=Beta&color=orange&style=flat-square)](https://github.com/selvakk2k/miraie-ac-card-in/releases)
+[![AI-Assisted](https://img.shields.io/badge/AI%20Assisted-Antigravity%20%7C%20Claude-blueviolet?style=flat-square&logo=google)](https://github.com/selvakk2k)
+[![AI Attribution](https://img.shields.io/badge/AI%20Attribution-AIA%20PAI%20Nc%20Hin-orange?style=flat-square)](https://aiattribution.github.io/interpret-attribution)
 
 A custom Lovelace thermostat card for Panasonic Air Conditioners on the Indian market.
 
@@ -70,7 +73,9 @@ energy_yesterday_sensor: sensor.room_2_ac_energy_yesterday
 
 ## Credits & License
 
-### Development Credits
-* Developed with the assistance of **Claude** (Anthropic) and **Gemini/Antigravity** (Google DeepMind).
+### Project Contributors & AI Attribution
+* **Lead Architecture & Design**: [@selvakk2k](https://github.com/selvakk2k) — Lovelace UX design, styling system, and physical appliance validation.
+* **Code Implementation & Engineering**: **Antigravity** (Google DeepMind) — custom card component architecture, dynamic SVG slider interactions, and HACS compliance.
+* **Pre-Release Code Review & Auditing**: **Claude** (Anthropic) — independent code review, security audits, and edge-case verification.
 
-Licensed under the **MIT License**. See the `LICENSE` file for the full license text.
+Licensed under the **MIT License**. See the [LICENSE](LICENSE) file for the full license text.
