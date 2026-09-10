@@ -143,7 +143,7 @@ export class MirAIeACCard extends LitElement {
     if (!entity && hass && hass.states) {
       entity = Object.keys(hass.states).find(e => e.startsWith('climate.')) || '';
     }
-    return { type: 'custom:miraie-ac-card-in', entity };
+    return { type: 'custom:miraie-ac-card', entity };
   }
 
   /* ── Config ── */
