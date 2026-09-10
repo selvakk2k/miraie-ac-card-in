@@ -15,7 +15,7 @@ const t=globalThis,i=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const x=globalThis,$=e=>e,k=x.trustedTypes,A=k?k.createPolicy("lit-html",{createHTML:e=>e}):void 0,C="$lit$",T=`lit$${Math.random().toFixed(9).slice(2)}$`,S="?"+T,P=`<${S}>`,j=document,z=()=>j.createComment(""),E=e=>null===e||"object"!=typeof e&&"function"!=typeof e,D=Array.isArray,N="[ \t\n\f\r]",M=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,H=/-->/g,O=/>/g,L=RegExp(`>|${N}(?:([^\\s"'>=/]+)(${N}*=${N}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),U=/'/g,F=/"/g,R=/^(?:script|style|textarea|title)$/i,I=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),B=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),q=new WeakMap,V=j.createTreeWalker(j,129);function G(e,t){if(!D(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==A?A.createHTML(t):t}const Y=(e,t)=>{const i=e.length-1,o=[];let s,a=2===t?"<svg>":3===t?"<math>":"",n=M;for(let t=0;t<i;t++){const i=e[t];let r,c,l=-1,d=0;for(;d<i.length&&(n.lastIndex=d,c=n.exec(i),null!==c);)d=n.lastIndex,n===M?"!--"===c[1]?n=H:void 0!==c[1]?n=O:void 0!==c[2]?(R.test(c[2])&&(s=RegExp("</"+c[2],"g")),n=L):void 0!==c[3]&&(n=L):n===L?">"===c[0]?(n=s??M,l=-1):void 0===c[1]?l=-2:(l=n.lastIndex-c[2].length,r=c[1],n=void 0===c[3]?L:'"'===c[3]?F:U):n===F||n===U?n=L:n===H||n===O?n=M:(n=L,s=void 0);const h=n===L&&e[t+1].startsWith("/>")?" ":"";a+=n===M?i+P:l>=0?(o.push(r),i.slice(0,l)+C+i.slice(l)+T+h):i+T+(-2===l?t:h)}return[G(e,a+(e[i]||"<?>")+(2===t?"</svg>":3===t?"</math>":"")),o]};class Q{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let s=0,a=0;const n=e.length-1,r=this.parts,[c,l]=Y(e,t);if(this.el=Q.createElement(c,i),V.currentNode=this.el.content,2===t||3===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=V.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(C)){const t=l[a++],i=o.getAttribute(e).split(T),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ee:"?"===n[1]?te:"@"===n[1]?ie:X}),o.removeAttribute(e)}else e.startsWith(T)&&(r.push({type:6,index:s}),o.removeAttribute(e));if(R.test(o.tagName)){const e=o.textContent.split(T),t=e.length-1;if(t>0){o.textContent=k?k.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],z()),V.nextNode(),r.push({type:2,index:++s});o.append(e[t],z())}}}else if(8===o.nodeType)if(o.data===S)r.push({type:2,index:s});else{let e=-1;for(;-1!==(e=o.data.indexOf(T,e+1));)r.push({type:7,index:s}),e+=T.length-1}s++}}static createElement(e,t){const i=j.createElement("template");return i.innerHTML=e,i}}function J(e,t,i=e,o){if(t===B)return t;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const a=E(t)?void 0:t._$litDirective$;return s?.constructor!==a&&(s?._$AO?.(!1),void 0===a?s=void 0:(s=new a(e),s._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(t=J(e,s._$AS(e,t.values),s,o)),t}class K{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??j).importNode(t,!0);V.currentNode=o;let s=V.nextNode(),a=0,n=0,r=i[0];for(;void 0!==r;){if(a===r.index){let t;2===r.type?t=new Z(s,s.nextSibling,this,e):1===r.type?t=new r.ctor(s,r.name,r.strings,this,e):6===r.type&&(t=new oe(s,this,e)),this._$AV.push(t),r=i[++n]}a!==r?.index&&(s=V.nextNode(),a++)}return V.currentNode=j,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class Z{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=J(this,e,t),E(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==B&&this._(e):void 0!==e._$litType$?this.$(e):void 0!==e.nodeType?this.T(e):(e=>D(e)||"function"==typeof e?.[Symbol.iterator])(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==W&&E(this._$AH)?this._$AA.nextSibling.data=e:this.T(j.createTextNode(e)),this._$AH=e}$(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Q.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new K(o,this),i=e.u(this.options);e.p(t),this.T(i),this._$AH=e}}_$AC(e){let t=q.get(e.strings);return void 0===t&&q.set(e.strings,t=new Q(e)),t}k(e){D(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const s of e)o===t.length?t.push(i=new Z(this.O(z()),this.O(z()),this,this.options)):i=t[o],i._$AI(s),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){const t=$(e).nextSibling;$(e).remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class X{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,s){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const s=this.strings;let a=!1;if(void 0===s)e=J(this,e,t,0),a=!E(e)||e!==this._$AH&&e!==B,a&&(this._$AH=e);else{const o=e;let n,r;for(e=s[0],n=0;n<s.length-1;n++)r=J(this,o[i+n],t,n),r===B&&(r=this._$AH[n]),a||=!E(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+s[n+1]),this._$AH[n]=r}a&&!o&&this.j(e)}j(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ee extends X{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===W?void 0:e}}class te extends X{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class ie extends X{constructor(e,t,i,o,s){super(e,t,i,o,s),this.type=5}_$AI(e,t=this){if((e=J(this,e,t,0)??W)===B)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class oe{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){J(this,e)}}const se=x.litHtmlPolyfillSupport;se?.(Q,Z),(x.litHtmlVersions??=[]).push("3.3.3");const ae=globalThis;
+const x=globalThis,$=e=>e,k=x.trustedTypes,A=k?k.createPolicy("lit-html",{createHTML:e=>e}):void 0,T="$lit$",C=`lit$${Math.random().toFixed(9).slice(2)}$`,S="?"+C,P=`<${S}>`,j=document,z=()=>j.createComment(""),E=e=>null===e||"object"!=typeof e&&"function"!=typeof e,D=Array.isArray,N="[ \t\n\f\r]",M=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,H=/-->/g,O=/>/g,L=RegExp(`>|${N}(?:([^\\s"'>=/]+)(${N}*=${N}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),U=/'/g,F=/"/g,R=/^(?:script|style|textarea|title)$/i,I=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),B=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),q=new WeakMap,V=j.createTreeWalker(j,129);function G(e,t){if(!D(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==A?A.createHTML(t):t}const Y=(e,t)=>{const i=e.length-1,o=[];let s,a=2===t?"<svg>":3===t?"<math>":"",n=M;for(let t=0;t<i;t++){const i=e[t];let r,c,l=-1,d=0;for(;d<i.length&&(n.lastIndex=d,c=n.exec(i),null!==c);)d=n.lastIndex,n===M?"!--"===c[1]?n=H:void 0!==c[1]?n=O:void 0!==c[2]?(R.test(c[2])&&(s=RegExp("</"+c[2],"g")),n=L):void 0!==c[3]&&(n=L):n===L?">"===c[0]?(n=s??M,l=-1):void 0===c[1]?l=-2:(l=n.lastIndex-c[2].length,r=c[1],n=void 0===c[3]?L:'"'===c[3]?F:U):n===F||n===U?n=L:n===H||n===O?n=M:(n=L,s=void 0);const h=n===L&&e[t+1].startsWith("/>")?" ":"";a+=n===M?i+P:l>=0?(o.push(r),i.slice(0,l)+T+i.slice(l)+C+h):i+C+(-2===l?t:h)}return[G(e,a+(e[i]||"<?>")+(2===t?"</svg>":3===t?"</math>":"")),o]};class Q{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let s=0,a=0;const n=e.length-1,r=this.parts,[c,l]=Y(e,t);if(this.el=Q.createElement(c,i),V.currentNode=this.el.content,2===t||3===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=V.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(T)){const t=l[a++],i=o.getAttribute(e).split(C),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ee:"?"===n[1]?te:"@"===n[1]?ie:X}),o.removeAttribute(e)}else e.startsWith(C)&&(r.push({type:6,index:s}),o.removeAttribute(e));if(R.test(o.tagName)){const e=o.textContent.split(C),t=e.length-1;if(t>0){o.textContent=k?k.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],z()),V.nextNode(),r.push({type:2,index:++s});o.append(e[t],z())}}}else if(8===o.nodeType)if(o.data===S)r.push({type:2,index:s});else{let e=-1;for(;-1!==(e=o.data.indexOf(C,e+1));)r.push({type:7,index:s}),e+=C.length-1}s++}}static createElement(e,t){const i=j.createElement("template");return i.innerHTML=e,i}}function J(e,t,i=e,o){if(t===B)return t;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const a=E(t)?void 0:t._$litDirective$;return s?.constructor!==a&&(s?._$AO?.(!1),void 0===a?s=void 0:(s=new a(e),s._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(t=J(e,s._$AS(e,t.values),s,o)),t}class K{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??j).importNode(t,!0);V.currentNode=o;let s=V.nextNode(),a=0,n=0,r=i[0];for(;void 0!==r;){if(a===r.index){let t;2===r.type?t=new Z(s,s.nextSibling,this,e):1===r.type?t=new r.ctor(s,r.name,r.strings,this,e):6===r.type&&(t=new oe(s,this,e)),this._$AV.push(t),r=i[++n]}a!==r?.index&&(s=V.nextNode(),a++)}return V.currentNode=j,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class Z{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=J(this,e,t),E(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==B&&this._(e):void 0!==e._$litType$?this.$(e):void 0!==e.nodeType?this.T(e):(e=>D(e)||"function"==typeof e?.[Symbol.iterator])(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==W&&E(this._$AH)?this._$AA.nextSibling.data=e:this.T(j.createTextNode(e)),this._$AH=e}$(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Q.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new K(o,this),i=e.u(this.options);e.p(t),this.T(i),this._$AH=e}}_$AC(e){let t=q.get(e.strings);return void 0===t&&q.set(e.strings,t=new Q(e)),t}k(e){D(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const s of e)o===t.length?t.push(i=new Z(this.O(z()),this.O(z()),this,this.options)):i=t[o],i._$AI(s),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){const t=$(e).nextSibling;$(e).remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class X{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,s){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const s=this.strings;let a=!1;if(void 0===s)e=J(this,e,t,0),a=!E(e)||e!==this._$AH&&e!==B,a&&(this._$AH=e);else{const o=e;let n,r;for(e=s[0],n=0;n<s.length-1;n++)r=J(this,o[i+n],t,n),r===B&&(r=this._$AH[n]),a||=!E(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+s[n+1]),this._$AH[n]=r}a&&!o&&this.j(e)}j(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ee extends X{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===W?void 0:e}}class te extends X{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class ie extends X{constructor(e,t,i,o,s){super(e,t,i,o,s),this.type=5}_$AI(e,t=this){if((e=J(this,e,t,0)??W)===B)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class oe{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){J(this,e)}}const se=x.litHtmlPolyfillSupport;se?.(Q,Z),(x.litHtmlVersions??=[]).push("3.3.3");const ae=globalThis;
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -850,32 +850,26 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
     font-size: 0.76rem;
     color: var(--m-text-2);
   }
-`,me={type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0,domain:"climate",domains:["climate"],documentationURL:"https://github.com/selvakk2k/miraie-ac-card-in"};window.customCards=window.customCards||[];const ue=window.customCards.findIndex(e=>"miraie-ac-card-in"===e.type||"custom:miraie-ac-card-in"===e.type);function ge(e){const t=/^cv[\s_]+(\d+)$/.exec((e??"").trim());return t?parseInt(t[1],10):-1}function ve(e){const t=Number(e);return isNaN(t)?String(e):t.toFixed(2)}ue>=0?window.customCards[ue]=me:window.customCards.push(me);let be=class extends ne{constructor(){super(...arguments),this._openPanel=null,this._expanded=!1,this._ghDropdown=null,this._handleWindowClick=e=>{const t=e.composedPath();this._ghDropdown&&!t.includes(this)&&(this._ghDropdown=null)}}static get styles(){return pe}connectedCallback(){super.connectedCallback(),window.addEventListener("click",this._handleWindowClick)}disconnectedCallback(){window.removeEventListener("click",this._handleWindowClick),super.disconnectedCallback()}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate",integration:"miraie_in"}}},{name:"name",selector:{text:{}}},{name:"theme",selector:{select:{options:[{label:"Default HA Theme",value:"default"},{label:"Material You",value:"material_you"}]}}},{name:"layout",selector:{select:{options:[{label:"Default (Full)",value:"default"},{label:"Compact (Expandable)",value:"compact"}]}}},{name:"full_layout",selector:{select:{options:[{label:"Classic",value:"default"},{label:"Google Home",value:"google_home"}]}}},{name:"accent_color",selector:{ui_color:{}}},{name:"main_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor",device_class:"temperature"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor",device_class:"humidity"}}}]},{name:"",type:"expandable",title:"2.0 Hybrid Transport Architecture (Auto-Discovered if blank)",icon:"mdi:swap-horizontal-circle-outline",schema:[{name:"hybrid_submode_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"active_backend_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"ir_blaster_sensor",selector:{entity:{domain:["binary_sensor","infrared","remote"]}}},{name:"cloud_mqtt_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"control_source_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"display_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"coil_clean_button",selector:{entity:{domain:"button",integration:"miraie_in"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]}]}}static getStubConfig(e,t,i){let o="";return t&&t.length&&(o=t.find(e=>e.startsWith("climate."))||""),!o&&i&&i.length&&(o=i.find(e=>e.startsWith("climate."))||""),!o&&e&&e.states&&(o=Object.keys(e.states).find(e=>e.startsWith("climate."))||""),{type:"custom:miraie-ac-card-in",entity:o}}setConfig(e){if(!e)throw new Error("Invalid configuration");this._config={...e},this._openPanel=null}updated(e){if(super.updated(e),e.has("_config")){const e=this._config?.theme||"default";this.getAttribute("theme")!==e&&this.setAttribute("theme",e)}}shouldUpdate(e){if(e.has("_config")||e.has("_openPanel")||e.has("_expanded")||e.has("_ghDropdown"))return!0;if(e.has("hass")&&this._config){const t=e.get("hass");if(!t)return!0;const i=this._config;if(!i.entity)return!0;const o=i.entity.replace(/^climate\./,""),s=Object.keys(this.hass.states);for(const e of s)if((e===i.entity||e.includes(o))&&t.states[e]!==this.hass.states[e])return!0;return!1}return!1}render(){if(!this.hass||!this._config)return null;const e=this._config;if(!e.entity)return I`
-        <ha-card class="m-card" style="padding: 24px; text-align: center;">
-          <div style="font-size: 16px; font-weight: 700; color: var(--primary-text-color);">MirAIe AC Card</div>
-          <div style="font-size: 13px; color: var(--secondary-text-color); margin-top: 8px;">
-            Please select a Panasonic MirAIe climate entity in the card editor below.
+`,me={type:"miraie-ac-card-in",name:"MirAIe AC Card",description:"A premium thermostat card for Panasonic MirAIe AC units",preview:!0,domain:"climate",domains:["climate"],documentationURL:"https://github.com/selvakk2k/miraie-ac-card-in"};window.customCards=window.customCards||[];const ue=window.customCards.findIndex(e=>"miraie-ac-card-in"===e.type||"custom:miraie-ac-card-in"===e.type);function ge(e){const t=/^cv[\s_]+(\d+)$/.exec((e??"").trim());return t?parseInt(t[1],10):-1}function ve(e){const t=Number(e);return isNaN(t)?String(e):t.toFixed(2)}ue>=0?window.customCards[ue]=me:window.customCards.push(me);let be=class extends ne{constructor(){super(...arguments),this._openPanel=null,this._expanded=!1,this._ghDropdown=null,this._handleWindowClick=e=>{const t=e.composedPath();this._ghDropdown&&!t.includes(this)&&(this._ghDropdown=null)}}static get styles(){return pe}connectedCallback(){super.connectedCallback(),window.addEventListener("click",this._handleWindowClick)}disconnectedCallback(){window.removeEventListener("click",this._handleWindowClick),super.disconnectedCallback()}static getConfigForm(){return{schema:[{name:"entity",required:!0,selector:{entity:{domain:"climate",integration:"miraie_in"}}},{name:"name",selector:{text:{}}},{name:"theme",selector:{select:{options:[{label:"Default HA Theme",value:"default"},{label:"Material You",value:"material_you"}]}}},{name:"layout",selector:{select:{options:[{label:"Default (Full)",value:"default"},{label:"Compact (Expandable)",value:"compact"}]}}},{name:"full_layout",selector:{select:{options:[{label:"Classic",value:"default"},{label:"Google Home",value:"google_home"}]}}},{name:"accent_color",selector:{ui_color:{}}},{name:"main_color",selector:{ui_color:{}}},{name:"",type:"expandable",title:"Display Sensors",icon:"mdi:thermometer",schema:[{name:"room_temp_sensor",selector:{entity:{domain:"sensor",device_class:"temperature"}}},{name:"humidity_sensor",selector:{entity:{domain:"sensor",device_class:"humidity"}}}]},{name:"",type:"expandable",title:"2.0 Hybrid Transport Architecture (Auto-Discovered if blank)",icon:"mdi:swap-horizontal-circle-outline",schema:[{name:"hybrid_submode_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"active_backend_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"ir_blaster_sensor",selector:{entity:{domain:["binary_sensor","infrared","remote"]}}},{name:"cloud_mqtt_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"control_source_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Convertible & Controls",icon:"mdi:toggle-switch-outline",schema:[{name:"nanoe_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"display_switch",selector:{entity:{domain:"switch",integration:"miraie_in"}}},{name:"coil_clean_button",selector:{entity:{domain:"button",integration:"miraie_in"}}},{name:"coil_cleaning_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}},{name:"filter_alert_sensor",selector:{entity:{domain:"binary_sensor",integration:"miraie_in"}}}]},{name:"",type:"expandable",title:"Diagnostics & Energy",icon:"mdi:chart-line",schema:[{name:"rssi_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_today_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}},{name:"energy_yesterday_sensor",selector:{entity:{domain:"sensor",integration:"miraie_in"}}}]}]}}static getStubConfig(e,t,i){let o="";return t&&t.length&&(o=t.find(e=>e.startsWith("climate."))||""),!o&&i&&i.length&&(o=i.find(e=>e.startsWith("climate."))||""),!o&&e&&e.states&&(o=Object.keys(e.states).find(e=>e.startsWith("climate."))||""),{type:"custom:miraie-ac-card-in",entity:o}}setConfig(e){if(!e)throw new Error("Invalid configuration");this._config={...e},this._openPanel=null}updated(e){if(super.updated(e),e.has("_config")){const e=this._config?.theme||"default";this.getAttribute("theme")!==e&&this.setAttribute("theme",e)}}shouldUpdate(e){if(e.has("_config")||e.has("_openPanel")||e.has("_expanded")||e.has("_ghDropdown"))return!0;if(e.has("hass")&&this._config){const t=e.get("hass");if(!t)return!0;const i=this._config;if(!i.entity)return!0;const o=i.entity.replace(/^climate\./,""),s=Object.keys(this.hass.states);for(const e of s)if((e===i.entity||e.includes(o))&&t.states[e]!==this.hass.states[e])return!0;return!1}return!1}render(){if(!this.hass||!this._config)return null;const e=this._config,t=e.entity,i=t?this.hass.states[t]:void 0;if(!i)return I`
+        <ha-card class="m-card" style="padding: 24px; text-align: center; color: var(--appliance-text-2, var(--secondary-text-color, #8e8e93));">
+          <ha-icon icon="mdi:air-conditioner" style="--mdc-icon-size: 40px; margin-bottom: 8px; opacity: 0.6; color: var(--miraie-accent, var(--primary-color, #f39c12));"></ha-icon>
+          <div style="font-weight: 500; font-size: 15px; color: var(--appliance-text-1, var(--primary-text-color, inherit));">MirAIe AC Card</div>
+          <div style="font-size: 13px; margin-top: 4px;">
+            ${t?I`Entity not found: <code>${t}</code>`:"Please select a Panasonic MirAIe climate entity in the card editor."}
           </div>
         </ha-card>
-      `;const t=this.hass.states[e.entity];if(!t)return I`
-        <ha-card class="m-card" style="padding: 24px; text-align: center;">
-          <div style="font-size: 16px; font-weight: 700; color: var(--primary-text-color);">MirAIe AC Card</div>
-          <div style="font-size: 13px; color: var(--error-color, #e53935); margin-top: 8px;">
-            Entity not found: <code>${e.entity}</code>
-          </div>
-        </ha-card>
-      `;const i=t.attributes,o="unavailable"!==t.state&&"unknown"!==t.state,s="off"!==t.state&&o,a=e.name||i.friendly_name||"AC",n=i.temperature,r=i.min_temp??16,c=i.max_temp??30,l=i.preset_mode,d="eco"===l?16:r,h="eco"===l?30:c,p=t.state,m=i.fan_mode,u=i.swing_mode,g=i.swing_horizontal_mode,v=e.room_temp_sensor?this.hass.states[e.room_temp_sensor]:void 0;let b=v?v.state:i.current_temperature;null==b||isNaN(Number(b))||(b=Number(b).toFixed(1));const _=e.humidity_sensor?this.hass.states[e.humidity_sensor]:void 0;let f=_?_.state:void 0;null==f||isNaN(Number(f))||(f=Number(f).toFixed(1));const y=e.nanoe_switch?this.hass.states[e.nanoe_switch]:void 0,w=e.display_switch?this.hass.states[e.display_switch]:void 0,x=e.coil_clean_button?this.hass.states[e.coil_clean_button]:void 0,$=e.coil_cleaning_sensor?this.hass.states[e.coil_cleaning_sensor]:void 0,k=e.filter_alert_sensor?this.hass.states[e.filter_alert_sensor]:void 0,A=e.rssi_sensor?this.hass.states[e.rssi_sensor]:void 0,C=e.energy_today_sensor?this.hass.states[e.energy_today_sensor]:void 0,T=e.energy_yesterday_sensor?this.hass.states[e.energy_yesterday_sensor]:void 0,S="on"===$?.state,P=e.entity.replace(/^climate\./,""),j=(e,t,i)=>{if(e&&this.hass.states[e])return this.hass.states[e];for(const e of i){const i=`${t}.${e}`;if(this.hass.states[i])return this.hass.states[i]}const o=Object.keys(this.hass.states);for(const e of i){const i=o.find(i=>i.startsWith(`${t}.${P}_`)&&i.includes(e));if(i)return this.hass.states[i]}},z=j(e.hybrid_submode_switch,"switch",[`${P}_hybrid_automatic_control`,`${P}_hybrid_submode`,`${P}_hybrid_control`,"hybrid"]),E=j(e.active_backend_switch,"switch",[`${P}_primary_transport_backend_cloud`,`${P}_primary_transport_backend`,`${P}_active_backend`,"backend","transport"]),D=j(e.ir_blaster_sensor,"binary_sensor",[`${P}_ir_blaster_available`,`${P}_ir_transmitter_available`,`${P}_ir_blaster_transmitter_availability`,"ir_blaster"]),N=j(e.cloud_mqtt_sensor,"binary_sensor",[`${P}_cloud_mqtt_connected`,`${P}_cloud_mqtt`,"cloud_mqtt"]),M=j(e.control_source_sensor,"sensor",[`${P}_last_controlled_via`,`${P}_control_source`,"last_controlled_via"]);let H=[],O="cv_";i.preset_modes&&i.preset_modes.some(e=>/^cv[\s_]/.test(e))&&(H=i.preset_modes.filter(e=>/^cv[\s_]/.test(e)),O=H[0].substring(0,3),H.includes(`${O}0`)||H.push(`${O}0`));let L=i.preset_mode&&/^cv[\s_]/.test(i.preset_mode)?i.preset_mode:`${O}0`;const U=H.filter(e=>ge(e)>0).sort((e,t)=>ge(e)-ge(t)),F=[`${O}0`,...U],R=F.indexOf(L),B=(W=H,W?.length?W.some(e=>60===ge(e))&&W.some(e=>50===ge(e))?"Converti8":"Converti7":"Convertible");var W;const q=U.length>0?R/(F.length-1)*100:0;let V="";if(this._config.accent_color)if(Array.isArray(this._config.accent_color))V=`rgb(${this._config.accent_color.join(",")})`;else if("string"==typeof this._config.accent_color){const e=this._config.accent_color.toLowerCase();V="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}let G="";if(this._config.main_color)if(Array.isArray(this._config.main_color))G=`rgb(${this._config.main_color.join(",")})`;else if("string"==typeof this._config.main_color){const e=this._config.main_color.toLowerCase();G="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}const Y=`${V?`--miraie-accent: ${V}; `:""}${G?`--m-bg: ${G}; `:""}`;if("compact"===e.layout&&!this._expanded)return this._renderCompact(t,a,s,n,b,f,p,r,c,Y);if("google_home"===e.full_layout)return this._renderGoogleHomeFull(t,a,s,n,b,f,p,r,c,Y);let Q=[];if(s){if(Q.push(this._modeLabel(p)),l&&"none"!==l)if(/^cv[\s_]/.test(l)){const e=ge(l);Q.push(0===e?"Normal Limit":e+"% Limit")}else Q.push(this._presetLabel(l));Q.push(`Fan: ${m??"Auto"}`)}return I`
-      <ha-card style="${Y}">
+      `;const o=i.attributes,s="unavailable"!==i.state&&"unknown"!==i.state,a="off"!==i.state&&s,n=e.name||o.friendly_name||"AC",r=o.temperature,c=o.min_temp??16,l=o.max_temp??30,d=o.preset_mode,h="eco"===d?16:c,p="eco"===d?30:l,m=i.state,u=o.fan_mode,g=o.swing_mode,v=o.swing_horizontal_mode,b=e.room_temp_sensor?this.hass.states[e.room_temp_sensor]:void 0;let _=b?b.state:o.current_temperature;null==_||isNaN(Number(_))||(_=Number(_).toFixed(1));const f=e.humidity_sensor?this.hass.states[e.humidity_sensor]:void 0;let y=f?f.state:void 0;null==y||isNaN(Number(y))||(y=Number(y).toFixed(1));const w=e.nanoe_switch?this.hass.states[e.nanoe_switch]:void 0,x=e.display_switch?this.hass.states[e.display_switch]:void 0,$=e.coil_clean_button?this.hass.states[e.coil_clean_button]:void 0,k=e.coil_cleaning_sensor?this.hass.states[e.coil_cleaning_sensor]:void 0,A=e.filter_alert_sensor?this.hass.states[e.filter_alert_sensor]:void 0,T=e.rssi_sensor?this.hass.states[e.rssi_sensor]:void 0,C=e.energy_today_sensor?this.hass.states[e.energy_today_sensor]:void 0,S=e.energy_yesterday_sensor?this.hass.states[e.energy_yesterday_sensor]:void 0,P="on"===k?.state,j=e.entity.replace(/^climate\./,""),z=(e,t,i)=>{if(e&&this.hass.states[e])return this.hass.states[e];for(const e of i){const i=`${t}.${e}`;if(this.hass.states[i])return this.hass.states[i]}const o=Object.keys(this.hass.states);for(const e of i){const i=o.find(i=>i.startsWith(`${t}.${j}_`)&&i.includes(e));if(i)return this.hass.states[i]}},E=z(e.hybrid_submode_switch,"switch",[`${j}_hybrid_automatic_control`,`${j}_hybrid_submode`,`${j}_hybrid_control`,"hybrid"]),D=z(e.active_backend_switch,"switch",[`${j}_primary_transport_backend_cloud`,`${j}_primary_transport_backend`,`${j}_active_backend`,"backend","transport"]),N=z(e.ir_blaster_sensor,"binary_sensor",[`${j}_ir_blaster_available`,`${j}_ir_transmitter_available`,`${j}_ir_blaster_transmitter_availability`,"ir_blaster"]),M=z(e.cloud_mqtt_sensor,"binary_sensor",[`${j}_cloud_mqtt_connected`,`${j}_cloud_mqtt`,"cloud_mqtt"]),H=z(e.control_source_sensor,"sensor",[`${j}_last_controlled_via`,`${j}_control_source`,"last_controlled_via"]);let O=[],L="cv_";o.preset_modes&&o.preset_modes.some(e=>/^cv[\s_]/.test(e))&&(O=o.preset_modes.filter(e=>/^cv[\s_]/.test(e)),L=O[0].substring(0,3),O.includes(`${L}0`)||O.push(`${L}0`));let U=o.preset_mode&&/^cv[\s_]/.test(o.preset_mode)?o.preset_mode:`${L}0`;const F=O.filter(e=>ge(e)>0).sort((e,t)=>ge(e)-ge(t)),R=[`${L}0`,...F],B=R.indexOf(U),W=(q=O,q?.length?q.some(e=>60===ge(e))&&q.some(e=>50===ge(e))?"Converti8":"Converti7":"Convertible");var q;const V=F.length>0?B/(R.length-1)*100:0;let G="";if(this._config.accent_color)if(Array.isArray(this._config.accent_color))G=`rgb(${this._config.accent_color.join(",")})`;else if("string"==typeof this._config.accent_color){const e=this._config.accent_color.toLowerCase();G="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}let Y="";if(this._config.main_color)if(Array.isArray(this._config.main_color))Y=`rgb(${this._config.main_color.join(",")})`;else if("string"==typeof this._config.main_color){const e=this._config.main_color.toLowerCase();Y="primary"===e?"var(--primary-color)":"accent"===e?"var(--accent-color)":/^[a-z-]+$/.test(e)?`var(--${e}-color, ${e})`:e}const Q=`${G?`--miraie-accent: ${G}; `:""}${Y?`--m-bg: ${Y}; `:""}`;if("compact"===e.layout&&!this._expanded)return this._renderCompact(i,n,a,r,_,y,m,c,l,Q);if("google_home"===e.full_layout)return this._renderGoogleHomeFull(i,n,a,r,_,y,m,c,l,Q);let J=[];if(a){if(J.push(this._modeLabel(m)),d&&"none"!==d)if(/^cv[\s_]/.test(d)){const e=ge(d);J.push(0===e?"Normal Limit":e+"% Limit")}else J.push(this._presetLabel(d));J.push(`Fan: ${u??"Auto"}`)}return I`
+      <ha-card style="${Q}">
 
         <!-- ── Header ── -->
         <div class="header">
           <div class="header-left">
             <div class="title-row">
               <ha-icon class="header-icon" icon="mdi:air-conditioner"></ha-icon>
-              <span class="title">${a}</span>
+              <span class="title">${n}</span>
             </div>
             <div class="subtitle">
-              ${o?s?Q.join(" • "):"Off":"Offline"}
+              ${s?a?J.join(" • "):"Off":"Offline"}
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -885,9 +879,9 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
               </button>
             `:""}
             <button
-              class="power-btn ${s?"on":""} ${!o||S?"disabled":""}"
-              title="${S?"Power cannot be toggled while coil cleaning is active":o?"Toggle Power":"Device is offline"}"
-              @click=${()=>{S?this._showToast("Power cannot be toggled while coil cleaning is active"):o?this._togglePower(t):this._showToast("Device is offline")}}
+              class="power-btn ${a?"on":""} ${!s||P?"disabled":""}"
+              title="${P?"Power cannot be toggled while coil cleaning is active":s?"Toggle Power":"Device is offline"}"
+              @click=${()=>{P?this._showToast("Power cannot be toggled while coil cleaning is active"):s?this._togglePower(i):this._showToast("Device is offline")}}
             >
               <ha-icon icon="mdi:power"></ha-icon>
             </button>
@@ -897,42 +891,42 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         <!-- ── Temperature ── -->
         <div class="temp-block">
           <button
-            class="temp-btn ${!s||"fan_only"===p||null!=n&&Number(n)<=Number(d)||S?"disabled":""}"
-            title="${S?"Temperature cannot be adjusted while coil cleaning is active":s?"fan_only"===p?"Temperature cannot be adjusted in Fan Only mode":null!=n&&Number(n)<=Number(d)?`Minimum temperature reached (${d}°)`:"Decrease Temperature":"Turn on the AC to adjust temperature"}"
-            @click=${()=>{S?this._showToast("Temperature cannot be adjusted while coil cleaning is active"):s?"fan_only"===p?this._showToast("Temperature cannot be adjusted in Fan Only mode"):null!=n&&Number(n)<=Number(d)?this._showToast(`Minimum temperature reached (${d}°)`):this._adjustTemp(-1,n,d):this._showToast("Turn on the AC to adjust temperature")}}
+            class="temp-btn ${!a||"fan_only"===m||null!=r&&Number(r)<=Number(h)||P?"disabled":""}"
+            title="${P?"Temperature cannot be adjusted while coil cleaning is active":a?"fan_only"===m?"Temperature cannot be adjusted in Fan Only mode":null!=r&&Number(r)<=Number(h)?`Minimum temperature reached (${h}°)`:"Decrease Temperature":"Turn on the AC to adjust temperature"}"
+            @click=${()=>{P?this._showToast("Temperature cannot be adjusted while coil cleaning is active"):a?"fan_only"===m?this._showToast("Temperature cannot be adjusted in Fan Only mode"):null!=r&&Number(r)<=Number(h)?this._showToast(`Minimum temperature reached (${h}°)`):this._adjustTemp(-1,r,h):this._showToast("Turn on the AC to adjust temperature")}}
           >
             <ha-icon icon="mdi:minus"></ha-icon>
           </button>
 
           <div class="temp-center">
             <div class="temp-value">
-              ${s?"fan_only"===p?"FA":null!=n?`${n}°C`:"--":"--"}
+              ${a?"fan_only"===m?"FA":null!=r?`${r}°C`:"--":"--"}
             </div>
             <div class="temp-meta">
               <span class="temp-meta-item">
                 <ha-icon icon="mdi:thermometer"></ha-icon>
-                ${null!=b?`${b}°C`:"--"}
+                ${null!=_?`${_}°C`:"--"}
               </span>
-              ${_?I`
+              ${f?I`
                 <span class="temp-meta-item">
                   <ha-icon icon="mdi:water-percent"></ha-icon>
-                  ${f}%
+                  ${y}%
                 </span>
               `:""}
             </div>
           </div>
 
           <button
-            class="temp-btn ${!s||"fan_only"===p||null!=n&&Number(n)>=Number(h)||S?"disabled":""}"
-            title="${S?"Temperature cannot be adjusted while coil cleaning is active":s?"fan_only"===p?"Temperature cannot be adjusted in Fan Only mode":null!=n&&Number(n)>=Number(h)?`Maximum temperature reached (${h}°)`:"Increase Temperature":"Turn on the AC to adjust temperature"}"
-            @click=${()=>{S?this._showToast("Temperature cannot be adjusted while coil cleaning is active"):s?"fan_only"===p?this._showToast("Temperature cannot be adjusted in Fan Only mode"):null!=n&&Number(n)>=Number(h)?this._showToast(`Maximum temperature reached (${h}°)`):this._adjustTemp(1,n,h):this._showToast("Turn on the AC to adjust temperature")}}
+            class="temp-btn ${!a||"fan_only"===m||null!=r&&Number(r)>=Number(p)||P?"disabled":""}"
+            title="${P?"Temperature cannot be adjusted while coil cleaning is active":a?"fan_only"===m?"Temperature cannot be adjusted in Fan Only mode":null!=r&&Number(r)>=Number(p)?`Maximum temperature reached (${p}°)`:"Increase Temperature":"Turn on the AC to adjust temperature"}"
+            @click=${()=>{P?this._showToast("Temperature cannot be adjusted while coil cleaning is active"):a?"fan_only"===m?this._showToast("Temperature cannot be adjusted in Fan Only mode"):null!=r&&Number(r)>=Number(p)?this._showToast(`Maximum temperature reached (${p}°)`):this._adjustTemp(1,r,p):this._showToast("Turn on the AC to adjust temperature")}}
           >
             <ha-icon icon="mdi:plus"></ha-icon>
           </button>
         </div>
 
         <!-- ── Filter Alert (always visible if entity configured + active) ── -->
-        ${"on"===k?.state?I`
+        ${"on"===A?.state?I`
           <div class="alert-banner">
             <div class="alert-left">
               <ha-icon class="alert-icon" icon="mdi:air-filter"></ha-icon>
@@ -943,17 +937,17 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         `:""}
 
         <!-- ── Connection / Transport Controls ── -->
-        ${E||z?I`
+        ${D||E?I`
           <div class="section">
             <div class="section-title">Connection</div>
             <div class="connection-row">
               <div class="segmented-bar connection-switches">
-                ${E?I`
-                  ${(()=>{const e="cloud"===E.state||"on"===E.state,t=z&&("auto"===z.state||"on"===z.state);return I`
+                ${D?I`
+                  ${(()=>{const e="cloud"===D.state||"on"===D.state,t=E&&("auto"===E.state||"on"===E.state);return I`
                       <button
-                        class="segmented-item ${t?"":"active"} ${t||S?"disabled":""}"
-                        title="${t?"Backend transport is managed automatically in Auto Failover mode":S?"Backend cannot be switched while coil cleaning is active":"Click to toggle primary transport backend"}"
-                        @click=${()=>{t?this._showToast("Backend transport is managed automatically in Auto Failover mode"):S?this._showToast("Backend cannot be switched while coil cleaning is active"):this._toggleSwitch(E.entity_id,E.state)}}
+                        class="segmented-item ${t?"":"active"} ${t||P?"disabled":""}"
+                        title="${t?"Backend transport is managed automatically in Auto Failover mode":P?"Backend cannot be switched while coil cleaning is active":"Click to toggle primary transport backend"}"
+                        @click=${()=>{t?this._showToast("Backend transport is managed automatically in Auto Failover mode"):P?this._showToast("Backend cannot be switched while coil cleaning is active"):this._toggleSwitch(D.entity_id,D.state)}}
                       >
                         <ha-icon icon="${e?"mdi:cloud-sync":"mdi:remote"}"></ha-icon>
                         ${e?"Backend: Cloud":"Backend: IR"}
@@ -961,14 +955,14 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
                     `})()}
                 `:""}
 
-                ${z?I`
+                ${E?I`
                   <button
-                    class="segmented-item ${"auto"===z.state||"on"===z.state?"active":""} ${S?"disabled":""}"
-                    title="${S?"Hybrid mode cannot be toggled while coil cleaning is active":"Click to toggle between Auto Failover and Manual backend"}"
-                    @click=${()=>{S?this._showToast("Hybrid mode cannot be toggled while coil cleaning is active"):this._toggleSwitch(z.entity_id,z.state)}}
+                    class="segmented-item ${"auto"===E.state||"on"===E.state?"active":""} ${P?"disabled":""}"
+                    title="${P?"Hybrid mode cannot be toggled while coil cleaning is active":"Click to toggle between Auto Failover and Manual backend"}"
+                    @click=${()=>{P?this._showToast("Hybrid mode cannot be toggled while coil cleaning is active"):this._toggleSwitch(E.entity_id,E.state)}}
                   >
-                    <ha-icon icon="${"auto"===z.state||"on"===z.state?"mdi:refresh-auto":"mdi:hand-back-right"}"></ha-icon>
-                    ${"auto"===z.state||"on"===z.state?"Auto Failover":"Manual"}
+                    <ha-icon icon="${"auto"===E.state||"on"===E.state?"mdi:refresh-auto":"mdi:hand-back-right"}"></ha-icon>
+                    ${"auto"===E.state||"on"===E.state?"Auto Failover":"Manual"}
                   </button>
                 `:""}
               </div>
@@ -982,11 +976,11 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         <div class="section">
           <div class="section-title">Modes</div>
           <div class="segmented-bar">
-            ${(i.hvac_modes||[]).filter(e=>"off"!==e).map(e=>I`
+            ${(o.hvac_modes||[]).filter(e=>"off"!==e).map(e=>I`
               <button
-                class="segmented-item ${p===e&&s?"active":""} ${!o||S?"disabled":""}"
-                title="${S?"HVAC mode cannot be changed while coil cleaning is active":o?this._modeLabel(e):"Device is offline"}"
-                @click=${()=>{S?this._showToast("HVAC mode cannot be changed while coil cleaning is active"):o?this._setHvacMode(e):this._showToast("Device is offline")}}
+                class="segmented-item ${m===e&&a?"active":""} ${!s||P?"disabled":""}"
+                title="${P?"HVAC mode cannot be changed while coil cleaning is active":s?this._modeLabel(e):"Device is offline"}"
+                @click=${()=>{P?this._showToast("HVAC mode cannot be changed while coil cleaning is active"):s?this._setHvacMode(e):this._showToast("Device is offline")}}
               >
                 <ha-icon icon="${this._modeIcon(e)}"></ha-icon>
                 ${this._modeLabel(e)}
@@ -1000,49 +994,49 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
           <div class="section-title">Fan & Swing</div>
           <div class="setting-tiles">
             <div
-              class="setting-tile ${"fan"===this._openPanel?"active":""} ${!s||"dry"===p||S?"disabled":""}"
-              title="${S?"Fan speed cannot be changed while coil cleaning is active":s?"dry"===p?"Fan speed is automatically managed in Dry mode":"Adjust fan speed":"Turn on the AC to adjust fan speed"}"
-              @click=${()=>{S?this._showToast("Fan speed cannot be changed while coil cleaning is active"):s?"dry"===p?this._showToast("Fan speed is automatically managed in Dry mode"):this._togglePanel("fan"):this._showToast("Turn on the AC to adjust fan speed")}}
+              class="setting-tile ${"fan"===this._openPanel?"active":""} ${!a||"dry"===m||P?"disabled":""}"
+              title="${P?"Fan speed cannot be changed while coil cleaning is active":a?"dry"===m?"Fan speed is automatically managed in Dry mode":"Adjust fan speed":"Turn on the AC to adjust fan speed"}"
+              @click=${()=>{P?this._showToast("Fan speed cannot be changed while coil cleaning is active"):a?"dry"===m?this._showToast("Fan speed is automatically managed in Dry mode"):this._togglePanel("fan"):this._showToast("Turn on the AC to adjust fan speed")}}
             >
               <div class="setting-tile-label">
                 <ha-icon icon="mdi:fan"></ha-icon>
                 <span>Fan</span>
               </div>
               <div class="setting-tile-value-row">
-                <span class="setting-tile-value">${m?m.charAt(0).toUpperCase()+m.slice(1):"Auto"}</span>
+                <span class="setting-tile-value">${u?u.charAt(0).toUpperCase()+u.slice(1):"Auto"}</span>
                 <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
               </div>
             </div>
 
-            ${null!=u?I`
+            ${null!=g?I`
               <div
-                class="setting-tile ${"swing_v"===this._openPanel?"active":""} ${!s||S?"disabled":""}"
-                title="${S?"Swing vanes cannot be adjusted while coil cleaning is active":s?"Adjust vertical swing":"Turn on the AC to adjust swing vanes"}"
-                @click=${()=>{S?this._showToast("Swing vanes cannot be adjusted while coil cleaning is active"):s?this._togglePanel("swing_v"):this._showToast("Turn on the AC to adjust swing vanes")}}
+                class="setting-tile ${"swing_v"===this._openPanel?"active":""} ${!a||P?"disabled":""}"
+                title="${P?"Swing vanes cannot be adjusted while coil cleaning is active":a?"Adjust vertical swing":"Turn on the AC to adjust swing vanes"}"
+                @click=${()=>{P?this._showToast("Swing vanes cannot be adjusted while coil cleaning is active"):a?this._togglePanel("swing_v"):this._showToast("Turn on the AC to adjust swing vanes")}}
               >
                 <div class="setting-tile-label">
                   <ha-icon icon="mdi:arrow-up-down"></ha-icon>
                   <span>V-Swing</span>
                 </div>
                 <div class="setting-tile-value-row">
-                  <span class="setting-tile-value">${"Auto Swing"===u?"Auto":u}</span>
+                  <span class="setting-tile-value">${"Auto Swing"===g?"Auto":g}</span>
                   <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
                 </div>
               </div>
             `:""}
 
-            ${null!=g?I`
+            ${null!=v?I`
               <div
-                class="setting-tile ${"swing_h"===this._openPanel?"active":""} ${!s||S?"disabled":""}"
-                title="${S?"Horizontal swing cannot be adjusted while coil cleaning is active":s?"Adjust horizontal swing":"Turn on the AC to adjust horizontal swing"}"
-                @click=${()=>{S?this._showToast("Horizontal swing cannot be adjusted while coil cleaning is active"):s?this._togglePanel("swing_h"):this._showToast("Turn on the AC to adjust horizontal swing")}}
+                class="setting-tile ${"swing_h"===this._openPanel?"active":""} ${!a||P?"disabled":""}"
+                title="${P?"Horizontal swing cannot be adjusted while coil cleaning is active":a?"Adjust horizontal swing":"Turn on the AC to adjust horizontal swing"}"
+                @click=${()=>{P?this._showToast("Horizontal swing cannot be adjusted while coil cleaning is active"):a?this._togglePanel("swing_h"):this._showToast("Turn on the AC to adjust horizontal swing")}}
               >
                 <div class="setting-tile-label">
                   <ha-icon icon="mdi:arrow-left-right"></ha-icon>
                   <span>H-Swing</span>
                 </div>
                 <div class="setting-tile-value-row">
-                  <span class="setting-tile-value">${"Auto Swing"===g?"Auto":g}</span>
+                  <span class="setting-tile-value">${"Auto Swing"===v?"Auto":v}</span>
                   <ha-icon class="setting-tile-chevron" icon="mdi:chevron-down"></ha-icon>
                 </div>
               </div>
@@ -1051,9 +1045,9 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
 
           ${"fan"===this._openPanel?I`
             <div class="picker-panel">
-              ${(i.fan_modes||[]).map(e=>I`
-                <button class="picker-opt ${m===e?"sel":""}"
-                        @click=${()=>{this._setFanMode(t,e),this._openPanel=null}}>
+              ${(o.fan_modes||[]).map(e=>I`
+                <button class="picker-opt ${u===e?"sel":""}"
+                        @click=${()=>{this._setFanMode(i,e),this._openPanel=null}}>
                   ${e.charAt(0).toUpperCase()+e.slice(1)}
                 </button>
               `)}
@@ -1062,9 +1056,9 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
 
           ${"swing_v"===this._openPanel?I`
             <div class="picker-panel">
-              ${(i.swing_modes||[]).map(e=>I`
-                <button class="picker-opt ${u===e?"sel":""}"
-                        @click=${()=>{this._setSwing(t,e),this._openPanel=null}}>
+              ${(o.swing_modes||[]).map(e=>I`
+                <button class="picker-opt ${g===e?"sel":""}"
+                        @click=${()=>{this._setSwing(i,e),this._openPanel=null}}>
                   ${e}
                 </button>
               `)}
@@ -1073,9 +1067,9 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
 
           ${"swing_h"===this._openPanel?I`
             <div class="picker-panel">
-              ${(i.swing_horizontal_modes||[]).map(e=>I`
-                <button class="picker-opt ${g===e?"sel":""}"
-                        @click=${()=>{this._setHSwing(t,e),this._openPanel=null}}>
+              ${(o.swing_horizontal_modes||[]).map(e=>I`
+                <button class="picker-opt ${v===e?"sel":""}"
+                        @click=${()=>{this._setHSwing(i,e),this._openPanel=null}}>
                   ${e}
                 </button>
               `)}
@@ -1087,11 +1081,11 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         <div class="section">
           <div class="section-title">Comfort Presets</div>
           <div class="segmented-bar">
-            ${["none","eco","boost"].map(e=>{const t=!s||["dry","auto","fan_only"].includes(p)&&"none"!==e||S||R>0&&"none"!==e;return I`
+            ${["none","eco","boost"].map(e=>{const t=!a||["dry","auto","fan_only"].includes(m)&&"none"!==e||P||B>0&&"none"!==e;return I`
                 <button
-                  class="segmented-item ${l===e?"active":""} ${t?"disabled":""}"
-                  title="${S?"Presets cannot be changed while coil cleaning is active":s?["dry","auto","fan_only"].includes(p)&&"none"!==e?`Presets are not available in ${this._modeLabel(p)} mode`:R>0&&"none"!==e?"Presets cannot be changed while capacity limit is active":"none"===e?"Normal":e.charAt(0).toUpperCase()+e.slice(1):"Turn on the AC to select presets"}"
-                  @click=${()=>{S?this._showToast("Presets cannot be changed while coil cleaning is active"):s?["dry","auto","fan_only"].includes(p)&&"none"!==e?this._showToast(`Presets are not available in ${this._modeLabel(p)} mode`):R>0&&"none"!==e?this._showToast("Presets cannot be changed while capacity limit is active"):this._setPreset(e):this._showToast("Turn on the AC to select presets")}}
+                  class="segmented-item ${d===e?"active":""} ${t?"disabled":""}"
+                  title="${P?"Presets cannot be changed while coil cleaning is active":a?["dry","auto","fan_only"].includes(m)&&"none"!==e?`Presets are not available in ${this._modeLabel(m)} mode`:B>0&&"none"!==e?"Presets cannot be changed while capacity limit is active":"none"===e?"Normal":e.charAt(0).toUpperCase()+e.slice(1):"Turn on the AC to select presets"}"
+                  @click=${()=>{P?this._showToast("Presets cannot be changed while coil cleaning is active"):a?["dry","auto","fan_only"].includes(m)&&"none"!==e?this._showToast(`Presets are not available in ${this._modeLabel(m)} mode`):B>0&&"none"!==e?this._showToast("Presets cannot be changed while capacity limit is active"):this._setPreset(e):this._showToast("Turn on the AC to select presets")}}
                 >
                   <ha-icon icon="${this._presetIcon(e)}"></ha-icon>
                   ${this._presetLabel(e)}
@@ -1101,34 +1095,34 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         </div>
 
         <!-- ── Convertible Mode — stepped notch slider ── -->
-        ${U.length>0?I`
-          <div class="section" style="${["dry","auto","fan_only"].includes(p)||S?"opacity: 0.5;":""}">
-            <div class="section-title">${B}</div>
+        ${F.length>0?I`
+          <div class="section" style="${["dry","auto","fan_only"].includes(m)||P?"opacity: 0.5;":""}">
+            <div class="section-title">${W}</div>
             <div class="step-slider-wrap">
               <div class="step-slider-header">
                 <span class="step-slider-title">Capacity Limit</span>
                 <span class="step-slider-val">
-                  ${0===R?"Normal":`${ge(L)}%`}
+                  ${0===B?"Normal":`${ge(U)}%`}
                 </span>
               </div>
 
               <!-- Track + notch dots -->
               <div class="step-track-outer">
                 <div class="step-track-bg">
-                  <div class="step-track-fill" style="width: ${q}%"></div>
+                  <div class="step-track-fill" style="width: ${V}%"></div>
                 </div>
                 <div class="step-notches">
-                  ${F.map((e,t)=>{const i=["eco","boost","powerful"].includes(l),o=!s||["dry","auto","fan_only"].includes(p)||S||i&&t>0;return I`
+                  ${R.map((e,t)=>{const i=["eco","boost","powerful"].includes(d),o=!a||["dry","auto","fan_only"].includes(m)||P||i&&t>0;return I`
                       <div class="notch-wrapper">
                         <button
                           class="step-notch
-                            ${t<R?"filled":""}
-                            ${t===R?"current":""}
+                            ${t<B?"filled":""}
+                            ${t===B?"current":""}
                             ${o?"disabled":""}"
-                          title="${S?"Capacity limit cannot be changed while coil cleaning is active":s?["dry","auto","fan_only"].includes(p)?`Capacity limit is not available in ${this._modeLabel(p)} mode`:i&&t>0?`Capacity limit cannot be changed while ${this._presetLabel(l)} mode is active`:0===t?"Normal":`${ge(e)}%`:"Turn on the AC to set capacity limits"}"
-                          @click=${()=>{S?this._showToast("Capacity limit cannot be changed while coil cleaning is active"):s?["dry","auto","fan_only"].includes(p)?this._showToast(`Capacity limit is not available in ${this._modeLabel(p)} mode`):i&&t>0?this._showToast(`Capacity limit cannot be changed while ${this._presetLabel(l)} mode is active`):this._setPreset(e):this._showToast("Turn on the AC to set capacity limits")}}
+                          title="${P?"Capacity limit cannot be changed while coil cleaning is active":a?["dry","auto","fan_only"].includes(m)?`Capacity limit is not available in ${this._modeLabel(m)} mode`:i&&t>0?`Capacity limit cannot be changed while ${this._presetLabel(d)} mode is active`:0===t?"Normal":`${ge(e)}%`:"Turn on the AC to set capacity limits"}"
+                          @click=${()=>{P?this._showToast("Capacity limit cannot be changed while coil cleaning is active"):a?["dry","auto","fan_only"].includes(m)?this._showToast(`Capacity limit is not available in ${this._modeLabel(m)} mode`):i&&t>0?this._showToast(`Capacity limit cannot be changed while ${this._presetLabel(d)} mode is active`):this._setPreset(e):this._showToast("Turn on the AC to set capacity limits")}}
                         ></button>
-                        <span class="notch-label ${t===R?"current":""}">${0===t?"N":ge(e)}</span>
+                        <span class="notch-label ${t===B?"current":""}">${0===t?"N":ge(e)}</span>
                       </div>
                     `})}
                 </div>
@@ -1138,46 +1132,46 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         `:""}
 
         <!-- ── Controls (Nanoe, Display, Coil Clean) ── -->
-        ${y||w||x?I`
+        ${w||x||$?I`
           <div class="section">
             <div class="section-title">Controls</div>
             <div class="toggles">
-              ${y?I`
-                <div class="toggle-card ${!o||S?"disabled":""}"
-                     title="${S?"Nanoe cannot be toggled while coil cleaning is active":o?"Toggle Nanoe™ air purification":"Device is offline"}"
-                     @click=${()=>{S?this._showToast("Nanoe cannot be toggled while coil cleaning is active"):o?this._toggleSwitch(e.nanoe_switch,y.state):this._showToast("Device is offline")}}>
+              ${w?I`
+                <div class="toggle-card ${!s||P?"disabled":""}"
+                     title="${P?"Nanoe cannot be toggled while coil cleaning is active":s?"Toggle Nanoe™ air purification":"Device is offline"}"
+                     @click=${()=>{P?this._showToast("Nanoe cannot be toggled while coil cleaning is active"):s?this._toggleSwitch(e.nanoe_switch,w.state):this._showToast("Device is offline")}}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===y.state?"active":""}">
+                    <div class="toggle-icon ${"on"===w.state?"active":""}">
                       <ha-icon icon="mdi:air-purifier"></ha-icon>
                     </div>
                     <span class="toggle-label">nanoe™</span>
                   </div>
-                  <ha-switch .checked=${"on"===y.state} ?disabled=${!o}></ha-switch>
+                  <ha-switch .checked=${"on"===w.state} ?disabled=${!s}></ha-switch>
                 </div>
               `:""}
-              ${w?I`
-                <div class="toggle-card ${!o||S?"disabled":""}"
-                     title="${S?"Display LED cannot be toggled while coil cleaning is active":o?"Toggle indoor unit LED display":"Device is offline"}"
-                     @click=${()=>{S?this._showToast("Display LED cannot be toggled while coil cleaning is active"):o?this._toggleSwitch(e.display_switch,w.state):this._showToast("Device is offline")}}>
+              ${x?I`
+                <div class="toggle-card ${!s||P?"disabled":""}"
+                     title="${P?"Display LED cannot be toggled while coil cleaning is active":s?"Toggle indoor unit LED display":"Device is offline"}"
+                     @click=${()=>{P?this._showToast("Display LED cannot be toggled while coil cleaning is active"):s?this._toggleSwitch(e.display_switch,x.state):this._showToast("Device is offline")}}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===w.state?"active":""}">
+                    <div class="toggle-icon ${"on"===x.state?"active":""}">
                       <ha-icon icon="mdi:eye"></ha-icon>
                     </div>
                     <span class="toggle-label">AC LED</span>
                   </div>
-                  <ha-switch .checked=${"on"===w.state} ?disabled=${!o}></ha-switch>
+                  <ha-switch .checked=${"on"===x.state} ?disabled=${!s}></ha-switch>
                 </div>
               `:""}
-              ${x?I`
-                <div class="toggle-card ${s||S?"disabled":""}"
-                     title="${S?"Coil cleaning cycle is currently running":s?"Coil clean cannot be started while AC is running":"Start coil self-cleaning cycle"}"
-                     @click=${()=>{S?this._showToast("Coil cleaning cycle is currently running"):s?this._showToast("Coil clean cannot be started while AC is running"):this._pressButton(e.coil_clean_button)}}>
+              ${$?I`
+                <div class="toggle-card ${a||P?"disabled":""}"
+                     title="${P?"Coil cleaning cycle is currently running":a?"Coil clean cannot be started while AC is running":"Start coil self-cleaning cycle"}"
+                     @click=${()=>{P?this._showToast("Coil cleaning cycle is currently running"):a?this._showToast("Coil clean cannot be started while AC is running"):this._pressButton(e.coil_clean_button)}}>
                   <div class="toggle-left">
-                    <div class="toggle-icon ${"on"===$?.state?"active":""}">
+                    <div class="toggle-icon ${"on"===k?.state?"active":""}">
                       <ha-icon icon="mdi:spray-bottle"></ha-icon>
                     </div>
                     <span class="toggle-label">
-                      ${"on"===$?.state?"Cleaning…":"Coil Clean"}
+                      ${"on"===k?.state?"Cleaning…":"Coil Clean"}
                     </span>
                   </div>
                   <ha-icon class="toggle-action" icon="mdi:play-circle-outline"></ha-icon>
@@ -1188,7 +1182,7 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
         `:""}
 
         <!-- ── Energy Cards ── -->
-        ${C||T?I`
+        ${C||S?I`
           <div class="section">
             <div class="section-title">Energy Consumption</div>
             <div class="energy-row">
@@ -1204,15 +1198,15 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
                   </div>
                 </div>
               `:""}
-              ${T?I`
+              ${S?I`
                 <div class="energy-card" @click=${()=>this._showMoreInfo(e.energy_yesterday_sensor)}>
                   <div class="energy-label">
                     <ha-icon icon="mdi:flash-outline"></ha-icon>
-                    ${T.attributes.friendly_name??"Yesterday"}
+                    ${S.attributes.friendly_name??"Yesterday"}
                   </div>
                   <div class="energy-value-row">
-                    <span class="energy-value">${ve(T.state)}</span>
-                    <span class="energy-unit">${T.attributes.unit_of_measurement??"kWh"}</span>
+                    <span class="energy-value">${ve(S.state)}</span>
+                    <span class="energy-unit">${S.attributes.unit_of_measurement??"kWh"}</span>
                   </div>
                 </div>
               `:""}
@@ -1222,33 +1216,33 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
 
         <!-- Footer Telemetry Status Row -->
         <div class="footer-telemetry-row">
-          ${D?I`
-            <div class="connection-status-pill">
-              <span class="status-dot ${"on"===D.state?"online":""}"></span>
-              <span>IR Blaster</span>
-            </div>
-          `:""}
           ${N?I`
             <div class="connection-status-pill">
               <span class="status-dot ${"on"===N.state?"online":""}"></span>
+              <span>IR Blaster</span>
+            </div>
+          `:""}
+          ${M?I`
+            <div class="connection-status-pill">
+              <span class="status-dot ${"on"===M.state?"online":""}"></span>
               <span>Cloud MQTT</span>
             </div>
           `:""}
-          ${M&&M.state&&"unknown"!==M.state&&"unavailable"!==M.state?I`
+          ${H&&H.state&&"unknown"!==H.state&&"unavailable"!==H.state?I`
             <div class="connection-status-pill">
-              <ha-icon icon="${this._sourceIcon(M.state)}" style="--mdc-icon-size: 14px;"></ha-icon>
-              <span>Last controlled by: ${this._sourceLabel(M.state)}</span>
+              <ha-icon icon="${this._sourceIcon(H.state)}" style="--mdc-icon-size: 14px;"></ha-icon>
+              <span>Last controlled by: ${this._sourceLabel(H.state)}</span>
             </div>
           `:""}
-          ${A?I`
+          ${T?I`
             <div class="connection-status-pill">
               <ha-icon icon="mdi:wifi" style="--mdc-icon-size: 14px;"></ha-icon>
-              <span>${A.state} ${A.attributes.unit_of_measurement??"dBm"}</span>
+              <span>${T.state} ${T.attributes.unit_of_measurement??"dBm"}</span>
             </div>
           `:""}
         </div>
       </ha-card>
-    `}_togglePanel(e){this._haptic("selection"),this._openPanel=this._openPanel===e?null:e}_haptic(e="light"){this.dispatchEvent(new CustomEvent("haptic",{detail:e,bubbles:!0,composed:!0}))}_showToast(e){this._haptic("warning"),this.dispatchEvent(new CustomEvent("hass-notification",{bubbles:!0,composed:!0,detail:{message:e}}))}_showMoreInfo(e){this._haptic("selection"),this.dispatchEvent(new CustomEvent("hass-more-info",{bubbles:!0,composed:!0,detail:{entityId:e}}))}_togglePower(e){this._haptic("medium"),"off"!==e.state?this.hass.callService("climate","set_hvac_mode",{entity_id:e.entity_id,hvac_mode:"off"}):this.hass.callService("climate","turn_on",{entity_id:e.entity_id})}_adjustTemp(e,t,i){if(this._haptic("light"),null==t)return;const o=Number(t)+e;if(null!=i&&(e<0&&o<Number(i)||e>0&&o>Number(i)))return;const s=this.hass?.states[this._config.entity];"auto"===s?.state&&this._showToast(`Temperature ${o}°C queued`),this.hass.callService("climate","set_temperature",{entity_id:this._config.entity,temperature:o})}_setHvacMode(e){this._haptic("light"),this.hass.callService("climate","set_hvac_mode",{entity_id:this._config.entity,hvac_mode:e})}_setFanMode(e,t){this._haptic("selection"),this.hass.callService("climate","set_fan_mode",{entity_id:e.entity_id,fan_mode:t})}_setSwing(e,t){this._haptic("selection"),this.hass.callService("climate","set_swing_mode",{entity_id:e.entity_id,swing_mode:t})}_setHSwing(e,t){this._haptic("selection"),this.hass.callService("climate","set_swing_horizontal_mode",{entity_id:e.entity_id,swing_horizontal_mode:t})}_setPreset(e){this._haptic("light");const t="cv_0"===e||"cv 0"===e?"none":e;this.hass.callService("climate","set_preset_mode",{entity_id:this._config.entity,preset_mode:t})}_toggleSwitch(e,t){this._haptic("light"),this.hass.callService("switch","on"===t?"turn_off":"turn_on",{entity_id:e})}_pressButton(e){this._haptic("medium"),this.hass.callService("button","press",{entity_id:e})}_modeLabel(e){return{cool:"Cool",dry:"Dry",fan_only:"Fan",auto:"Auto",heat:"Heat",off:"Off"}[e]??e.charAt(0).toUpperCase()+e.slice(1)}_modeIcon(e){return{cool:"mdi:snowflake",dry:"mdi:water-percent",fan_only:"mdi:fan",auto:"mdi:cached",heat:"mdi:fire"}[e]??"mdi:air-conditioner"}_modeColor(e){return{cool:"rgba(100, 181, 246, 0.18)",dry:"rgba(129, 199, 132, 0.18)",fan_only:"rgba(179, 157, 219, 0.18)",auto:"rgba(255, 183,  77, 0.18)",heat:"rgba(255, 138, 101, 0.18)"}[e]??"rgba(128, 128, 128, 0.12)"}_presetLabel(e){return"boost"===e?"Powerful":"none"===e?"None":"eco"===e?"Eco":e.charAt(0).toUpperCase()+e.slice(1)}_presetIcon(e){return{eco:"mdi:leaf",boost:"mdi:rocket",powerful:"mdi:rocket",none:"mdi:close-circle-outline"}[e]??"mdi:play-circle-outline"}_sourceIcon(e){const t=(e||"").toLowerCase();return t.includes("remote")?"mdi:remote":t.includes("switch")?"mdi:toggle-switch":t.includes("blaster")||t.includes("failover")||"ir"===t?"mdi:remote-desktop":t.includes("cloud")||"mqtt"===t?"mdi:cloud-check":"mdi:remote-desktop"}_sourceLabel(e){if(!e)return"Unknown";const t=e.trim(),i=t.toLowerCase();return"ir"===i?"IR":"cloud"===i?"Cloud":"ir blaster"===i||"ir_blaster"===i?"IR Blaster":"ir remote"===i||"ir_remote"===i?"IR Remote":"ir failover"===i||"ir_failover"===i?"IR Failover":"ir failover (offline)"===i||"ir_failover (offline)"===i?"IR Failover (Offline)":t.split(/[\s_]+/).map(e=>{const t=e.toLowerCase();return"ir"===t?"IR":"mqtt"===t?"MQTT":"ha"===t?"HA":e.charAt(0).toUpperCase()+e.slice(1).toLowerCase()}).join(" ")}_renderGoogleHomeFull(e,t,i,o,s,a,n,r,c,l){const d=this._config,h=e.attributes,p=h.hvac_modes||[],m=h.fan_mode,u=h.fan_modes||[],g=h.swing_mode,v=h.swing_modes||[],b=h.swing_horizontal_mode,_=h.swing_horizontal_modes||[],f="unavailable"!==e.state&&"unknown"!==e.state,y=h.preset_mode,w="eco"===y?16:r,x="eco"===y?30:c,$=i?"fan_only"===n?"FA":null!=o?`${o}°`:"--":f?"Off":"Offline";let k=["none"],A=[];if(h.preset_modes&&(k=Array.from(new Set(["none",...h.preset_modes.filter(e=>!/^cv[\s_]/.test(e))])),A=h.preset_modes.filter(e=>/^cv[\s_]/.test(e)),A.length>0)){const e=A[0].substring(0,3);A.includes(`${e}0`)||A.push(`${e}0`)}const C=A.sort((e,t)=>ge(t)-ge(e)),T=d.nanoe_switch?this.hass.states[d.nanoe_switch]:void 0,S=d.display_switch?this.hass.states[d.display_switch]:void 0,P=d.coil_clean_button?this.hass.states[d.coil_clean_button]:void 0,j=d.coil_cleaning_sensor?this.hass.states[d.coil_cleaning_sensor]:void 0,z=d.energy_today_sensor?this.hass.states[d.energy_today_sensor]:void 0,E=d.energy_yesterday_sensor?this.hass.states[d.energy_yesterday_sensor]:void 0,D=d.rssi_sensor?this.hass.states[d.rssi_sensor]:void 0,N="on"===j?.state,M=d.entity.replace(/^climate\./,""),H=(e,t,i)=>{if(e&&this.hass.states[e])return this.hass.states[e];for(const e of i){const i=`${t}.${e}`;if(this.hass.states[i])return this.hass.states[i]}const o=Object.keys(this.hass.states);for(const e of i){const i=o.find(i=>i.startsWith(`${t}.${M}_`)&&i.includes(e));if(i)return this.hass.states[i]}},O=H(d.hybrid_submode_switch,"switch",[`${M}_hybrid_automatic_control`,`${M}_hybrid_submode`,`${M}_hybrid_control`,"hybrid"]),L=H(d.active_backend_switch,"switch",[`${M}_primary_transport_backend_cloud`,`${M}_primary_transport_backend`,`${M}_active_backend`,"backend","transport"]),U=H(d.control_source_sensor,"sensor",[`${M}_last_controlled_via`,`${M}_control_source`,"last_controlled_via"]),F=H(d.ir_blaster_sensor,"binary_sensor",[`${M}_ir_blaster_available`,`${M}_ir_transmitter_available`,`${M}_ir_blaster_transmitter_availability`,"ir_blaster"]),R=H(d.cloud_mqtt_sensor,"binary_sensor",[`${M}_cloud_mqtt_connected`,`${M}_cloud_mqtt`,"cloud_mqtt"]);let B=[];return i&&(B.push(this._modeLabel(n)),y&&"none"!==y&&!/^cv[\s_]/.test(y)&&B.push(this._presetLabel(y))),I`
+    `}_togglePanel(e){this._haptic("selection"),this._openPanel=this._openPanel===e?null:e}_haptic(e="light"){this.dispatchEvent(new CustomEvent("haptic",{detail:e,bubbles:!0,composed:!0}))}_showToast(e){this._haptic("warning"),this.dispatchEvent(new CustomEvent("hass-notification",{bubbles:!0,composed:!0,detail:{message:e}}))}_showMoreInfo(e){this._haptic("selection"),this.dispatchEvent(new CustomEvent("hass-more-info",{bubbles:!0,composed:!0,detail:{entityId:e}}))}_togglePower(e){this._haptic("medium"),"off"!==e.state?this.hass.callService("climate","set_hvac_mode",{entity_id:e.entity_id,hvac_mode:"off"}):this.hass.callService("climate","turn_on",{entity_id:e.entity_id})}_adjustTemp(e,t,i){if(this._haptic("light"),null==t)return;const o=Number(t)+e;if(null!=i&&(e<0&&o<Number(i)||e>0&&o>Number(i)))return;const s=this.hass?.states[this._config.entity];"auto"===s?.state&&this._showToast(`Temperature ${o}°C queued`),this.hass.callService("climate","set_temperature",{entity_id:this._config.entity,temperature:o})}_setHvacMode(e){this._haptic("light"),this.hass.callService("climate","set_hvac_mode",{entity_id:this._config.entity,hvac_mode:e})}_setFanMode(e,t){this._haptic("selection"),this.hass.callService("climate","set_fan_mode",{entity_id:e.entity_id,fan_mode:t})}_setSwing(e,t){this._haptic("selection"),this.hass.callService("climate","set_swing_mode",{entity_id:e.entity_id,swing_mode:t})}_setHSwing(e,t){this._haptic("selection"),this.hass.callService("climate","set_swing_horizontal_mode",{entity_id:e.entity_id,swing_horizontal_mode:t})}_setPreset(e){this._haptic("light");const t="cv_0"===e||"cv 0"===e?"none":e;this.hass.callService("climate","set_preset_mode",{entity_id:this._config.entity,preset_mode:t})}_toggleSwitch(e,t){this._haptic("light"),this.hass.callService("switch","on"===t?"turn_off":"turn_on",{entity_id:e})}_pressButton(e){this._haptic("medium"),this.hass.callService("button","press",{entity_id:e})}_modeLabel(e){return{cool:"Cool",dry:"Dry",fan_only:"Fan",auto:"Auto",heat:"Heat",off:"Off"}[e]??e.charAt(0).toUpperCase()+e.slice(1)}_modeIcon(e){return{cool:"mdi:snowflake",dry:"mdi:water-percent",fan_only:"mdi:fan",auto:"mdi:cached",heat:"mdi:fire"}[e]??"mdi:air-conditioner"}_modeColor(e){return{cool:"rgba(100, 181, 246, 0.18)",dry:"rgba(129, 199, 132, 0.18)",fan_only:"rgba(179, 157, 219, 0.18)",auto:"rgba(255, 183,  77, 0.18)",heat:"rgba(255, 138, 101, 0.18)"}[e]??"rgba(128, 128, 128, 0.12)"}_presetLabel(e){return"boost"===e?"Powerful":"none"===e?"None":"eco"===e?"Eco":e.charAt(0).toUpperCase()+e.slice(1)}_presetIcon(e){return{eco:"mdi:leaf",boost:"mdi:rocket",powerful:"mdi:rocket",none:"mdi:close-circle-outline"}[e]??"mdi:play-circle-outline"}_sourceIcon(e){const t=(e||"").toLowerCase();return t.includes("remote")?"mdi:remote":t.includes("switch")?"mdi:toggle-switch":t.includes("blaster")||t.includes("failover")||"ir"===t?"mdi:remote-desktop":t.includes("cloud")||"mqtt"===t?"mdi:cloud-check":"mdi:remote-desktop"}_sourceLabel(e){if(!e)return"Unknown";const t=e.trim(),i=t.toLowerCase();return"ir"===i?"IR":"cloud"===i?"Cloud":"ir blaster"===i||"ir_blaster"===i?"IR Blaster":"ir remote"===i||"ir_remote"===i?"IR Remote":"ir failover"===i||"ir_failover"===i?"IR Failover":"ir failover (offline)"===i||"ir_failover (offline)"===i?"IR Failover (Offline)":t.split(/[\s_]+/).map(e=>{const t=e.toLowerCase();return"ir"===t?"IR":"mqtt"===t?"MQTT":"ha"===t?"HA":e.charAt(0).toUpperCase()+e.slice(1).toLowerCase()}).join(" ")}_renderGoogleHomeFull(e,t,i,o,s,a,n,r,c,l){const d=this._config,h=e.attributes,p=h.hvac_modes||[],m=h.fan_mode,u=h.fan_modes||[],g=h.swing_mode,v=h.swing_modes||[],b=h.swing_horizontal_mode,_=h.swing_horizontal_modes||[],f="unavailable"!==e.state&&"unknown"!==e.state,y=h.preset_mode,w="eco"===y?16:r,x="eco"===y?30:c,$=i?"fan_only"===n?"FA":null!=o?`${o}°`:"--":f?"Off":"Offline";let k=["none"],A=[];if(h.preset_modes&&(k=Array.from(new Set(["none",...h.preset_modes.filter(e=>!/^cv[\s_]/.test(e))])),A=h.preset_modes.filter(e=>/^cv[\s_]/.test(e)),A.length>0)){const e=A[0].substring(0,3);A.includes(`${e}0`)||A.push(`${e}0`)}const T=A.sort((e,t)=>ge(t)-ge(e)),C=d.nanoe_switch?this.hass.states[d.nanoe_switch]:void 0,S=d.display_switch?this.hass.states[d.display_switch]:void 0,P=d.coil_clean_button?this.hass.states[d.coil_clean_button]:void 0,j=d.coil_cleaning_sensor?this.hass.states[d.coil_cleaning_sensor]:void 0,z=d.energy_today_sensor?this.hass.states[d.energy_today_sensor]:void 0,E=d.energy_yesterday_sensor?this.hass.states[d.energy_yesterday_sensor]:void 0,D=d.rssi_sensor?this.hass.states[d.rssi_sensor]:void 0,N="on"===j?.state,M=d.entity.replace(/^climate\./,""),H=(e,t,i)=>{if(e&&this.hass.states[e])return this.hass.states[e];for(const e of i){const i=`${t}.${e}`;if(this.hass.states[i])return this.hass.states[i]}const o=Object.keys(this.hass.states);for(const e of i){const i=o.find(i=>i.startsWith(`${t}.${M}_`)&&i.includes(e));if(i)return this.hass.states[i]}},O=H(d.hybrid_submode_switch,"switch",[`${M}_hybrid_automatic_control`,`${M}_hybrid_submode`,`${M}_hybrid_control`,"hybrid"]),L=H(d.active_backend_switch,"switch",[`${M}_primary_transport_backend_cloud`,`${M}_primary_transport_backend`,`${M}_active_backend`,"backend","transport"]),U=H(d.control_source_sensor,"sensor",[`${M}_last_controlled_via`,`${M}_control_source`,"last_controlled_via"]),F=H(d.ir_blaster_sensor,"binary_sensor",[`${M}_ir_blaster_available`,`${M}_ir_transmitter_available`,`${M}_ir_blaster_transmitter_availability`,"ir_blaster"]),R=H(d.cloud_mqtt_sensor,"binary_sensor",[`${M}_cloud_mqtt_connected`,`${M}_cloud_mqtt`,"cloud_mqtt"]);let B=[];return i&&(B.push(this._modeLabel(n)),y&&"none"!==y&&!/^cv[\s_]/.test(y)&&B.push(this._presetLabel(y))),I`
       <ha-card style="${l}" class="gh-full-card">
         <div class="gh-header">
           <div class="gh-header-left">
@@ -1350,7 +1344,7 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
           </div>
 
           <!-- Convertible Dropdown -->
-          ${C.length>0?I`
+          ${T.length>0?I`
             <div class="gh-select-wrapper ${"cv"===this._ghDropdown?"active":""}" style="${!i||["dry","auto","fan_only"].includes(n)||N?"opacity: 0.5;":""}">
               <button class="gh-custom-select" @click=${e=>{e.stopPropagation(),N?this._showToast("Capacity limit cannot be changed while coil cleaning is active"):i?["dry","auto","fan_only"].includes(n)?this._showToast(`Capacity limit is not available in ${this._modeLabel(n)} mode`):(this._haptic("selection"),this._ghDropdown="cv"===this._ghDropdown?null:"cv"):this._showToast("Turn on the AC to set capacity limits")}}>
                 <span>Limit: ${e.attributes.preset_mode&&/^cv[\s_]/.test(e.attributes.preset_mode)?0===ge(e.attributes.preset_mode)?"Normal":ge(e.attributes.preset_mode)+"%":"Normal"}</span>
@@ -1358,7 +1352,7 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
               </button>
               ${"cv"===this._ghDropdown?I`
                 <div class="gh-dropdown-menu">
-                  ${C.map(t=>{const i=ge(t),o=e.attributes.preset_mode===t||0===i&&(!e.attributes.preset_mode||!/^cv[\s_]/.test(e.attributes.preset_mode));return I`
+                  ${T.map(t=>{const i=ge(t),o=e.attributes.preset_mode===t||0===i&&(!e.attributes.preset_mode||!/^cv[\s_]/.test(e.attributes.preset_mode));return I`
                       <button class="gh-dropdown-item ${o?"active":""}" 
                            @click=${e=>{e.stopPropagation(),this._ghDropdown=null,this._setPreset(t)}}>
                         ${0===i?"Normal":i+"%"}
@@ -1430,9 +1424,9 @@ const ce={attribute:!0,type:String,converter:_,reflect:!1,hasChanged:f},le=(e=ce
           `:""}
         </div>
 
-        ${T||S||P||z||E?I`
+        ${C||S||P||z||E?I`
           <div class="gh-extra-chips">
-            ${T?I`<div class="gh-chip ${"on"===T.state?"active":""} ${!f||N?"disabled":""}" title="${N?"Nanoe cannot be toggled while coil cleaning is active":f?"Toggle Nanoe™ air purification":"Device is offline"}" @click=${()=>N?this._showToast("Nanoe cannot be toggled while coil cleaning is active"):f?this._toggleSwitch(d.nanoe_switch,T.state):this._showToast("Device is offline")}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>`:""}
+            ${C?I`<div class="gh-chip ${"on"===C.state?"active":""} ${!f||N?"disabled":""}" title="${N?"Nanoe cannot be toggled while coil cleaning is active":f?"Toggle Nanoe™ air purification":"Device is offline"}" @click=${()=>N?this._showToast("Nanoe cannot be toggled while coil cleaning is active"):f?this._toggleSwitch(d.nanoe_switch,C.state):this._showToast("Device is offline")}><ha-icon icon="mdi:virus-outline"></ha-icon>Nanoe</div>`:""}
             ${S?I`<div class="gh-chip ${"on"===S.state?"active":""} ${!f||N?"disabled":""}" title="${N?"Display LED cannot be toggled while coil cleaning is active":f?"Toggle indoor unit LED display":"Device is offline"}" @click=${()=>N?this._showToast("Display LED cannot be toggled while coil cleaning is active"):f?this._toggleSwitch(d.display_switch,S.state):this._showToast("Device is offline")}><ha-icon icon="mdi:lightbulb-outline"></ha-icon>Display</div>`:""}
             ${P||j?I`
               <div
