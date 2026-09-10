@@ -1717,5 +1717,5 @@ private _sourceLabel(s: string): string {
 
 // Dual registration for seamless backward-compatibility
 if (!customElements.get('miraie-ac-card')) {
-  customElements.define('miraie-ac-card', MirAIeACCard);
+  customElements.define('miraie-ac-card', class extends MirAIeACCard {});
 }
