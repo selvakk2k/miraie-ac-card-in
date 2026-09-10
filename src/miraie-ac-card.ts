@@ -84,7 +84,7 @@ export class MirAIeACCard extends LitElement {
       schema: [
         { name: 'entity',  required: true, selector: { entity: { domain: 'climate', integration: 'miraie_in' } } },
         { name: 'name',    selector: { text: {} } },
-        { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You', value: 'material_you' }] } } },
+        { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You (Optimized for Material 3 Theme)', value: 'material_you' }] } } },
         { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
         { name: 'full_layout', selector: { select: { options: [{ label: 'Classic', value: 'default' }, { label: 'Google Home', value: 'google_home' }] } } },
         { name: 'accent_color', selector: { ui_color: {} } },
