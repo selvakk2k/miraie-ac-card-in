@@ -7,7 +7,7 @@ import { styles } from './styles';
 /* ── Card picker & By-Entity suggestion registration ── */
 const customCardEntry = {
   type: 'miraie-ac-card',
-  name: 'Panasonic AC Card',
+  name: 'Panasonic AC India Card',
   description: 'A premium thermostat card for Indian-market Panasonic MirAIe AC units',
   preview: true,
   domain: 'climate',
