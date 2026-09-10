@@ -87,8 +87,13 @@ export class MirAIeACCard extends LitElement {
         { name: 'theme', selector: { select: { options: [{ label: 'Default HA Theme', value: 'default' }, { label: 'Material You (Optimized for Material 3 Theme)', value: 'material_you' }] } } },
         { name: 'layout', selector: { select: { options: [{ label: 'Default (Full)', value: 'default' }, { label: 'Compact (Expandable)', value: 'compact' }] } } },
         { name: 'full_layout', selector: { select: { options: [{ label: 'Classic', value: 'default' }, { label: 'Google Home', value: 'google_home' }] } } },
-        { name: 'accent_color', selector: { ui_color: {} } },
-        { name: 'main_color', selector: { ui_color: {} } },
+        {
+          name: '', type: 'expandable', title: 'Theming & Colors', icon: 'mdi:palette',
+          schema: [
+            { name: 'accent_color', label: 'Accent Color', selector: { ui_color: {} } },
+            { name: 'main_color', label: 'Background Color', selector: { ui_color: {} } },
+          ],
+        },
         {
           name: '', type: 'expandable', title: 'Display Sensors', icon: 'mdi:thermometer',
           schema: [
@@ -162,6 +167,20 @@ export class MirAIeACCard extends LitElement {
       const theme = this._config?.theme || 'default';
       if (this.getAttribute('theme') !== theme) {
         this.setAttribute('theme', theme);
+      }
+      if (this._config?.accent_color) {
+        this.style.setProperty('--appliance-accent', this._config.accent_color);
+        this.style.setProperty('--m-accent', this._config.accent_color);
+      } else {
+        this.style.removeProperty('--appliance-accent');
+        this.style.removeProperty('--m-accent');
+      }
+      if (this._config?.main_color) {
+        this.style.setProperty('--appliance-bg', this._config.main_color);
+        this.style.setProperty('--m-bg', this._config.main_color);
+      } else {
+        this.style.removeProperty('--appliance-bg');
+        this.style.removeProperty('--m-bg');
       }
     }
   }
