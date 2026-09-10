@@ -6,9 +6,9 @@ import { styles } from './styles';
 
 /* ── Card picker & By-Entity suggestion registration ── */
 const customCardEntry = {
-  type: 'miraie-ac-card-in',
-  name: 'MirAIe AC Card',
-  description: 'A premium thermostat card for Panasonic MirAIe AC units',
+  type: 'miraie-ac-card',
+  name: 'Panasonic AC Card',
+  description: 'A premium thermostat card for Indian-market Panasonic MirAIe AC units',
   preview: true,
   domain: 'climate',
   domains: ['climate'],
@@ -16,7 +16,7 @@ const customCardEntry = {
 };
 (window as any).customCards = (window as any).customCards || [];
 const existingCardIdx = (window as any).customCards.findIndex(
-  (c: any) => c.type === 'miraie-ac-card-in' || c.type === 'custom:miraie-ac-card-in'
+  (c: any) => c.type === 'miraie-ac-card' || c.type === 'custom:miraie-ac-card' || c.type === 'miraie-ac-card-in' || c.type === 'custom:miraie-ac-card-in'
 );
 if (existingCardIdx >= 0) {
   (window as any).customCards[existingCardIdx] = customCardEntry;
@@ -1694,4 +1694,9 @@ private _sourceLabel(s: string): string {
   }
 
   public getCardSize(): number { return this._config?.layout === 'compact' && !this._expanded ? 2 : 5; }
+}
+
+// Dual registration for seamless backward-compatibility
+if (!customElements.get('miraie-ac-card')) {
+  customElements.define('miraie-ac-card', MirAIeACCard);
 }
