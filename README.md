@@ -23,13 +23,13 @@ A custom Lovelace thermostat card for Panasonic Air Conditioners on the Indian m
 * **Energy Analytics Cards**: Quick telemetry display for Today's and Yesterday's power consumption with one-tap drill-down into Home Assistant historical graphs.
 * **Haptic Touch Feedback**: Tactile vibration responses when toggling modes and adjusting setpoints on mobile devices.
 * **Visual GUI Editor**: Full configuration support directly inside Home Assistant's dashboard editor without requiring manual YAML.
-* **Dynamic Theming & Material You**: Fully responsive across dark mode and default themes, with dedicated Material You mode optimized for the [Material You Theme by Nerwyn](https://github.com/Nerwyn/material-you-theme).
+* **Dynamic Theming & Theme Compatibility**: Fully responsive across default Home Assistant themes and dark mode, optimized for the [Material You Theme by Nerwyn](https://github.com/Nerwyn/material-you-theme) (Google Home layout) and the [Graphite Theme by Tilman Griesel](https://github.com/TilmanGriesel/graphite) (Classic layout).
 
 ---
 
 ## Screenshots
 
-| Google Home Style | Classic Card Style |
+| Google Home Style<br>*(shown with [Material You Theme](https://github.com/Nerwyn/material-you-theme))* | Classic Card Style<br>*(shown with [Graphite Theme](https://github.com/TilmanGriesel/graphite))* |
 | :---: | :---: |
 | **Full View**<br><img src="images/screenshot_gh_full.png" alt="Google Home Full View" width="380"> | **Full View**<br><img src="images/screenshot_classic_full.png" alt="Classic Full View" width="380"> |
 | **Compact View**<br><img src="images/screenshot_gh_compact.png" alt="Google Home Compact View" width="380"> | **Compact View**<br><img src="images/screenshot_classic_compact.png" alt="Classic Compact View" width="380"> |
